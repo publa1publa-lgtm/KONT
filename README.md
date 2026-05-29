@@ -1,6 +1,6 @@
 # KONT — marketing site
 
-Clean Next.js landing (ported from `contentfabric_site` `/home`). Copy lives in `src/messages/en.json`.
+Clean Next.js landing. Copy lives in `src/messages/en.json`.
 
 ## Develop
 
