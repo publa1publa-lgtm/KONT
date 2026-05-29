@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "title": "KONT — One workspace for every channel",
+    "description": "Plan, publish, and grow across social platforms from a single calm workspace — built for creators and teams."
+  },
+  "story": {
+    "brand": "KONT",
+    "nav": {
+      "howItWorks": "How it works",
+      "benefits": "Why KONT",
+      "cta": "Request demo"
+    },
+    "footer": {
+      "tagline": "The content workspace that keeps creators shipping: plan faster, publish safely, and turn performance into the next week's plan.",
+      "trustLine": "Official APIs · OAuth · No shared passwords",
+      "productColumn": "Product",
+      "resourcesColumn": "Explore",
+      "companyColumn": "Legal",
+      "productLinks": [
+        { "label": "How it works", "href": "#pillars" },
+        { "label": "Why teams switch", "href": "#benefits" },
+        { "label": "Get started", "href": "#cta" }
+      ],
+      "resourceLinks": [
+        { "label": "Request demo", "href": "#" }
+      ],
+      "companyLinks": [
+        { "label": "Privacy", "href": "#" },
+        { "label": "Terms", "href": "#" }
+      ]
+    }
+  },
+  "landing": {
+    "scrollHint": "Scroll to explore",
+    "hero": {
+      "label": "KONT",
+      "title": "Your entire social stack — in one calm workspace",
+      "text": "Plan, publish, and learn without tab chaos. Built for creators and teams who ship every week.",
+      "ctaPrimary": "Get early access",
+      "ctaSecondary": "Explore product",
+      "platforms": ["Instagram", "TikTok", "YouTube", "X", "Telegram", "LinkedIn"],
+      "multiChannel": {
+        "kicker": "Multi-channel",
+        "title": "One post. Every surface."
+      },
+      "secure": {
+        "kicker": "Secure connect",
+        "title": "OAuth only. You stay in control.",
+        "line": "No shared passwords · Revoke anytime"
+      },
+      "pulse": {
+        "kicker": "Live pulse",
+        "metrics": [
+          { "value": "3.2×", "label": "Faster publishing cycles" },
+          { "value": "12+", "label": "Platforms connected" },
+          { "value": "1", "label": "Dashboard for the whole team" }
+        ]
+      },
+      "quickWins": {
+        "kicker": "Quick wins",
+        "title": "Ship more with less friction",
+        "items": [
+          "Schedule a week in one pass",
+          "Auto-resize for every channel",
+          "Comments stay on the post"
+        ]
+      },
+      "timing": {
+        "kicker": "Smart timing",
+        "title": "Post when people actually show up",
+        "chips": ["Peak hours", "Timezone-aware", "Suggested slots"]
+      }
+    },
+    "pillars": {
+      "label": "How it works",
+      "title": "Create. Manage. Grow.",
+      "text": "Three moves. One workspace. No duct-tape between tools.",
+      "items": [
+        {
+          "id": "create",
+          "title": "Create",
+          "body": "Draft once, adapt for every format, and ship with templates your team actually uses."
+        },
+        {
+          "id": "manage",
+          "title": "Manage",
+          "body": "One calendar, shared drafts, and clear approvals — no more scattered spreadsheets."
+        },
+        {
+          "id": "grow",
+          "title": "Grow",
+          "body": "See what performs across channels and double down on content that moves the needle."
+        }
+      ]
+    },
+    "benefits": {
+      "label": "Why teams switch",
+      "title": "Calm shipping, real momentum.",
+      "text": "KONT keeps planning, publishing, and learning in one premium workspace — so your team spends time on output, not tabs.",
+      "items": [
+        {
+          "title": "One calendar, less noise",
+          "body": "Plan the week in one view, keep approvals tight, and publish without hopping between tools."
+        },
+        {
+          "title": "Templates that ship",
+          "body": "Reusable formats for every channel, consistent brand voice, and fewer last‑minute rewrites."
+        },
+        {
+          "title": "Signals you can act on",
+          "body": "Performance insights across platforms — so you double down on what actually works."
+        }
+      ],
+      "quote": {
+        "kicker": "The shift",
+        "text": "Less context switching. More consistency.",
+        "emphasis": " The work stays in one place."
+      }
+    },
+    "cta": {
+      "label": "Ready when you are",
+      "title": "Start your workspace in minutes",
+      "text": "Connect your channels, invite your team, and publish your first batch this week — no credit card required.",
+      "primary": "Get started free",
+      "secondary": "See what's inside",
+      "trust": ["OAuth-only connections", "Cancel anytime", "Team-ready from day one"],
+      "note": "Free to start · Cancel anytime"
+    }
+  },
+  "demoModal": {
+    "title": "Request a demo",
+    "subtitle": "Leave your email — we'll reach out with early access details.",
+    "emailLabel": "Work email",
+    "emailPlaceholder": "you@company.com",
+    "submit": "Request demo",
+    "submitting": "Sending…",
+    "successTitle": "You're on the list",
+    "successBody": "Thanks — we'll be in touch shortly.",
+    "close": "Close",
+    "errorInvalid": "Enter a valid email address."
+  }
+}
