@@ -88,6 +88,8 @@ html.home-route-active body {
   --stream-ratio: 0.28;
 
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   font-family: var(--font-syne), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: var(--home-fg);
 }
@@ -400,6 +402,8 @@ html.home-route-active body {
 .home-hero__badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.4rem 0.8rem 0.4rem 0.7rem;
@@ -414,6 +418,11 @@ html.home-route-active body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--home-blue);
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
 }
 
 .home-hero__badge-dot {
@@ -1879,6 +1888,43 @@ html.home-route-active body {
 }
 
 @media (max-width: 768px) {
+  .home-landing {
+    --home-nav-offset: max(4.75rem, calc(3.75rem + env(safe-area-inset-top, 0px)));
+    --home-section-pad: clamp(1.1rem, 4.5vw, 1.75rem);
+    --home-seam-h: clamp(3rem, 9vh, 5rem);
+  }
+
+  .home-section__inner {
+    min-height: auto;
+    padding-bottom: var(--home-section-pad);
+  }
+
+  .home-hero__badge {
+    margin-bottom: 0.85rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .home-section__inner--hero {
+    min-height: auto;
+    padding-top: max(5.5rem, calc(var(--home-nav-offset) + 0.5rem));
+    padding-inline: clamp(1rem, 4vw, 1.25rem);
+    padding-bottom: clamp(1.1rem, 3.5vw, 1.5rem);
+  }
+
+  .home-hero__pillars {
+    width: 100%;
+    padding-inline: clamp(1rem, 4vw, 1.35rem);
+    padding-top: clamp(2rem, 6vh, 3rem);
+  }
+
+  .home-pillars__grid {
+    max-width: none;
+  }
+
   .home-hero__column--left {
     order: 1;
   }
@@ -1902,6 +1948,38 @@ html.home-route-active body {
 
   .home-stat:not(:last-child)::after {
     display: none;
+  }
+
+  .home-screen__cta {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    padding: 0.85rem 1.35rem;
+    font-size: 0.9rem;
+  }
+
+  .home-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .home-hero__link {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-tools__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .home-screen__title {
+    font-size: clamp(1.45rem, 7.5vw, 1.85rem);
+  }
+
+  .home-screen__title--section {
+    font-size: clamp(1.35rem, 6.5vw, 1.65rem);
   }
 }
 

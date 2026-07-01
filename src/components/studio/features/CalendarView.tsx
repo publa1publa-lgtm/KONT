@@ -36,6 +36,15 @@ export function CalendarView() {
   const [confirmArchiveId, setConfirmArchiveId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [actionBusy, setActionBusy] = useState(false);
+  const [narrowLayout, setNarrowLayout] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 899px)");
+    const sync = () => setNarrowLayout(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const selectedDayLabel = useMemo(() => {
     if (!previewDayKey) return S.dayPreviewPickDay;
@@ -182,7 +191,7 @@ export function CalendarView() {
           <CalendarDayPreviewPanel
             className="studio-calendar__preview"
             variant="studio-toolbar"
-            showItemList={false}
+            showItemList={narrowLayout}
             dayKey={previewDayKey}
             items={apiItems}
             canAdd={previewCanAdd}

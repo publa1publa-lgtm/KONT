@@ -902,6 +902,7 @@
     "title": "Where the work stays calm",
     "subtitle": "Three spaces. One flow. Choose where you want to work.",
     "back": "Back",
+    "sectionInfo": "About this section",
     "createCta": "Create {label}",
     "sections": {
       "create": {

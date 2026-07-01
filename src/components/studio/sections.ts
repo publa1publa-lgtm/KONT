@@ -24,8 +24,6 @@ export type StudioItem = {
   icon: Icon;
   /** CSS grid-area (row-start / col-start / row-end / col-end). */
   area: string;
-  /** Short horizontal tiles for dense grid rows. */
-  variant?: "compact";
 };
 
 export type StudioSection = {
@@ -60,13 +58,13 @@ export const SECTIONS: Record<SectionId, StudioSection> = {
   },
   grow: {
     id: "grow",
-    gridClass: "grid-cols-6 grid-rows-5",
+    gridClass: "grid-cols-6 grid-rows-6",
     items: [
       { id: "analytics", icon: ChartLineUpIcon, area: "1 / 1 / 5 / 5" },
       { id: "insights", icon: SparkleIcon, area: "1 / 5 / 5 / 7" },
-      { id: "reports", icon: ArticleMediumIcon, area: "5 / 1 / 6 / 3", variant: "compact" },
-      { id: "audience", icon: UsersThreeIcon, area: "5 / 3 / 6 / 5", variant: "compact" },
-      { id: "experiments", icon: FlaskIcon, area: "5 / 5 / 6 / 7", variant: "compact" },
+      { id: "reports", icon: ArticleMediumIcon, area: "5 / 1 / 7 / 3" },
+      { id: "audience", icon: UsersThreeIcon, area: "5 / 3 / 7 / 5" },
+      { id: "experiments", icon: FlaskIcon, area: "5 / 5 / 7 / 7" },
     ],
   },
 };

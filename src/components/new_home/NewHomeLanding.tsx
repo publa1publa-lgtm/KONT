@@ -40,6 +40,15 @@ const CTA_ORBIT_ICONS = [
   { src: "/home/icons/color/linkedin.svg", className: "home-cta-orbit__icon--f" },
 ] as const;
 
+const HERO_PLATFORM_ICONS: Record<string, string> = {
+  Instagram: "/home/icons/color/instagram.svg",
+  TikTok: "/home/icons/color/tiktok.svg",
+  YouTube: "/home/icons/color/youtube.svg",
+  X: "/home/icons/color/x.svg",
+  Telegram: "/home/icons/color/telegram.svg",
+  LinkedIn: "/home/icons/color/linkedin.svg",
+};
+
 export function NewHomeLanding() {
   const { landing } = useMessages();
   const { openModal } = useDemoModal();
@@ -75,14 +84,38 @@ export function NewHomeLanding() {
               <div className="home-section__inner home-section__inner--hero">
                 <div className="hero2 hero2--split">
                   <div className="hero2__copy home-reveal" data-reveal>
+                    <span className="hero2__copy-glow hero2__copy-glow--a" aria-hidden />
+                    <span className="hero2__copy-glow hero2__copy-glow--b" aria-hidden />
+
                     <span className="home-hero__badge">
                       <span className="home-hero__badge-dot" aria-hidden />
                       {h.badge}
                     </span>
                     <h1 className="hero2__title">
-                      {h.title} <span className="home-hero__accent">{h.titleAccent}</span>
+                      <span className="hero2__title-line">{h.title}</span>
+                      <span className="hero2__title-line hero2__title-line--accent">
+                        <span className="home-hero__accent">{h.titleAccent}</span>
+                      </span>
                     </h1>
                     <p className="hero2__sub">{h.text}</p>
+
+                    <div className="hero2__platforms" aria-label={h.social.worksWith}>
+                      <span className="hero2__platforms-label">{h.social.worksWith}</span>
+                      <ul className="hero2__platforms-row">
+                        {h.platforms.map((name) => {
+                          const src = HERO_PLATFORM_ICONS[name];
+                          if (!src) return null;
+                          return (
+                            <li key={name}>
+                              <span className="hero2__platform-icon" title={name}>
+                                <Image src={src} alt="" width={18} height={18} />
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+
                     <div className="hero2__actions">
                       <button
                         type="button"
@@ -95,18 +128,6 @@ export function NewHomeLanding() {
                       <a className="hero2__secondary" href="#product">
                         {h.ctaSecondary}
                       </a>
-                    </div>
-                    <div className="hero2__proof" data-reveal>
-                      <div className="hero2__avatars" aria-hidden="true">
-                        <span className="hero2__avatar hero2__avatar--1" />
-                        <span className="hero2__avatar hero2__avatar--2" />
-                        <span className="hero2__avatar hero2__avatar--3" />
-                        <span className="hero2__avatar hero2__avatar--4" />
-                        <span className="hero2__avatar hero2__avatar--5" />
-                      </div>
-                      <p className="hero2__proof-text">
-                        <strong>{h.social.count}</strong> {h.social.text}
-                      </p>
                     </div>
 
                     <p className="hero2__trust">

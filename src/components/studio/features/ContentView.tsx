@@ -282,7 +282,7 @@ export function ContentView() {
         <StudioHeader label={C.library} title={C.allContent} />
 
           {/* Mobile / tablet: stacked cards */}
-          <StudioWrapperList className="mt-4 lg:hidden">
+          <StudioWrapperList className="mt-4 xl:hidden">
             <StudioWrapperListBody as="ul">
               {sorted.length === 0 ? (
                 <StudioWrapperListRow as="li" empty className="px-4 py-10 text-sm">
@@ -353,7 +353,7 @@ export function ContentView() {
           </StudioWrapperList>
 
           {/* Desktop: table fills remaining studio height; body scrolls inside */}
-          <StudioWrapperList className={`${studioWrapperList.surfaceGrow} mt-4 hidden lg:flex`}>
+          <StudioWrapperList className={`${studioWrapperList.surfaceGrow} mt-4 hidden xl:flex`}>
             <div className={studioWrapperList.tableScroll}>
               <table className={studioWrapperList.table}>
                 <colgroup>

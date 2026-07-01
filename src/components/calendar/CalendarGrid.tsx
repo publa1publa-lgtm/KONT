@@ -52,6 +52,11 @@ export function CalendarGrid({
     [month, fixedWeekRows],
   );
   const weekDays = useMemo(() => weekDaysMondayFirst(intlLocale(locale)), [locale]);
+  const cellGap = embedded ? "gap-1 sm:gap-2" : "gap-2 sm:gap-2.5";
+  const innerMinWidth = embedded ? "min-w-0" : "min-w-[32rem] sm:min-w-0";
+  const scrollWrapClass = embedded
+    ? "flex min-h-0 flex-1 flex-col overflow-hidden"
+    : "scrollbar-none flex min-h-0 flex-1 flex-col overflow-x-auto overscroll-x-contain";
 
   return (
     <div
@@ -65,18 +70,22 @@ export function CalendarGrid({
         .join(" ")}
     >
       <div className="relative flex min-h-0 flex-1 flex-col">
-        <div
-          className="pointer-events-none absolute inset-y-3 left-0 z-[2] w-8 studio-cal-scroll-fade sm:hidden"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-y-3 right-0 z-[2] w-8 studio-cal-scroll-fade studio-cal-scroll-fade--right sm:hidden"
-          aria-hidden
-        />
-        <div className="scrollbar-none flex min-h-0 flex-1 flex-col overflow-x-auto overscroll-x-contain">
-          <div className="flex min-h-0 min-w-[32rem] flex-1 flex-col sm:min-w-0">
+        {!embedded ? (
+          <>
+            <div
+              className="pointer-events-none absolute inset-y-3 left-0 z-[2] w-8 studio-cal-scroll-fade sm:hidden"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-y-3 right-0 z-[2] w-8 studio-cal-scroll-fade studio-cal-scroll-fade--right sm:hidden"
+              aria-hidden
+            />
+          </>
+        ) : null}
+        <div className={scrollWrapClass}>
+          <div className={`flex min-h-0 ${innerMinWidth} flex-1 flex-col`}>
             <div className="cal-weekday-bar shrink-0">
-              <div className="grid grid-cols-7 gap-2 sm:gap-2.5">
+              <div className={`grid grid-cols-7 ${cellGap}`}>
                 {weekDays.map((d, idx) => (
                   <div key={`${idx}:${d}`} className={["cal-weekday", idx >= 5 ? "is-weekend" : ""].join(" ")}>
                     {d}
@@ -86,7 +95,7 @@ export function CalendarGrid({
             </div>
 
             <div
-              className="mt-2 grid min-h-0 flex-1 grid-cols-7 gap-2 sm:mt-2.5 sm:gap-2.5"
+              className={`mt-2 grid min-h-0 flex-1 grid-cols-7 ${cellGap} sm:mt-2.5`}
               style={
                 fixedWeekRows
                   ? { gridTemplateRows: `repeat(${fixedWeekRows}, minmax(0, 1fr))` }
