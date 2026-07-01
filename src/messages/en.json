@@ -8,6 +8,7 @@
     "nav": {
       "howItWorks": "How it works",
       "benefits": "Why KONT",
+      "studio": "Studio",
       "cta": "Request demo"
     },
     "footer": {
@@ -17,114 +18,1010 @@
       "resourcesColumn": "Explore",
       "companyColumn": "Legal",
       "productLinks": [
-        { "label": "How it works", "href": "#pillars" },
-        { "label": "Why teams switch", "href": "#benefits" },
-        { "label": "Get started", "href": "#cta" }
+        {
+          "label": "How it works",
+          "href": "#pillars"
+        },
+        {
+          "label": "Why teams switch",
+          "href": "#benefits"
+        },
+        {
+          "label": "Get started",
+          "href": "#cta"
+        }
       ],
       "resourceLinks": [
-        { "label": "Request demo", "href": "#" }
+        {
+          "label": "Request demo",
+          "href": "#"
+        },
+        {
+          "label": "Studio",
+          "href": "/studio"
+        }
       ],
       "companyLinks": [
-        { "label": "Privacy", "href": "#" },
-        { "label": "Terms", "href": "#" }
+        {
+          "label": "Privacy",
+          "href": "#"
+        },
+        {
+          "label": "Terms",
+          "href": "#"
+        }
       ]
     }
   },
   "landing": {
     "scrollHint": "Scroll to explore",
     "hero": {
-      "label": "KONT",
-      "title": "Your entire social stack — in one calm workspace",
-      "text": "Plan, publish, and learn without tab chaos. Built for creators and teams who ship every week.",
+      "label": "The content workspace",
+      "badge": "Early access now open",
+      "title": "Your chaos stack.",
+      "titleAccent": "Our calm workspace.",
+      "text": "Plan, publish, and measure every channel from a single workspace. Built for creators and teams who ship every week.",
       "ctaPrimary": "Get early access",
-      "ctaSecondary": "Explore product",
-      "platforms": ["Instagram", "TikTok", "YouTube", "X", "Telegram", "LinkedIn"],
+      "ctaSecondary": "See how it works",
+      "trust": "Official platform APIs · OAuth-only · No shared passwords",
+      "platforms": [
+        "Instagram",
+        "TikTok",
+        "YouTube",
+        "X",
+        "Telegram",
+        "LinkedIn"
+      ],
       "multiChannel": {
         "kicker": "Multi-channel",
         "title": "One post. Every surface."
       },
+      "social": {
+        "count": "1,200+ creators",
+        "text": "on the early-access list",
+        "worksWith": "Publishes to"
+      },
+      "tags": [
+        "OAuth-only",
+        "Auto-format",
+        "Smart timing"
+      ],
       "secure": {
         "kicker": "Secure connect",
         "title": "OAuth only. You stay in control.",
-        "line": "No shared passwords · Revoke anytime"
+        "line": "No shared passwords · Revoke access anytime"
       },
       "pulse": {
         "kicker": "Live pulse",
+        "activities": [
+          {
+            "action": "Published",
+            "detail": "Instagram Reel · now live",
+            "icon": "/home/icons/color/instagram.svg"
+          },
+          {
+            "action": "Scheduled",
+            "detail": "YouTube Short · 6:00 PM",
+            "icon": "/home/icons/color/youtube.svg"
+          },
+          {
+            "action": "Auto-formatted",
+            "detail": "TikTok · 3 crops ready",
+            "icon": "/home/icons/color/tiktok.svg"
+          }
+        ],
+        "insights": [
+          {
+            "value": "94%",
+            "label": "On-time delivery rate"
+          },
+          {
+            "value": "2m",
+            "label": "All channels synced"
+          },
+          {
+            "value": "847",
+            "label": "Posts scheduled this week"
+          }
+        ],
         "metrics": [
-          { "value": "3.2×", "label": "Faster publishing cycles" },
-          { "value": "12+", "label": "Platforms connected" },
-          { "value": "1", "label": "Dashboard for the whole team" }
+          {
+            "value": "3.2×",
+            "label": "Faster publishing cycles"
+          },
+          {
+            "value": "12+",
+            "label": "Platforms in one place"
+          }
         ]
       },
       "quickWins": {
         "kicker": "Quick wins",
-        "title": "Ship more with less friction",
+        "title": "Ship more, with less friction",
         "items": [
-          "Schedule a week in one pass",
-          "Auto-resize for every channel",
+          "Schedule a full week in one pass",
+          "Auto-format for every channel",
           "Comments stay on the post"
         ]
       },
       "timing": {
         "kicker": "Smart timing",
-        "title": "Post when people actually show up",
-        "chips": ["Peak hours", "Timezone-aware", "Suggested slots"]
+        "title": "Publish when your audience is live",
+        "chips": [
+          "Peak hours",
+          "Timezone-aware",
+          "Suggested slots"
+        ]
       }
     },
     "pillars": {
       "label": "How it works",
-      "title": "Create. Manage. Grow.",
-      "text": "Three moves. One workspace. No duct-tape between tools.",
+      "title": "CREATE . MANAGE . GROW",
+      "text": "Three spaces. One flow. The same calm workspace — from first draft to proof it worked.",
       "items": [
         {
           "id": "create",
-          "title": "Create",
-          "body": "Draft once, adapt for every format, and ship with templates your team actually uses."
+          "title": "CREATE .",
+          "body": "Compose. Caption. Automate. Posts, reels, and workflows start on one canvas — adapt once, ship to every channel."
         },
         {
           "id": "manage",
-          "title": "Manage",
-          "body": "One calendar, shared drafts, and clear approvals — no more scattered spreadsheets."
+          "title": "MANAGE .",
+          "body": "Plan. Review. Publish. Calendar, inbox, and connected accounts keep every post on track — without tab chaos."
         },
         {
           "id": "grow",
-          "title": "Grow",
-          "body": "See what performs across channels and double down on content that moves the needle."
+          "title": "GROW .",
+          "body": "Measure. Learn. Act. Analytics and insights show what resonates — so your next move is informed, not guessed."
         }
       ]
     },
     "benefits": {
       "label": "Why teams switch",
-      "title": "Calm shipping, real momentum.",
-      "text": "KONT keeps planning, publishing, and learning in one premium workspace — so your team spends time on output, not tabs.",
-      "items": [
+      "title": "The patchwork",
+      "titleAccent": "ends here.",
+      "text": "Top teams don't need more tools — they need one calm surface built for how publishing actually works.",
+      "compare": {
+        "before": {
+          "tag": "Fragmented",
+          "title": "Six tabs to ship one reel",
+          "items": [
+            "Drafts scattered across Notion, Drive, and DMs",
+            "Approvals buried in Slack threads",
+            "Scheduling in one tool, analytics in three others",
+            "Every publish day starts with tab archaeology"
+          ],
+          "metric": "6 tools · ~47 min lost per post"
+        },
+        "after": {
+          "tag": "Unified",
+          "title": "One workspace, every channel",
+          "items": [
+            "Compose once — auto-format for Reels, Shorts, and posts",
+            "Approvals and comments live on the asset, not in chat",
+            "Calendar, inbox, and analytics in the same view",
+            "Publish to 12+ platforms without leaving the workspace"
+          ],
+          "metric": "1 workspace · under 6 min avg."
+        }
+      },
+      "stats": [
         {
-          "title": "One calendar, less noise",
-          "body": "Plan the week in one view, keep approvals tight, and publish without hopping between tools."
+          "value": 3.2,
+          "decimals": 1,
+          "suffix": "×",
+          "label": "Faster publishing cycles"
         },
         {
-          "title": "Templates that ship",
-          "body": "Reusable formats for every channel, consistent brand voice, and fewer last‑minute rewrites."
+          "value": 12,
+          "suffix": "+",
+          "label": "Platforms in one place"
+        },
+        {
+          "value": 40,
+          "suffix": "%",
+          "label": "Less time lost to tab-switching"
+        },
+        {
+          "value": 1,
+          "suffix": "",
+          "label": "Source of truth for the team"
+        }
+      ],
+      "items": [
+        {
+          "title": "Kill the tab marathon",
+          "body": "Stop copying captions between tools. Plan, edit, and schedule from a single canvas — channel-aware slots included.",
+          "outcome": "3.2× faster cycles"
+        },
+        {
+          "title": "Templates that ship, not stall",
+          "body": "Reusable formats for every surface, a locked brand voice, and zero last-minute rewrites before go-live.",
+          "outcome": "70% fewer rewrites"
         },
         {
           "title": "Signals you can act on",
-          "body": "Performance insights across platforms — so you double down on what actually works."
+          "body": "Cross-platform performance in one read — double down on winners instead of guessing from four dashboards.",
+          "outcome": "One analytics truth"
         }
       ],
-      "quote": {
-        "kicker": "The shift",
-        "text": "Less context switching. More consistency.",
-        "emphasis": " The work stays in one place."
+      "testimonial": {
+        "quote": "We used to lose half a day every time we shipped a campaign. Now the whole team sees one calendar, one inbox, one truth.",
+        "author": "Maya Chen",
+        "role": "Head of Content · 8-person studio",
+        "metric": "Weekly ops: 12h → 3h"
       }
+    },
+    "bento": {
+      "label": "Product preview",
+      "title": "See the product, not a pitch deck",
+      "text": "The core of Studio — calendar, unified inbox, audience map, connected accounts, automations, and analytics. Live widgets, not screenshots.",
+      "tabs": {
+        "calendar": "Calendar",
+        "automation": "Automations",
+        "dashboard": "Dashboard",
+        "inbox": "Inbox",
+        "accounts": "Accounts",
+        "insights": "Insights",
+        "audience": "Audience"
+      },
+      "features": [
+        {
+          "id": "calendar",
+          "title": "Content Calendar",
+          "body": "Visual week planning with channel-aware slots, approvals, and drag-and-drop scheduling."
+        },
+        {
+          "id": "automation",
+          "title": "Automation Builder",
+          "body": "Chain upload → resize → schedule → publish across every surface you care about."
+        },
+        {
+          "id": "dashboard",
+          "title": "Creator Dashboard",
+          "body": "Cross-channel analytics in calm cards — reach, engagement, and growth you can act on today."
+        }
+      ]
     },
     "cta": {
       "label": "Ready when you are",
+      "badge": "Limited early access",
       "title": "Start your workspace in minutes",
       "text": "Connect your channels, invite your team, and publish your first batch this week — no credit card required.",
-      "primary": "Get started free",
+      "primary": "Get early access",
       "secondary": "See what's inside",
-      "trust": ["OAuth-only connections", "Cancel anytime", "Team-ready from day one"],
-      "note": "Free to start · Cancel anytime"
+      "trust": [
+        "OAuth-only connections",
+        "Cancel anytime",
+        "Team-ready from day one"
+      ],
+      "note": "Free to start · No credit card required"
+    }
+  },
+  "studio": {
+    "nav": {
+      "calendar": "Calendar",
+      "content": "Content",
+      "platforms": "Platforms",
+      "linktree": "LinkTree",
+      "linktree2": "LinkTree · new",
+      "inbox": "Inbox",
+      "automations": "Automations",
+      "bots": "Bots"
+    },
+    "navMenu": {
+      "allFlows": "All flows",
+      "createFlow": "Create flow",
+      "allBots": "All bots",
+      "createBot": "Create bot"
+    },
+    "placeholders": {
+      "pickAutomations": "Open Automations in the navigation, then choose All flows or Create flow.",
+      "pickBots": "Open Bots in the navigation, then choose All bots or Create bot."
+    },
+    "linkStudio": {
+      "label": "Link page",
+      "subtitle": "Build a Linktree-style public page: a short URL, headline, bio, and tap-friendly buttons for your social bio.",
+      "handle": "Public handle",
+      "handleHint": "Your page lives at /u/your-handle — use 3–32 characters: lowercase letters, digits, and single hyphens only.",
+      "handlePlaceholder": "your-name",
+      "title": "Headline",
+      "titlePlaceholder": "Your name or brand",
+      "bio": "Bio",
+      "bioPlaceholder": "One line under your headline…",
+      "linksHeading": "Buttons",
+      "linkLabel": "Label",
+      "linkUrl": "URL",
+      "enabled": "Visible",
+      "addLink": "Add button",
+      "remove": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved.",
+      "loading": "Loading…",
+      "copyPublicUrl": "Copy public link",
+      "copied": "Copied!",
+      "openPublic": "Open public page",
+      "publicPage": "Public page",
+      "loadError": "Could not load your link page.",
+      "saveError": "Could not save. Check the handle and URLs.",
+      "emptyLinksHint": "Add buttons with a label and a URL (https://…). Empty rows are ignored when you save.",
+      "mobileEditor": "Editor",
+      "mobilePreview": "Preview",
+      "mobileStepCounter": "Step {n} of {t}",
+      "mobileStepAddress": "URL",
+      "mobileStepProfile": "Profile",
+      "mobileStepLinks": "Links",
+      "mobileHintAddress": "Pick a short handle first — that’s how people open your page.",
+      "mobileHintProfile": "Headline and one line under it — like your social bio.",
+      "mobileHintLinks": "Buttons top to bottom. Empty rows won’t be saved.",
+      "mobileHintPreview": "Draft: after saving, this is what visitors will see.",
+      "mobileSaveReminder": "Tap Save at the top when you’re done.",
+      "mobileStickyEditHint": "Switch steps using the bar in the form below.",
+      "mobileDesktopLastStepHint": "Check the public link, then tap Save at the top.",
+      "mobileBack": "Back",
+      "mobileNext": "Next",
+      "mobileViewPreview": "View preview",
+      "mobilePreviewTitle": "On your page",
+      "mobilePreviewEmptyHandle": "Set your handle in step 1 to see the link and preview.",
+      "mobilePreviewNoLinks": "No buttons yet — add them on the Links step.",
+      "crossLinkFull": "Want 25 templates and a live phone preview? Try LinkTree in the studio.",
+      "crossLinkFullCta": "Open LinkTree",
+      "profileEditor": {
+        "title": "Name & bio",
+        "description": "Display name, handle, and page copy. Photo is optional — often from Instagram after you connect.",
+        "displayName": "Name or handle",
+        "username": "URL handle",
+        "usernameHint": "a–z, 0–9, _",
+        "pageUrl": "Page:",
+        "pageUrlPlaceholder": "your-handle",
+        "bio": "About you",
+        "bioPlaceholder": "One or two sentences: what you do and what visitors should know.",
+        "photoTitle": "Profile photo",
+        "photoHint": "Optional — Instagram or image URL.",
+        "connectInstagram": "Instagram",
+        "connectSoon": "Instagram: connection coming soon — we’ll pull your profile photo.",
+        "avatarManual": "Or paste an image URL manually",
+        "avatarPlaceholder": "Image URL (optional)"
+      },
+      "linksEditor": {
+        "urlOk": "URL looks good",
+        "urlAuto": "You can omit https:// — we’ll add it automatically.",
+        "urlInvalid": "Check the URL format."
+      },
+      "templatePicker": {
+        "variants": "{count} themes · preview and palette",
+        "closeAria": "Close"
+      }
+    },
+    "linkTreeStudio": {
+      "label": "LinkTree",
+      "subtitle": "25 themes, live preview, profile and buttons — built for your bio link.",
+      "badge": "Link in Bio",
+      "save": "Save",
+      "saving": "Saving…",
+      "public": "Public page",
+      "loadError": "Could not load your draft.",
+      "saveError": "Could not save.",
+      "saved": "Saved.",
+      "publicToast": "Public page:",
+      "stepTemplate": "Template",
+      "stepProfile": "Profile",
+      "stepLinks": "Links",
+      "saveReminder": "Tap Save in the header when you’re done.",
+      "autoSaveHint": "Edits save automatically after you pause typing.",
+      "desktopHint": "Use the steps above: template, profile, links — the preview on the right updates live.",
+      "mobileEditor": "Editor",
+      "mobilePreview": "Preview",
+      "mobileBack": "Back",
+      "mobileNext": "Next",
+      "mobileViewPreview": "View preview",
+      "previewAside": "This is what visitors will see. On large screens the preview stays pinned.",
+      "previewRight": "Preview on the right",
+      "live": "Live",
+      "design": {
+        "title": "Template",
+        "description": "Start from a ready-made template — the preview updates instantly. Fine-tune colors in Customize.",
+        "templateLabel": "Template",
+        "gallery": "Gallery",
+        "tweaks": "Customize",
+        "customColors": "Custom colors",
+        "colorsAndShape": "Colors & shape",
+        "palette": "Palette",
+        "reset": "Reset",
+        "bg": "Background",
+        "text": "Text",
+        "buttons": "Buttons",
+        "buttonText": "Button text",
+        "radius": "Corner radius",
+        "size": "Size",
+        "font": "Font",
+        "buttonSizeAria": "Button size on page",
+        "fontAria": "Page font",
+        "fonts": {
+          "inter": "Body",
+          "syne": "Accent",
+          "mono": "Mono"
+        },
+        "sizes": {
+          "sm": "Smaller",
+          "md": "Medium",
+          "lg": "Larger"
+        },
+        "pickTemplateAria": "Pick template “{name}”",
+        "demoBio": "Short bio"
+      },
+      "templatePicker": {
+        "title": "Templates",
+        "variants": "{count} themes · preview and palette",
+        "close": "Close"
+      },
+      "linksSection": {
+        "title": "Buttons & links",
+        "description": "Top-to-bottom list — guests see the same order. Drag the left handle to reorder.",
+        "addButton": "Add link",
+        "emptyTitle": "No links yet",
+        "emptyBody": "Add your first: short label and URL. It appears in the preview right away.",
+        "emptyCta": "Add first link",
+        "listSummary": "In list: {count} · order = order on page",
+        "addAnother": "Add another",
+        "quickAddPlaceholder": "Paste a link and press Enter",
+        "quickAddButton": "Add",
+        "addManual": "Empty row",
+        "tapToEdit": "Tap to edit",
+        "doneEdit": "Done",
+        "positionTitle": "Position on page",
+        "dragAria": "Drag to reorder (currently position {index})",
+        "dragHint": "Drag",
+        "buttonLabel": "Button label",
+        "buttonPlaceholder": "e.g. YouTube, Shop, Telegram",
+        "linkLabel": "Link",
+        "linkPlaceholder": "https://… or youtube.com/…",
+        "urlAutoHint": "https:// is optional — we add it automatically.",
+        "removeButton": "Remove button",
+        "removeHint": "Remove"
+      },
+      "preview": {
+        "emptyLinks": "Add links on the left"
+      },
+      "urlInvalid": "Enter a valid http(s) URL",
+      "themes": {
+        "light": {
+          "title": "Light",
+          "description": "Clean and versatile"
+        },
+        "paper": {
+          "title": "Paper",
+          "description": "Editorial warmth"
+        },
+        "slate": {
+          "title": "Slate",
+          "description": "Calm professional tone"
+        },
+        "sand": {
+          "title": "Sand",
+          "description": "Desert sun"
+        },
+        "lavender": {
+          "title": "Lavender",
+          "description": "Soft purple"
+        },
+        "blush": {
+          "title": "Blush",
+          "description": "Soft pink editorial"
+        },
+        "arctic": {
+          "title": "Arctic",
+          "description": "Ice and cool air"
+        },
+        "dark": {
+          "title": "Dark",
+          "description": "High-contrast classic"
+        },
+        "noir": {
+          "title": "Noir",
+          "description": "Black-and-white drama"
+        },
+        "midnight": {
+          "title": "Midnight",
+          "description": "Blue night and gold"
+        },
+        "cosmos": {
+          "title": "Cosmos",
+          "description": "Stellar depth"
+        },
+        "gold": {
+          "title": "Gold",
+          "description": "Premium shine"
+        },
+        "obsidian": {
+          "title": "Obsidian",
+          "description": "Volcanic glass"
+        },
+        "sunset": {
+          "title": "Sunset",
+          "description": "Warm dusk"
+        },
+        "ember": {
+          "title": "Ember",
+          "description": "Glowing coals"
+        },
+        "candy": {
+          "title": "Candy",
+          "description": "Sweet neon pink"
+        },
+        "gradient": {
+          "title": "Gradient",
+          "description": "Purple-pink flow"
+        },
+        "ocean": {
+          "title": "Ocean",
+          "description": "Water depth"
+        },
+        "forest": {
+          "title": "Forest",
+          "description": "Pine shadow"
+        },
+        "aurora": {
+          "title": "Aurora",
+          "description": "Northern lights"
+        },
+        "coral": {
+          "title": "Coral",
+          "description": "Reef and turquoise"
+        },
+        "neon": {
+          "title": "Neon",
+          "description": "Cyber glow"
+        },
+        "retro": {
+          "title": "Retro",
+          "description": "80s synthwave"
+        },
+        "cyber": {
+          "title": "Cyber",
+          "description": "Yellow on black"
+        },
+        "electric": {
+          "title": "Electric",
+          "description": "Lime on indigo"
+        }
+      }
+    },
+    "linkTreeStudio2": {
+      "label": "Link in bio",
+      "badge": "New editor",
+      "subtitle": "Cleaner steps on the left, live phone preview on the right — same page, refreshed layout.",
+      "stepTemplateHint": "Pick a theme; colors and fonts update in the preview as you go.",
+      "stepProfileHint": "Name, handle, and bio — what visitors see at the top of your page.",
+      "stepLinksHint": "Add tap-friendly buttons; drag order in the list when you need to.",
+      "desktopHint": "Work through the steps in the sidebar. The preview stays visible while you edit.",
+      "previewTitle": "Live preview",
+      "previewCaption": "What guests see on their phone",
+      "editorPanelTitle": "Step",
+      "continueLabel": "Continue",
+      "finishPreviewLabel": "Check preview"
+    },
+    "user": {
+      "settings": "Settings",
+      "billing": "Billing",
+      "logout": "Log out",
+      "devEmail": "Dev: Hello World",
+      "devEmailSending": "Sending…",
+      "sendEmailSuccess": "Sent “Hello World” to {email}",
+      "sendEmailFailed": "Could not send email",
+      "sendEmailDevSkipped": "Add SMTP_* to .env (see .env.example)",
+      "modals": {
+        "close": "Close",
+        "cancel": "Cancel",
+        "settingsTitle": "Settings",
+        "settingsSubtitle": "Make the studio feel right on your device.",
+        "billingTitle": "Billing",
+        "billingSubtitle": "Billing is coming soon. For now, contact us to enable access.",
+        "reducedMotion": {
+          "label": "Reduced motion",
+          "hint": "Turn down animations for comfort and performance."
+        },
+        "links": {
+          "title": "Quick links",
+          "terms": "Terms",
+          "privacy": "Privacy",
+          "contact": "Contact"
+        }
+      },
+      "theme": {
+        "label": "Theme",
+        "luxury": "Luxury",
+        "dark": "Dark"
+      }
+    },
+    "mobile": {
+      "active": "Active:"
+    },
+    "content": {
+      "label": "Content",
+      "subtitle": "Add posts and reels, review everything you have scheduled.",
+      "addContent": "Add content",
+      "createCta": "Create {label}",
+      "library": "Library",
+      "allContent": "All content",
+      "noItems": "No items yet.",
+      "tableTitle": "Title",
+      "tableType": "Type",
+      "tablePlatforms": "Platforms",
+      "tableStatus": "Status",
+      "tableScheduled": "Scheduled",
+      "tableHashtags": "Hashtags",
+      "tableCreated": "Created",
+      "tableActions": "Actions",
+      "typeReel": "Reel",
+      "typePost": "Post",
+      "edit": "Edit",
+      "duplicate": "Copy",
+      "archive": "Archive",
+      "delete": "Delete",
+      "duplicateTitleSuffix": " (copy)",
+      "composerTitle": "Content",
+      "composerSubtitle": "Create content",
+      "composer": {
+        "close": "Close",
+        "editContent": "Edit content",
+        "createContent": "Create content",
+        "kindToggleAria": "Content type: post or reel",
+        "date": "Date",
+        "time": "Time",
+        "schedule": "Schedule",
+        "title": "Title",
+        "titlePlaceholder": "Title",
+        "text": "Text",
+        "textPlaceholder": "Write something...",
+        "description": "Description",
+        "descriptionPlaceholder": "Description…",
+        "hashtags": "HashTags",
+        "hashtagsPlaceholder": "e.g. #creator #reels #tiktok",
+        "video": "Video",
+        "image": "Image",
+        "noImageSelected": "No image selected",
+        "cancel": "Cancel",
+        "save": "Save",
+        "create": "Create",
+        "saving": "Saving…",
+        "errors": {
+          "selectVideoFile": "Please select a video file.",
+          "videoTooLarge": "Video is too large ({mb}MB). Try a smaller file.",
+          "failedReadVideo": "Failed to read video.",
+          "selectImageFile": "Please select an image file.",
+          "imageTooLarge": "Image is too large ({mb}MB). Try a smaller one.",
+          "failedReadImage": "Failed to read image.",
+          "pastDay": "You can’t add a post to a past date.",
+          "pastTime": "You can’t add a post to a time earlier than now.",
+          "noPlatformsConnected": "No connected platforms. Connect at least one platform to publish.",
+          "pickPublishTargets": "Pick at least one connected account to publish."
+        },
+        "publishing": {
+          "title": "Publishing",
+          "loadingAccounts": "Loading connected accounts…",
+          "draftOnlyTitle": "Draft",
+          "draftOnlyBody": "Saved to your library only. Connect Instagram or TikTok under Platforms to publish here.",
+          "intro": "Draft keeps the item local. Or choose connected accounts to target.",
+          "draftLabel": "Draft",
+          "draftHint": "Library only — no publish targets yet.",
+          "connectedLabel": "Connected accounts"
+        },
+        "preview": {
+          "reels": "Reels",
+          "feedPreview": "Feed preview",
+          "brand": "Content Fabric",
+          "captionEmpty": "Title or description will appear here"
+        }
+      },
+      "errors": {
+        "signInToLoad": "Sign in to load your content.",
+        "signInToEdit": "Sign in to edit.",
+        "couldNotOpenForEditing": "Could not open this item for editing.",
+        "couldNotLoadContent": "Could not load content.",
+        "loadFailed": "Load failed",
+        "saveFailed": "Save failed",
+        "archiveFailed": "Archive failed",
+        "deleteFailed": "Delete failed",
+        "duplicateFailed": "Could not duplicate",
+        "pickDateTime": "Pick a date and time.",
+        "pickDate": "Pick a date.",
+        "videoRequired": "Video is required."
+      },
+      "dialogs": {
+        "archiveTitle": "Archive content",
+        "archiveMessage": "Move this item to the archive? It will be hidden from the calendar and not published.",
+        "archiveConfirm": "Archive",
+        "deleteTitle": "Delete content",
+        "deleteMessage": "Delete this item permanently? This cannot be undone.",
+        "deleteConfirm": "Delete"
+      }
+    },
+    "platforms": {
+      "connectedLabel": "Connected platforms",
+      "connectedSubtitle": "Tap a platform to open details",
+      "connectedCount": "Connected:",
+      "connectedHintNone": "Connect at least one platform to start.",
+      "connectedHintSome": "Tap a platform to open details →",
+      "noConnected": "No connected platforms yet.",
+      "yourPlatforms": "Your platforms",
+      "statusOverview": "Status overview",
+      "searchPlaceholder": "Search (name, hint, account)…",
+      "connectedOnly": "Connected only",
+      "resetDemo": "Reset demo",
+      "noMatch": "No platforms match your filters.",
+      "account": "Account",
+      "lastSync": "Last sync",
+      "sync": "Sync",
+      "disconnect": "Disconnect",
+      "connect": "Connect",
+      "noSync": "no sync",
+      "pinterestConnectFailed": "Pinterest: could not connect account",
+      "pinterestNetworkError": "Pinterest: network error"
+    },
+    "inbox": {
+      "label": "Inbox",
+      "subtitle": "One place for comments, DMs, and mentions across connected channels — preview for review.",
+      "demoBanner": "Preview data only. This screen is not connected to live networks.",
+      "demoEyebrow": "Demo",
+      "unreadBadge": "Unread",
+      "unreadSummary": "{count} unread",
+      "threads": "Threads",
+      "listEmpty": "Nothing matches your filters.",
+      "pickThread": "Pick a thread from the list to read messages and try the demo reply box.",
+      "back": "Threads",
+      "connectedAs": "Connected as",
+      "notConnected": "Not connected in this demo",
+      "sampleDisconnected": "Sample",
+      "markRead": "Mark read",
+      "readState": "Read",
+      "conversation": "Conversation",
+      "replyLabel": "Reply",
+      "replyPlaceholder": "Write a quick reply…",
+      "replyHint": "Demo: replies stay in this browser session and are not sent to any platform.",
+      "send": "Send",
+      "sentDemo": "Saved for this session (demo).",
+      "justNow": "Just now",
+      "kindComment": "Comment",
+      "kindDm": "Direct",
+      "kindMention": "Mention",
+      "sort": {
+        "label": "Sort",
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "unread": "Unread first"
+      },
+      "filter": {
+        "all": "All",
+        "channels": "Channels",
+        "connectedOnly": "Connected channels only"
+      },
+      "dialog": {
+        "title": "Sort & channels",
+        "subtitle": "Choose how threads are ordered and which sources to show. Platforms you have not connected yet stay disabled — add them under Platforms with Unified Inbox enabled.",
+        "done": "Done",
+        "cancel": "Cancel",
+        "openButtonAria": "Open sort and channel options",
+        "sortSection": "Order",
+        "channelsSection": "Platforms",
+        "channelUnavailable": "Connect in Platforms with Unified Inbox to use this filter."
+      },
+      "noSourcesTitle": "No Inbox sources yet",
+      "noSourcesBody": "Open Platforms, connect a channel, and enable “Unified Inbox” in permissions. Only those channels appear here as filters, and their threads show in the list.",
+      "platform": {
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "tiktok": "TikTok",
+        "facebook": "Facebook",
+        "pinterest": "Pinterest",
+        "linkedin": "LinkedIn",
+        "telegram": "Telegram"
+      }
+    },
+    "connection": {
+      "online": "Online",
+      "offline": "Offline",
+      "ariaConnected": "{state}, connected",
+      "ariaDisconnected": "{state}, not connected"
+    },
+    "locale": {
+      "label": "Language",
+      "en": "English",
+      "he": "עברית",
+      "ru": "Русский"
+    },
+    "automations": {
+      "subtitleAll": "Manage flows and build automation logic.",
+      "flowNamePlaceholder": "Flow name",
+      "allFlows": "All flows",
+      "createFlow": "Create flow",
+      "creating": "Creating…",
+      "saving": "Saving…",
+      "edit": "Edit",
+      "delete": "Delete",
+      "noFlows": "No flows yet. Click",
+      "noFlowsCta": "Create flow",
+      "stepSettings": "Step settings",
+      "type": "Type",
+      "message": "Message",
+      "notificationPlaceholder": "Notification text",
+      "contentType": "Content type",
+      "json": "JSON",
+      "selectStep": "Select a step to edit settings.",
+      "backToAll": "Back to all flows",
+      "deleteFlow": "Delete flow",
+      "deleteConfirm": "Delete {name}? This cannot be undone.",
+      "updatedAt": "{status} • Updated {date}"
+    },
+    "bots": {
+      "subtitleAll": "Create bots for comment/DM replies, then reuse them as nodes inside flows.",
+      "botNamePlaceholder": "Bot name",
+      "allBots": "All bots",
+      "createBot": "Create bot",
+      "rulesLabel": "Rules (plain text)",
+      "rulesPlaceholder": "Describe when the bot should reply…",
+      "noBots": "No bots yet.",
+      "noBotsCta": "Create bot",
+      "behaviorTitle": "Behavior",
+      "behaviorHint": "Lightweight placeholder. Next: structured rules (intents, keywords, templates) and a test console.",
+      "botInfoTitle": "Bot info",
+      "useInFlows": "Next: expose this bot as an Action node inside Automations."
+    },
+    "reelPlatforms": {
+      "title": "Choose platforms",
+      "subtitle": "Pick where to publish this reel.",
+      "platformSubtitles": {
+        "youtube": "Videos & scheduling",
+        "tiktok": "Short-form distribution",
+        "instagram": "Reels & cross-post",
+        "facebook": "Pages & video publishing",
+        "pinterest": "Pins & boards",
+        "linkedin": "Posts & articles"
+      }
+    },
+    "platformConnect": {
+      "permissions": "Permissions",
+      "connect": "Connect {platform}",
+      "intro": "Select what this app can access. You can change this later in Settings.",
+      "agreeTitle": "I’ve reviewed and agree",
+      "agreeBody": "I understand what data will be accessed and I consent to granting the selected permissions.",
+      "requiredHint": "Required scopes are locked to prevent broken connections.",
+      "continue": "Continue"
+    },
+    "preview": {
+      "live": "live",
+      "avatar": "avatar",
+      "publicPath": "/u/{handle}"
+    },
+    "metaTitle": "KONT Studio — Your calm content workspace",
+    "metaDescription": "Create, manage, and grow your content from one quiet, focused workspace.",
+    "kicker": "KONT Studio",
+    "title": "Where the work stays calm",
+    "subtitle": "Three spaces. One flow. Choose where you want to work.",
+    "back": "Back",
+    "createCta": "Create {label}",
+    "sections": {
+      "create": {
+        "label": "Create",
+        "tagline": "Bring ideas to life — compose, caption, and automate from one calm canvas."
+      },
+      "manage": {
+        "label": "Manage",
+        "tagline": "Keep every post on track — plan, review, and publish without the noise."
+      },
+      "grow": {
+        "label": "Grow",
+        "tagline": "Turn performance into your next move — read the signals, act on what works."
+      }
+    },
+    "items": {
+      "content": {
+        "label": "Content",
+        "hint": "One draft, every channel"
+      },
+      "sub": {
+        "label": "Subtitles",
+        "hint": "Captions without the grind"
+      },
+      "bot": {
+        "label": "Assistant",
+        "hint": "Ideas when you need them"
+      },
+      "automations": {
+        "label": "Automations",
+        "hint": "Workflows on autopilot"
+      },
+      "calendar": {
+        "label": "Calendar",
+        "hint": "Your week, mapped"
+      },
+      "inbox": {
+        "label": "Inbox",
+        "hint": "Every reply, one desk"
+      },
+      "drafts": {
+        "label": "Drafts",
+        "hint": "Ideas waiting to ship"
+      },
+      "accounts": {
+        "label": "Accounts",
+        "hint": "All channels, one link"
+      },
+      "queue": {
+        "label": "Queue",
+        "hint": "Next up, always clear"
+      },
+      "archive": {
+        "label": "Archive",
+        "hint": "Everything you shipped"
+      },
+      "analytics": {
+        "label": "Analytics",
+        "hint": "Growth you can read"
+      },
+      "insights": {
+        "label": "Insights",
+        "hint": "Signals worth acting on"
+      },
+      "reports": {
+        "label": "Reports",
+        "hint": "Wins, shared cleanly"
+      },
+      "audience": {
+        "label": "Audience",
+        "hint": "Know who watches"
+      },
+      "experiments": {
+        "label": "Experiments",
+        "hint": "Test. Learn. Repeat."
+      }
+    },
+    "detail": {
+      "kicker": "In the studio",
+      "body": "This space is taking shape. Soon you'll work here in calm, focused detail — no clutter, no rush.",
+      "primary": "Notify me when it's ready",
+      "secondary": "Back to {section}"
+    },
+    "itemDetails": {
+      "sub": {
+        "body": "Auto-caption every clip with calm, on-brand subtitles — timing, style, and language in one quiet panel.",
+        "primary": "Join the waitlist"
+      },
+      "drafts": {
+        "body": "Your unfinished ideas live here — pick up where you left off, without digging through folders.",
+        "primary": "Join the waitlist"
+      },
+      "queue": {
+        "body": "See what ships next, in order. Drag, pause, or reschedule without breaking the flow.",
+        "primary": "Join the waitlist"
+      },
+      "archive": {
+        "body": "Everything you have already published — searchable, filterable, always within reach.",
+        "primary": "Join the waitlist"
+      },
+      "analytics": {
+        "body": "Reach, engagement, and growth in one calm read — no dashboards that shout.",
+        "primary": "Join the waitlist"
+      },
+      "insights": {
+        "body": "Signals you can actually act on. Not vanity charts — clear next steps.",
+        "primary": "Join the waitlist"
+      },
+      "reports": {
+        "body": "Share the wins automatically. Weekly summaries your team will actually read.",
+        "primary": "Join the waitlist"
+      },
+      "audience": {
+        "body": "Understand who is really watching — segments, habits, and quiet patterns.",
+        "primary": "Join the waitlist"
+      },
+      "experiments": {
+        "body": "Test hooks, thumbnails, and timing. Learn fast, repeat what works.",
+        "primary": "Join the waitlist"
+      }
     }
   },
   "demoModal": {
@@ -138,5 +1035,108 @@
     "successBody": "Thanks — we'll be in touch shortly.",
     "close": "Close",
     "errorInvalid": "Enter a valid email address."
+  },
+  "calendar": {
+    "back": "Back",
+    "title": "Calendar",
+    "subtitle": "Plan reels and posts. Tap a future day to create content or review what is scheduled.",
+    "month": "Month",
+    "year": "Year",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "cellAria": "Open events for {dateKey}",
+    "otherMonth": "other",
+    "more": "+{count} more…",
+    "schedule": {
+      "studioSubtitle": "Pick a day on the left to preview scheduled content. Add or open an item from the panel on the right.",
+      "monthHeading": "Current period",
+      "gridHint": "Tap a day to preview its content. Swipe the calendar horizontally on narrow screens.",
+      "scrollCalendarHint": "Swipe the calendar left or right to see all days.",
+      "dayPreviewEyebrow": "Day preview",
+      "dayPreviewPickDay": "Select a day",
+      "dayPreviewPickDayHint": "Tap a day in the calendar to see scheduled posts and reels.",
+      "dayPreviewEmpty": "Nothing scheduled for this day.",
+      "dayPreviewCount": "{count} scheduled",
+      "dayPreviewAdd": "Add content",
+      "eventsEyebrow": "Events",
+      "eventsTitle": "Video events",
+      "postsEyebrow": "Posts",
+      "postsTitle": "Scheduled posts",
+      "postsMonthEyebrow": "This month",
+      "postsMonthTitle": "Scheduled posts",
+      "postsMonthSubtitle": "Only posts from today through the end of the selected month. Reels, older items, and the full list are in Content.",
+      "noPostsThisWindow": "No posts scheduled in this period.",
+      "pastMonthCalendar": "This month is already over. Open Content to browse the full archive.",
+      "colDate": "Date",
+      "colTime": "Time",
+      "colTitle": "Title",
+      "colHashtags": "Hashtags",
+      "colActions": "Actions",
+      "noEvents": "No video events yet.",
+      "noPosts": "No scheduled posts yet.",
+      "cellPostsCount": "Posts {count}",
+      "cellReelsCount": "Reels {count}"
+    },
+    "modal": {
+      "closeOverlay": "Close modal",
+      "newVideoEvent": "New video event",
+      "eventDetails": "Event details",
+      "dateKey": "Date key: {dateKey}",
+      "close": "Close",
+      "cancel": "Cancel",
+      "video": "Video",
+      "autoTags": "Auto tags",
+      "pickPlatforms": "Pick platforms to generate tags",
+      "title": "Title",
+      "titlePlaceholder": "e.g. Product drop teaser",
+      "time": "Time",
+      "description": "Description",
+      "descriptionPlaceholder": "Add notes…",
+      "hashtags": "Hashtags",
+      "hashtagsPlaceholder": "e.g. #creator #reels #tiktok",
+      "saveEvent": "Save event",
+      "errors": {
+        "selectVideoFile": "Please select a video file.",
+        "videoTooLarge": "Video is too large for localStorage ({mb}MB). Try a smaller file.",
+        "failedReadVideo": "Failed to read video.",
+        "pickDate": "Pick a date.",
+        "pastDay": "You can’t add a post to a past date.",
+        "pastTime": "You can’t add a post to a time earlier than now."
+      }
+    }
+  },
+  "common": {
+    "breadcrumb": {
+      "home": "Home",
+      "info": "Info",
+      "permissions": "Permissions",
+      "aboutUs": "About us",
+      "products": "Products"
+    },
+    "loading": {
+      "page": "Loading page",
+      "preview": "Loading preview",
+      "editor": "Loading editor",
+      "studio": "Loading studio",
+      "register": "Loading…"
+    },
+    "theme": {
+      "label": "Theme",
+      "luxury": "Luxury",
+      "dark": "Dark"
+    },
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "required": "Required",
+    "panel": "Panel",
+    "back": "Back",
+    "draft": "Draft",
+    "updated": "Updated"
   }
 }

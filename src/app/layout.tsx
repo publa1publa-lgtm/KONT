@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Syne } from "next/font/google";
-import { Outfit } from "next/font/google";
 
 import { DemoModalProvider } from "@/contexts/demo-modal-context";
 import { MessagesProvider } from "@/contexts/messages-context";
@@ -19,14 +18,7 @@ const inter = Inter({
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  display: "swap",
-});
-
-const outfit = Outfit({
-  variable: "--font-home-outfit",
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -42,6 +34,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: messages.meta.title,
   description: messages.meta.description,
+  icons: {
+    icon: [{ url: "/brand/kont-logo.svg", type: "image/svg+xml" }],
+    apple: "/brand/kont-logo.svg",
+  },
   openGraph: {
     title: messages.meta.title,
     description: messages.meta.description,
@@ -57,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${syne.variable} ${outfit.variable} h-full scroll-smooth antialiased`}
+      className={`${inter.variable} ${syne.variable} h-full scroll-smooth antialiased`}
     >
       <body className="font-body flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)]">
         <MessagesProvider messages={messages}>

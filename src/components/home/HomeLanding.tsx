@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  ArrowRight,
   BarChart3,
   CalendarDays,
   Clock,
   Layers,
+  Lock,
   PenLine,
   Shield,
   Sparkles,
@@ -13,6 +15,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { BenefitsSection } from "@/components/new_home/sections/BenefitsSection";
 import { LandingFooter } from "@/components/layout/LandingFooter";
 import { LandingNav } from "@/components/layout/LandingNav";
 import { useDemoModal } from "@/contexts/demo-modal-context";
@@ -20,6 +23,7 @@ import { useMessages } from "@/contexts/messages-context";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
 import "./home-landing.css";
+import "@/components/new_home/new-home.css";
 import { useFallingIcons } from "./useFallingIcons";
 
 const PILLAR_ICONS = {
@@ -27,8 +31,6 @@ const PILLAR_ICONS = {
   manage: CalendarDays,
   grow: TrendingUp,
 } as const;
-
-const BENEFIT_ICONS = [CalendarDays, Sparkles, BarChart3] as const;
 
 const PILLAR_ACCENTS = ["home-pillar--create", "home-pillar--manage", "home-pillar--grow"] as const;
 
@@ -87,8 +89,14 @@ export function HomeLanding() {
                   aria-label="Product overview"
                 >
                   <div className="home-hero__copy">
-                    <p className="home-screen__label">{h.label}</p>
-                    <h1 className="home-screen__title home-screen__title--hero">{h.title}</h1>
+                    <span className="home-hero__badge">
+                      <span className="home-hero__badge-dot" aria-hidden />
+                      {h.badge}
+                    </span>
+                    <h1 className="home-screen__title home-screen__title--hero">
+                      {h.title}{" "}
+                      <span className="home-hero__accent">{h.titleAccent}</span>
+                    </h1>
                     <p className="home-screen__text home-screen__text--hero">{h.text}</p>
                     <div className="home-hero__actions home-hero__actions--left">
                       <button
@@ -97,11 +105,16 @@ export function HomeLanding() {
                         onClick={openModal}
                       >
                         {h.ctaPrimary}
+                        <ArrowRight className="home-screen__cta-icon" aria-hidden />
                       </button>
                       <a className="home-hero__link" href="#benefits">
                         {h.ctaSecondary}
                       </a>
                     </div>
+                    <p className="home-hero__trust">
+                      <Lock className="home-hero__trust-icon" aria-hidden />
+                      {h.trust}
+                    </p>
                   </div>
 
                   <div className="home-hero__cards">
@@ -216,10 +229,15 @@ export function HomeLanding() {
                       data-reveal
                       style={{ transitionDelay: `${0.08 * i}s` }}
                     >
-                      <span className="home-pillar__icon" aria-hidden>
-                        <Icon />
-                      </span>
-                      <h3 className="home-pillar__title">{pillar.title}</h3>
+                      <div className="home-pillar__head">
+                        <span className="home-pillar__icon" aria-hidden>
+                          <Icon />
+                        </span>
+                        <h3 className="home-pillar__title">{pillar.title}</h3>
+                        <span className="home-pillar__index" aria-hidden>
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
                       <p className="home-pillar__body">{pillar.body}</p>
                     </li>
                   );
@@ -233,56 +251,7 @@ export function HomeLanding() {
           </p>
         </section>
 
-        <section
-          id="benefits"
-          className="home-section home-section--tools scroll-mt-28"
-          aria-label="Why KONT"
-        >
-          <div
-            className="home-section__inner home-section__inner--tools home-reveal"
-            data-reveal
-          >
-            <div className="home-tools home-reveal" data-reveal>
-              <header className="home-tools__head">
-                <p className="home-screen__label">{landing.benefits.label}</p>
-                <h2 className="home-screen__title home-screen__title--section">
-                  {landing.benefits.title}
-                </h2>
-                <p className="home-screen__text home-screen__text--tools">
-                  {landing.benefits.text}
-                </p>
-              </header>
-
-              <div className="home-tools__grid" aria-label="Key benefits">
-                {landing.benefits.items.map((item, i) => {
-                  const Icon = BENEFIT_ICONS[i];
-                  return (
-                    <article
-                      key={item.title}
-                      className="home-tools__card home-reveal"
-                      data-reveal
-                      style={{ transitionDelay: `${0.08 * i}s` }}
-                    >
-                      <span className="home-tools__icon" aria-hidden>
-                        <Icon />
-                      </span>
-                      <h3 className="home-tools__title">{item.title}</h3>
-                      <p className="home-tools__body">{item.body}</p>
-                    </article>
-                  );
-                })}
-              </div>
-
-              <div className="home-tools__quote" aria-label="Value statement">
-                <p className="home-tools__quote-kicker">{landing.benefits.quote.kicker}</p>
-                <p className="home-tools__quote-text">
-                  {landing.benefits.quote.text}
-                  <span className="home-tools__quote-emph">{landing.benefits.quote.emphasis}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <BenefitsSection />
 
         <section
           id="cta"
@@ -304,6 +273,7 @@ export function HomeLanding() {
                   onClick={openModal}
                 >
                   {landing.cta.primary}
+                  <ArrowRight className="home-screen__cta-icon" aria-hidden />
                 </button>
                 <a className="home-cta-card__link" href="#benefits">
                   {landing.cta.secondary}
