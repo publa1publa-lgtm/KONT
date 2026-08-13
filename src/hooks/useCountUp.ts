@@ -17,15 +17,16 @@ export function useCountUp<T extends HTMLElement>(
   target: number,
   { duration = 1500, decimals = 0 }: CountUpOptions = {},
 ) {
+  const safeTarget = Number.isFinite(target) ? target : 0;
   const ref = useRef<T>(null);
-  const [value, setValue] = useState(target);
+  const [value, setValue] = useState(safeTarget);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setValue(target);
+      setValue(safeTarget);
       return;
     }
 
@@ -41,11 +42,11 @@ export function useCountUp<T extends HTMLElement>(
         const tick = (now: number) => {
           const progress = Math.min(1, (now - start) / duration);
           const eased = 1 - Math.pow(1 - progress, 3);
-          setValue(target * eased);
+          setValue(safeTarget * eased);
           if (progress < 1) {
             raf = requestAnimationFrame(tick);
           } else {
-            setValue(target);
+            setValue(safeTarget);
           }
         };
         raf = requestAnimationFrame(tick);
@@ -58,7 +59,7 @@ export function useCountUp<T extends HTMLElement>(
       observer.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, [target, duration]);
+  }, [safeTarget, duration]);
 
   const display = value.toLocaleString("en-US", {
     minimumFractionDigits: decimals,

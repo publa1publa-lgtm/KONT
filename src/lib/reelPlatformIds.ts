@@ -1,12 +1,6 @@
-/** Local mirror of Prisma PlatformKind — no DB dependency in KONT studio shell. */
-export enum PlatformKind {
-  INSTAGRAM = "INSTAGRAM",
-  FACEBOOK = "FACEBOOK",
-  TIKTOK = "TIKTOK",
-  YOUTUBE = "YOUTUBE",
-  PINTEREST = "PINTEREST",
-  LINKEDIN = "LINKEDIN",
-}
+import { PlatformKind } from "@prisma/client";
+
+export { PlatformKind };
 
 /** Platforms that participate in reel publishing / `/api/platform-accounts`. */
 export type ReelPlatformId =

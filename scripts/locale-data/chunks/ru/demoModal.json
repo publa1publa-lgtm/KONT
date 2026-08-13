@@ -1,0 +1,12 @@
+{
+  "demoModal.title": "Запросить демо",
+  "demoModal.subtitle": "Оставьте email — мы напишем с деталями раннего доступа.",
+  "demoModal.emailLabel": "Рабочий email",
+  "demoModal.emailPlaceholder": "you@company.com",
+  "demoModal.submit": "Запросить демо",
+  "demoModal.submitting": "Отправка…",
+  "demoModal.successTitle": "Вы в списке",
+  "demoModal.successBody": "Спасибо — скоро свяжемся.",
+  "demoModal.close": "Закрыть",
+  "demoModal.errorInvalid": "Введите корректный адрес email."
+}

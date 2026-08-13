@@ -93,12 +93,13 @@ html.nh-hybrid-active ::selection {
 .new-home-nav__shell {
   pointer-events: auto;
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
-  width: min(100%, 72rem);
-  padding: 0.5rem 0.6rem 0.5rem 0.95rem;
+  width: min(100%, 78rem);
+  padding-block: 0.5rem;
+  padding-inline: 0.95rem 0.6rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background:
@@ -143,9 +144,13 @@ html.nh-hybrid-active ::selection {
 }
 
 .new-home-nav__brand {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  justify-self: start;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  margin-inline-end: auto;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -167,15 +172,20 @@ html.nh-hybrid-active ::selection {
 }
 
 .new-home-nav__links {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
   display: none;
   align-items: center;
-  justify-self: center;
+  justify-content: center;
   gap: 0.15rem;
   padding: 0.2rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.12);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transform: translate(-50%, -50%);
 }
 
 @media (min-width: 768px) {
@@ -204,12 +214,179 @@ html.nh-hybrid-active ::selection {
 }
 
 .new-home-nav__actions {
-  justify-self: end;
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
   gap: 0.45rem;
+  margin-inline-start: auto;
 }
 
+.new-home-nav__locale {
+  position: relative;
+  display: inline-flex;
+}
+
+.new-home-nav__locale-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  height: 1.85rem;
+  padding-inline: 0.55rem 0.62rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.88);
+  font-family: inherit;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  appearance: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.new-home-nav__locale-btn svg {
+  width: 0.78rem;
+  height: 0.78rem;
+  opacity: 0.92;
+}
+
+.new-home-nav__locale-btn:hover,
+.new-home-nav__locale-btn.is-open {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.new-home-nav__locale-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (min-width: 640px) {
+  .new-home-nav__locale-btn {
+    height: 2rem;
+    padding-inline: 0.62rem 0.7rem;
+    font-size: 0.62rem;
+  }
+}
+
+.new-home-nav__locale-menu,
+.new-home-nav__lang-sheet {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 10.75rem;
+  padding: 0.32rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(0, 113, 227, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 248, 255, 0.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 18px 48px -28px rgba(8, 16, 46, 0.45),
+    0 8px 20px -12px rgba(0, 70, 180, 0.2);
+}
+
+.new-home-nav__locale-menu {
+  position: fixed;
+  z-index: 80;
+  inset-inline-start: auto;
+  animation: nh-locale-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes nh-locale-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.new-home-nav__lang-sheet {
+  width: 100%;
+  min-width: 0;
+  margin: 0.2rem 0 0.45rem;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.new-home-nav__lang-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.42rem 0.5rem;
+  border: 0;
+  border-radius: 0.62rem;
+  background: transparent;
+  color: #1d1d1f;
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+  appearance: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.new-home-nav__flag {
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 0.28rem;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.new-home-nav__lang-native {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.new-home-nav__lang-check {
+  width: 0.78rem;
+  height: 0.78rem;
+  color: #0071e3;
+}
+
+.new-home-nav__lang-row:hover {
+  background: rgba(219, 234, 254, 0.72);
+}
+
+.new-home-nav__lang-row.is-active {
+  background: rgba(219, 234, 254, 0.95);
+  color: #0071e3;
+}
+
+.new-home-nav__lang-sheet .new-home-nav__lang-row {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.new-home-nav__lang-sheet .new-home-nav__lang-row:hover,
+.new-home-nav__lang-sheet .new-home-nav__lang-row.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.new-home-nav__lang-sheet .new-home-nav__lang-check {
+  color: #fff;
+}
+
+.new-home-nav__lang-row:focus-visible {
+  outline: 2px solid var(--nh-brand, #0071e3);
+  outline-offset: 1px;
+}
+
+.new-home-nav__sign-in,
+.new-home-nav__sign-up,
 .new-home-nav__studio {
   display: inline-flex;
   align-items: center;
@@ -217,18 +394,50 @@ html.nh-hybrid-active ::selection {
   height: 2.15rem;
   padding-inline: 0.95rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.34);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #fff;
   text-decoration: none;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.new-home-nav__sign-in {
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.82);
+  background: transparent;
+}
+
+.new-home-nav__sign-in:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.new-home-nav__sign-up {
+  border: 1px solid rgba(0, 234, 255, 0.35);
+  color: #fff;
+  background: rgba(0, 234, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.new-home-nav__sign-up:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 234, 255, 0.55);
+  background: rgba(0, 234, 255, 0.14);
+}
+
+.new-home-nav__studio {
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  color: #fff;
   background: rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 @media (min-width: 640px) {
+  .new-home-nav__sign-in,
+  .new-home-nav__sign-up,
   .new-home-nav__studio {
     height: 2.35rem;
     padding-inline: 1.1rem;
@@ -294,10 +503,16 @@ html.nh-hybrid-active ::selection {
 
 @media (max-width: 767px) {
   .new-home-nav__shell {
-    grid-template-columns: 1fr auto;
-    padding: 0.45rem 0.5rem 0.45rem 0.85rem;
+    padding-block: 0.45rem;
+    padding-inline: 0.85rem 0.5rem;
   }
 
+  .new-home-nav__links {
+    display: none !important;
+  }
+
+  .new-home-nav__sign-in,
+  .new-home-nav__sign-up,
   .new-home-nav__studio {
     display: none;
   }
@@ -417,6 +632,8 @@ html.nh-hybrid-active ::selection {
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+.new-home-nav__mobile-sign-in,
+.new-home-nav__mobile-sign-up,
 .new-home-nav__mobile-studio {
   display: inline-flex;
   align-items: center;
@@ -424,11 +641,26 @@ html.nh-hybrid-active ::selection {
   min-height: 2.5rem;
   padding-inline: 1rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.34);
   font-size: 0.875rem;
   font-weight: 700;
-  color: #fff;
   text-decoration: none;
+}
+
+.new-home-nav__mobile-sign-in {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.new-home-nav__mobile-sign-up {
+  border: 1px solid rgba(0, 234, 255, 0.35);
+  color: #fff;
+  background: rgba(0, 234, 255, 0.1);
+}
+
+.new-home-nav__mobile-studio {
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  color: #fff;
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -494,9 +726,10 @@ html.nh-hybrid-active ::selection {
   z-index: 1;
   width: 100vw;
   max-width: none;
-  left: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  left: auto;
+  right: auto;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   padding: calc(clamp(3.25rem, 8.5vh, 5.75rem) * var(--nh-top-boost)) clamp(1.75rem, 6vw, 4rem)
     calc(var(--home-section-pad) + var(--home-seam-h) + clamp(1.25rem, 3vw, 2.25rem));
   background: linear-gradient(
@@ -959,7 +1192,7 @@ html.nh-hybrid-active ::selection {
   padding: 0;
   border: none;
   background: transparent;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   font: inherit;
 }
@@ -1013,9 +1246,10 @@ html.nh-hybrid-active ::selection {
 .hero2-bleed {
   position: relative;
   width: 100vw;
-  left: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  left: auto;
+  right: auto;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   display: flex;
   justify-content: center;
 }
@@ -1246,6 +1480,7 @@ html.nh-hybrid-active ::selection {
     width: 100%;
     max-width: 100%;
     left: auto;
+    right: auto;
     margin-left: 0;
     margin-right: 0;
   }
@@ -1312,7 +1547,7 @@ html.nh-hybrid-active ::selection {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
   align-items: center;
   gap: clamp(1.75rem, 4vw, 4rem);
-  text-align: left;
+  text-align: start;
 }
 
 .hero2__copy {
@@ -1562,14 +1797,14 @@ html.nh-hybrid-active ::selection {
   height: 2.15rem;
   border-radius: 50%;
   border: 2px solid #ffffff;
-  margin-left: -0.62rem;
+  margin-inline-start: -0.62rem;
   box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.5),
     0 6px 14px -6px rgba(15, 23, 42, 0.4);
 }
 
 .hero2__avatar:first-child {
-  margin-left: 0;
+  margin-inline-start: 0;
 }
 
 .hero2__avatar--1 { background: linear-gradient(140deg, #0071e3, #4aa3ff); }
@@ -2193,12 +2428,12 @@ html.nh-hybrid-active ::selection {
   height: 1.45rem;
   border-radius: 999px;
   border: 2px solid #fff;
-  margin-left: -0.45rem;
+  margin-inline-start: -0.45rem;
   box-shadow: 0 4px 10px -6px rgba(15, 23, 42, 0.45);
 }
 
 .hero-mobile__social-avatars i:first-child {
-  margin-left: 0;
+  margin-inline-start: 0;
   background: linear-gradient(140deg, #0071e3, #4aa3ff);
 }
 
@@ -3857,7 +4092,7 @@ html.nh-hybrid-active ::selection {
   .nh-float--inbox {
     z-index: 3;
     margin-top: clamp(-2.35rem, -4.2vw, -3.35rem);
-    padding-left: 0.2rem;
+    padding-inline-start: 0.2rem;
     animation-duration: 7.6s;
     animation-delay: -1.2s;
   }
@@ -5004,16 +5239,17 @@ html.nh-hybrid-active ::selection {
   z-index: 3;
   width: min(92%, 76rem);
   margin-inline: auto;
-  text-align: left;
+  text-align: start;
 }
 
 .nh-shift__bleed {
   position: relative;
   z-index: 2;
   width: 100vw;
-  left: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  left: auto;
+  right: auto;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   padding-inline: clamp(1rem, 4vw, 2rem);
   background:
     radial-gradient(ellipse 70% 55% at 50% 18%, rgba(255, 255, 255, 0.95), transparent 62%),
@@ -5298,7 +5534,7 @@ html.nh-hybrid-active ::selection {
 
 .nh-shift-pane__list li {
   position: relative;
-  padding-left: 1.1rem;
+  padding-inline-start: 1.1rem;
   font-size: 0.88rem;
   line-height: 1.5;
   color: rgba(29, 29, 31, 0.68);
@@ -5307,7 +5543,7 @@ html.nh-hybrid-active ::selection {
 .nh-shift-pane__list li::before {
   content: "";
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 0.55em;
   width: 0.35rem;
   height: 0.35rem;
@@ -5411,11 +5647,11 @@ html.nh-hybrid-active ::selection {
   flex-direction: column;
   gap: 0.35rem;
   padding: clamp(1rem, 2vw, 1.35rem) clamp(0.85rem, 1.5vw, 1.15rem);
-  border-right: 1px solid rgba(58, 79, 255, 0.08);
+  border-inline-end: 1px solid rgba(58, 79, 255, 0.08);
 }
 
 .nh-shift-metric:last-child {
-  border-right: 0;
+  border-inline-end: 0;
 }
 
 .nh-shift-metric__value {
@@ -5632,7 +5868,7 @@ html.nh-hybrid-active ::selection {
   }
 
   .nh-shift-metric:nth-child(2) {
-    border-right: 0;
+    border-inline-end: 0;
   }
 
   .nh-shift-metric:nth-child(1),
@@ -5831,7 +6067,7 @@ html.nh-hybrid-active ::selection {
 
   .nh-shift__quote-metric {
     white-space: normal;
-    text-align: left;
+    text-align: start;
   }
 
   .nh-hybrid .home-section__inner--cta {

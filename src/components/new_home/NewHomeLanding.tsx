@@ -22,6 +22,7 @@ import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
 import "@/components/home/home-landing.css";
 import "./new-home.css";
+import "./new-home-rtl.css";
 
 const PILLAR_ICONS = {
   create: PenLine,

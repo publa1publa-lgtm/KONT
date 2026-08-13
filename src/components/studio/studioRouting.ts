@@ -1,4 +1,5 @@
 import { SECTION_ORDER, SECTIONS, type SectionId } from "./sections";
+import { DEFAULT_LOCALE, localeFromPathname, stripLocalePrefix, withLocale, type AppLocale } from "@/i18n/config";
 
 const SECTION_SET = new Set<string>(SECTION_ORDER);
 
@@ -19,12 +20,14 @@ export function isStudioItemId(itemId: string): boolean {
   return getSectionForItem(itemId) !== null;
 }
 
-/** Parse `/studio` or `/studio/calendar` (legacy `/studio/manage/calendar` still works). */
+function studioSegments(pathname: string): string[] {
+  const bare = stripLocalePrefix(pathname);
+  return bare.replace(/\/+$/, "").split("/").filter(Boolean);
+}
+
+/** Parse `/[locale]/studio` or `/[locale]/studio/calendar`. */
 export function parseStudioItemFromPathname(pathname: string): string | null {
-  const segments = pathname
-    .replace(/\/+$/, "")
-    .split("/")
-    .filter(Boolean);
+  const segments = studioSegments(pathname);
 
   if (segments[0] !== "studio") {
     return null;
@@ -43,12 +46,9 @@ export function parseStudioItemFromPathname(pathname: string): string | null {
   return null;
 }
 
-/** Grid section from `/studio`, `/studio/manage`, or the item's section while in detail. */
+/** Grid section from studio path (locale-aware). */
 export function parseStudioSectionFromPathname(pathname: string): SectionId {
-  const segments = pathname
-    .replace(/\/+$/, "")
-    .split("/")
-    .filter(Boolean);
+  const segments = studioSegments(pathname);
 
   if (segments[0] !== "studio") {
     return "create";
@@ -74,21 +74,33 @@ export function parseStudioSectionFromPathname(pathname: string): SectionId {
 type StudioHrefOptions = {
   item?: string | null;
   section?: SectionId;
+  locale?: AppLocale;
+  /** Current pathname — used to keep the active locale in links. */
+  pathname?: string;
 };
 
-/** `/studio` or `/studio/manage` on the grid; `/studio/calendar` when inside a card. */
+function resolveLocale(opts: StudioHrefOptions): AppLocale {
+  if (opts.locale) return opts.locale;
+  if (opts.pathname) return localeFromPathname(opts.pathname) ?? DEFAULT_LOCALE;
+  return DEFAULT_LOCALE;
+}
+
+/** `/en/studio` or `/en/studio/calendar` when inside a card. */
 export function buildStudioHref(options?: string | null | StudioHrefOptions): string {
   const opts: StudioHrefOptions =
     typeof options === "string" || options === null || options === undefined ? { item: options } : options;
 
+  const locale = resolveLocale(opts);
+  let path = "/studio";
+
   if (opts.item && isStudioItemId(opts.item)) {
-    return `/studio/${opts.item}`;
+    path = `/studio/${opts.item}`;
+  } else {
+    const section = opts.section ?? "create";
+    if (section !== "create") {
+      path = `/studio/${section}`;
+    }
   }
 
-  const section = opts.section ?? "create";
-  if (section === "create") {
-    return "/studio";
-  }
-
-  return `/studio/${section}`;
+  return withLocale(locale, path);
 }

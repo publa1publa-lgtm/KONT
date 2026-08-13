@@ -309,18 +309,18 @@ html.home-route-active body {
 .home-hero__column--left {
   justify-self: start;
   align-items: flex-start;
-  text-align: left;
+  text-align: start;
   width: min(100%, 24rem);
-  padding-left: clamp(0.15rem, 1vw, 0.75rem);
+  padding-inline-start: clamp(0.15rem, 1vw, 0.75rem);
 }
 
 .home-hero__column--right {
   justify-self: end;
   align-items: flex-end;
-  text-align: left;
+  text-align: start;
   width: min(100%, 24rem);
   gap: clamp(0.85rem, 1.9vh, 1.1rem);
-  padding-right: clamp(0.15rem, 1vw, 0.75rem);
+  padding-inline-end: clamp(0.15rem, 1vw, 0.75rem);
 }
 
 .home-hero__column--right .home-hero__glass,
@@ -907,7 +907,7 @@ html.home-route-active body {
   margin: 0;
   padding: 0;
   width: 100%;
-  text-align: left;
+  text-align: start;
 }
 
 .home-pillar {
@@ -966,7 +966,7 @@ html.home-route-active body {
 }
 
 .home-pillar__index {
-  margin-left: auto;
+  margin-inline-start: auto;
   flex-shrink: 0;
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.75rem;

@@ -1,5 +1,3 @@
-import { invalidateResourceCache } from "@/lib/client/resourceCache";
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -12,7 +10,6 @@ export class ApiError extends Error {
 }
 
 export type ApiFetchOptions = RequestInit & {
-  /** Parse JSON body; default true for GET/POST/PUT/PATCH unless body is FormData */
   json?: boolean;
 };
 
@@ -46,31 +43,6 @@ export async function apiFetch<T>(path: string, init?: ApiFetchOptions): Promise
   return (await res.json()) as T;
 }
 
-/** @deprecated Use `apiFetch` — kept for treeApi compatibility */
-export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
-  try {
-    return await apiFetch<T>(url, init);
-  } catch {
-    return null;
-  }
-}
-
-export async function apiGet<T>(path: string, cacheKey?: string, ttlMs?: number): Promise<T> {
-  if (cacheKey && ttlMs) {
-    const { getCachedResource } = await import("@/lib/client/resourceCache");
-    return getCachedResource(cacheKey, ttlMs, () => apiFetch<T>(path));
-  }
-  return apiFetch<T>(path);
-}
-
-export async function apiMutate<T>(
-  path: string,
-  init?: ApiFetchOptions & { invalidateKeys?: string[] },
-): Promise<T> {
-  const { invalidateKeys, ...rest } = init ?? {};
-  const result = await apiFetch<T>(path, rest);
-  if (invalidateKeys?.length) {
-    for (const key of invalidateKeys) invalidateResourceCache(key);
-  }
-  return result;
+export async function apiMutate<T>(path: string, init?: ApiFetchOptions): Promise<T> {
+  return apiFetch<T>(path, init);
 }

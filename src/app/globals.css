@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "../components/studio/studio.css";
 
+@font-face {
+  font-family: "Gladiaclm He";
+  src: url("/fonts/gladiaclm_he.ttf") format("truetype");
+  font-display: swap;
+}
+
 /* Cinematic Dark Tech â€” cosmic black + ember / ice */
 :root {
   --bg: #000000;
@@ -423,7 +429,19 @@ html {
 
 :lang(he) body,
 :lang(he) .font-body {
-  font-family: var(--font-inter), "Segoe UI", "Helvetica Neue", Arial, "Noto Sans Hebrew", "Rubik", sans-serif;
+  /* Keep Syne on marketing — Hebrew strings render fine with Inter fallbacks. */
+  font-family: var(--font-syne), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Gladiaclm only inside Studio when Hebrew is active */
+html.studio-route-active.font-hebrew,
+html.studio-route-active.font-hebrew body {
+  font-family: var(--st-font, var(--font-hebrew), "Gladiaclm He", system-ui, sans-serif);
+}
+
+html.studio-route-active.font-hebrew {
+  --font-sans: var(--font-hebrew), "Gladiaclm He", system-ui, sans-serif;
+  --font-display: var(--font-hebrew), "Gladiaclm He", system-ui, sans-serif;
 }
 
 .font-body {

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { useMessages } from "@/contexts/messages-context";
+import { landingDemoEn } from "@/lib/i18n/landingDemoEn";
 
 import { AccountsWidget } from "../micro/AccountsWidget";
 import { AudienceWidget } from "../micro/AudienceWidget";
@@ -25,7 +26,9 @@ import { InsightsWidget } from "../micro/InsightsWidget";
 
 export function ProductSection() {
   const { landing } = useMessages();
+  // Section chrome: translated. Demo card labels/widgets: English only.
   const bento = landing.bento;
+  const tabs = landingDemoEn.bento.tabs;
 
   return (
     <section
@@ -44,35 +47,35 @@ export function ProductSection() {
           <span className="nh-constellation__glow" aria-hidden="true" />
 
           <div className="nh-constellation__col nh-constellation__col--left">
-            <FloatCard variant="dash" icon={BarChart3} kicker={bento.tabs.dashboard} chip="Last 7 days" delay={0}>
+            <FloatCard variant="dash" icon={BarChart3} kicker={tabs.dashboard} chip="Last 7 days" delay={0}>
               <DashboardWidget />
             </FloatCard>
 
-            <FloatCard variant="auto" icon={GitBranch} kicker={bento.tabs.automation} chip={<LiveChip />} delay={0.08}>
+            <FloatCard variant="auto" icon={GitBranch} kicker={tabs.automation} chip={<LiveChip />} delay={0.08}>
               <AutomationFlow />
             </FloatCard>
           </div>
 
           <div className="nh-constellation__col nh-constellation__col--mid">
-            <FloatCard variant="cal" icon={CalendarDays} kicker={bento.tabs.calendar} delay={0.06}>
+            <FloatCard variant="cal" icon={CalendarDays} kicker={tabs.calendar} delay={0.06}>
               <CalendarWidget />
             </FloatCard>
 
-            <FloatCard variant="inbox" icon={Inbox} kicker={bento.tabs.inbox} chip="3 unread" tall delay={0.14}>
+            <FloatCard variant="inbox" icon={Inbox} kicker={tabs.inbox} chip="3 unread" tall delay={0.14}>
               <InboxWidget />
             </FloatCard>
           </div>
 
           <div className="nh-constellation__col nh-constellation__col--right">
-            <FloatCard variant="accounts" icon={Link2} kicker={bento.tabs.accounts} chip="5 live" delay={0.1}>
+            <FloatCard variant="accounts" icon={Link2} kicker={tabs.accounts} chip="5 live" delay={0.1}>
               <AccountsWidget />
             </FloatCard>
 
-            <FloatCard variant="insights" icon={Sparkles} kicker={bento.tabs.insights} chip="AI" delay={0.12}>
+            <FloatCard variant="insights" icon={Sparkles} kicker={tabs.insights} chip="AI" delay={0.12}>
               <InsightsWidget />
             </FloatCard>
 
-            <FloatCard variant="audience" icon={Globe2} kicker={bento.tabs.audience} chip="142 regions" delay={0.18}>
+            <FloatCard variant="audience" icon={Globe2} kicker={tabs.audience} chip="142 regions" delay={0.18}>
               <AudienceWidget />
             </FloatCard>
           </div>

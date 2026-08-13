@@ -2,22 +2,29 @@
 
 import { useI18n } from "@/contexts/i18n-context";
 import type { ComposerPublishSelection, ConnectedPlatformAccount } from "@/lib/composerPublish";
+import { ComposerFieldError } from "./ComposerContentPreview";
 
 type Props = {
   accounts: ConnectedPlatformAccount[];
   loaded: boolean;
   value: ComposerPublishSelection;
   onChange: (next: ComposerPublishSelection) => void;
+  error?: string;
 };
 
-export function ComposerPublishTargets({ accounts, loaded, value, onChange }: Props) {
+export function ComposerPublishTargets({ accounts, loaded, value, onChange, error }: Props) {
   const { messages } = useI18n();
   const P = messages.studio.content.composer.publishing;
   const platformLabels = messages.studio.inbox.platform;
 
+  const shellClass = [
+    "rounded-2xl border bg-[var(--studio-surface-3)] p-4",
+    error ? "border-[var(--ember)]/40" : "border-[var(--line)]",
+  ].join(" ");
+
   if (!loaded) {
     return (
-      <div className="rounded-2xl border border-[var(--line)] bg-[var(--studio-surface-3)] p-4">
+      <div className={shellClass}>
         <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{P.title}</div>
         <p className="mt-2 text-sm text-[var(--muted)]">{P.loadingAccounts}</p>
       </div>
@@ -26,16 +33,19 @@ export function ComposerPublishTargets({ accounts, loaded, value, onChange }: Pr
 
   if (accounts.length === 0) {
     return (
-      <div className="rounded-2xl border border-[var(--line)] bg-[var(--studio-surface-3)] p-4">
+      <div className={shellClass}>
         <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{P.title}</div>
         <p className="mt-2 text-sm font-semibold text-[var(--fg)]">{P.draftOnlyTitle}</p>
         <p className="mt-1 text-sm text-[var(--muted)]">{P.draftOnlyBody}</p>
+        <div className="mt-2">
+          <ComposerFieldError message={error} />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--line)] bg-[var(--studio-surface-3)] p-4">
+    <div className={shellClass}>
       <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{P.title}</div>
       <p className="mt-1 text-sm text-[var(--muted)]">{P.intro}</p>
 
@@ -119,6 +129,9 @@ export function ComposerPublishTargets({ accounts, loaded, value, onChange }: Pr
             </div>
           </div>
         </label>
+      </div>
+      <div className="mt-3">
+        <ComposerFieldError message={error} />
       </div>
     </div>
   );

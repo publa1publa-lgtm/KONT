@@ -1,0 +1,472 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PlatformKind {
+  INSTAGRAM
+  FACEBOOK
+  TIKTOK
+  YOUTUBE
+  TELEGRAM
+  DISCORD
+  X
+  LINKEDIN
+  PINTEREST
+}
+
+enum PlatformAccountStatus {
+  CONNECTED
+  EXPIRED
+  REVOKED
+  ERROR
+}
+
+enum ContentType {
+  POST
+  REEL
+}
+
+enum ContentStatus {
+  DRAFT
+  READY
+  SCHEDULED
+  ARCHIVED
+}
+
+enum ContentTargetStatus {
+  PENDING
+  SCHEDULED
+  PUBLISHING
+  PUBLISHED
+  FAILED
+  CANCELLED
+}
+
+enum PublishAttemptStatus {
+  STARTED
+  SUCCEEDED
+  FAILED
+}
+
+enum AuditAction {
+  USER_REGISTERED
+  USER_LOGIN
+  USER_LOGOUT
+  USER_PASSWORD_CHANGED
+  USER_EMAIL_VERIFIED
+  USER_DELETED
+
+  SESSION_CREATED
+  SESSION_REVOKED
+
+  PLATFORM_CONNECTED
+  PLATFORM_REFRESH_TOKEN
+  PLATFORM_REVOKED
+
+  CONTENT_CREATED
+  CONTENT_UPDATED
+  CONTENT_DELETED
+
+  PUBLISH_REQUESTED
+  PUBLISH_SUCCEEDED
+  PUBLISH_FAILED
+
+  MEDIA_UPLOADED
+  MEDIA_DELETED
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+enum MediaStatus {
+  UPLOADING
+  READY
+  FAILED
+  DELETED
+}
+
+enum ContentMediaRole {
+  MAIN
+  COVER
+  CAROUSEL
+  ATTACHMENT
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPPORT
+}
+
+enum EmailVerificationPurpose {
+  SIGN_UP
+  CHANGE_EMAIL
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  login        String?  @unique
+  firstName    String   @default("")
+  lastName     String   @default("")
+  marketingOptIn Boolean @default(false)
+  passwordHash String
+
+  role         UserRole  @default(USER)
+  /// IANA timezone (e.g. "Europe/Moscow"). Used for scheduling content correctly.
+  timezone     String    @default("UTC")
+  /// Preferred locale, e.g. "en", "ru", "he".
+  locale       String    @default("en")
+
+  /// When the email address was confirmed via verification link. NULL = not yet verified.
+  emailVerifiedAt DateTime?
+
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  /// Soft-delete marker: keeps audit/billing trail intact when the user requests account deletion.
+  deletedAt    DateTime?
+
+  platformAccounts PlatformAccount[]
+  contents         Content[]
+  mediaAssets      MediaAsset[]
+  auditLogs        AuditLog[]
+  sessions         Session[]
+  emailVerifications EmailVerification[]
+  passwordResets   PasswordReset[]
+  oauthStates      OAuthState[]
+  linkPage         LinkPage?
+
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+/// Single “link in bio” page per user (Linktree-style): public slug + ordered buttons.
+model LinkPage {
+  id     String @id @default(uuid())
+  userId String @unique
+  /// Public URL segment: `/u/{handle}` — lowercase letters, digits, hyphens.
+  handle String @unique
+  /// Headline shown above the bio on the public page.
+  title  String @default("")
+  bio    String @default("")
+  /// JSON array: `{ id, label, url, enabled }[]`.
+  links  Json   @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([handle])
+}
+
+/// Active or revoked authenticated sessions. Server source of truth for revoking JWT-cookie auth.
+model Session {
+  id          String   @id @default(uuid())
+  userId      String
+  /// SHA-256 hex of the random session token; the JWT carries the `id`, never the secret.
+  tokenHash   String   @unique @db.VarChar(64)
+
+  ip          String?
+  userAgent   String?
+
+  createdAt   DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  /// Optional reason: "user_logout" | "password_changed" | "admin_revoked" | "expired_inactive".
+  revokedReason String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+}
+
+/// Token issued for email verification (sign-up) or email-change confirmation.
+model EmailVerification {
+  id        String                   @id @default(uuid())
+  userId    String
+  /// Address being verified. May differ from user.email during a CHANGE_EMAIL flow.
+  email     String
+  purpose   EmailVerificationPurpose @default(SIGN_UP)
+  /// SHA-256 hex of the random token e-mailed to the user.
+  tokenHash String                   @unique @db.VarChar(64)
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+  @@index([expiresAt])
+}
+
+/// Password reset token. One-shot (`usedAt`) and short-lived.
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique @db.VarChar(64)
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  ip        String?
+  userAgent String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+  @@index([expiresAt])
+}
+
+model PlatformAccount {
+  id             String               @id @default(uuid())
+  userId         String
+  platform       PlatformKind
+  status         PlatformAccountStatus @default(CONNECTED)
+
+  platformUserId String
+  handle         String?
+
+  /// Currently granted OAuth scopes. Source of truth for what we may call.
+  scopes         String[]             @default([])
+
+  /// AES-256-GCM ciphertext (see lib/crypto.ts). NEVER stored in plaintext.
+  accessTokenEnc      String?
+  refreshTokenEnc     String?
+  /// Version of the encryption key used for the current ciphertext. Lets us rotate without breaking decryption.
+  tokenEncVersion     Int      @default(1)
+  /// When the access_token expires (provider-reported).
+  tokenExpiresAt      DateTime?
+  /// When the connection itself expires (e.g. Meta long-lived token, ~60 days).
+  connectionExpiresAt DateTime?
+
+  /// Provider-specific non-secret metadata (e.g. FB page_id, YT channel_id, IG business_id).
+  providerMetadata Json?
+
+  lastSyncAt     DateTime?
+  /// Set when the user disconnects, or the platform sends a deauth webhook. Soft-delete, keeps audit trail.
+  revokedAt      DateTime?
+  revokedReason  String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targets ContentTarget[]
+
+  @@unique([platform, platformUserId])
+  @@index([userId, platform])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+model Content {
+  id          String      @id @default(uuid())
+  userId      String
+  type        ContentType
+  status      ContentStatus @default(DRAFT)
+
+  title       String
+  text        String?     // Post body
+  description String?     // Reel description/caption
+
+  imageUrl    String?     // Post image
+  videoUrl    String?     // Reel video
+
+  hashtags    String[]    @default([])
+  tags        String[]    @default([])
+
+  /// Client JSON: e.g. { platforms, subtitles } for reels
+  metadata    Json?
+
+  scheduledAt DateTime?
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  /// Soft-delete: keeps history available for audit and any in-flight publish jobs.
+  deletedAt   DateTime?
+
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targets ContentTarget[]
+  media   ContentMedia[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@index([type, createdAt])
+  @@index([scheduledAt])
+  @@index([deletedAt])
+  /// Composite index used by the publish worker: pull SCHEDULED items whose scheduledAt is due.
+  @@index([status, scheduledAt])
+}
+
+/// Uploaded user file (image / video / audio) tracked in DB.
+/// Replaces the legacy `Content.imageUrl` / `Content.videoUrl` data-URL pattern.
+model MediaAsset {
+  id              String      @id @default(uuid())
+  userId          String
+  kind            MediaKind
+  status          MediaStatus @default(UPLOADING)
+
+  /// Backend that stores the bytes ("local" | "s3" | "r2" | "cloudinary"). Lets us migrate later.
+  storageProvider String      @default("local")
+  /// Provider-specific key (path inside bucket / on disk). Globally unique to allow simple revocation.
+  storageKey      String      @unique
+  /// Public/accessor URL. For local provider: `/api/media/<storageKey>`.
+  url             String
+
+  filename        String
+  mimeType        String
+  sizeBytes       BigInt
+
+  /// Optional probed metadata (filled by client at upload time or by background probe).
+  width           Int?
+  height          Int?
+  durationMs      Int?
+  posterUrl       String?
+
+  /// SHA-256 hex digest. Used for per-user dedup.
+  checksumSha256  String?     @db.VarChar(64)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deletedAt       DateTime?
+
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentMedia    ContentMedia[]
+
+  @@unique([userId, checksumSha256], name: "userId_checksumSha256")
+  @@index([userId, createdAt])
+  @@index([status])
+  @@index([kind])
+}
+
+/// Join table between Content and MediaAsset. One Content can have many media (carousel / cover + main / attachments).
+model ContentMedia {
+  id        String           @id @default(uuid())
+  contentId String
+  mediaId   String
+  role      ContentMediaRole @default(MAIN)
+  position  Int              @default(0)
+
+  createdAt DateTime @default(now())
+
+  content   Content    @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, mediaId, role])
+  @@index([contentId, position])
+  @@index([mediaId])
+}
+
+model ContentTarget {
+  id                String            @id @default(uuid())
+  contentId          String
+  platformAccountId  String
+  status            ContentTargetStatus @default(PENDING)
+
+  publishedAt       DateTime?
+  remoteId          String?
+
+  lastErrorCode     String?
+  lastErrorMessage  String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  content         Content         @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  platformAccount PlatformAccount @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+  attempts        PublishAttempt[]
+
+  @@unique([contentId, platformAccountId])
+  @@index([platformAccountId, status])
+  @@index([status])
+}
+
+model PublishAttempt {
+  id              String               @id @default(uuid())
+  contentTargetId String
+  attemptNo       Int
+  status          PublishAttemptStatus  @default(STARTED)
+
+  errorCode       String?
+  errorMessage    String?
+
+  startedAt       DateTime @default(now())
+  finishedAt      DateTime?
+
+  contentTarget ContentTarget @relation(fields: [contentTargetId], references: [id], onDelete: Cascade)
+
+  @@unique([contentTargetId, attemptNo])
+  @@index([contentTargetId, startedAt])
+  @@index([status])
+}
+
+/// Short-lived record bound to an in-flight OAuth flow.
+/// Stores PKCE verifier and CSRF state so /api/oauth/<provider>/callback can validate the redirect.
+model OAuthState {
+  id              String       @id @default(uuid())
+  /// SHA-256 hex of the random `state` value passed to the provider. We never store the raw value.
+  stateHash       String       @unique @db.VarChar(64)
+  /// PKCE code_verifier in plaintext — short-lived (~10 minutes) and bound to a single request.
+  codeVerifier    String?
+
+  provider        PlatformKind
+
+  /// User who initiated the connect flow (NULL if user wasn't logged in yet — e.g. sign-in-with-google later).
+  userId          String?
+
+  /// Where to redirect after success (relative path inside our app). Validated against an allow-list at callback.
+  returnTo        String?
+
+  /// Snapshot of requested scopes; used to detect when the provider returned fewer than asked.
+  requestedScopes String[]     @default([])
+
+  ip              String?
+  userAgent       String?
+
+  createdAt       DateTime     @default(now())
+  expiresAt       DateTime
+  consumedAt      DateTime?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+  @@index([provider, consumedAt])
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  userId     String?
+  action     AuditAction
+  entityType String?
+  entityId   String?
+  ip         String?
+  userAgent  String?
+  metadata   Json?
+
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}

@@ -68,6 +68,8 @@ export function writeDemoContent(items: ContentApiItem[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
+/** Demo localStorage content — only when explicitly enabled for UI review without DB. */
 export function shouldUseDemoContent(): boolean {
-  return true;
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem("kont-studio-demo-content-enabled") === "1";
 }

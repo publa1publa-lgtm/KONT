@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { type SectionId } from "./sections";
+import { StudioAccountMenu } from "./StudioAccountMenu";
 import { StudioBlock } from "./StudioBlock";
 import { StudioItemView } from "./StudioItemView";
 import { StudioTopMenu } from "./StudioTopMenu";
@@ -14,6 +15,11 @@ import {
   parseStudioItemFromPathname,
   parseStudioSectionFromPathname,
 } from "./studioRouting";
+
+import {
+  applyStudioTheme,
+  readStudioTheme,
+} from "@/lib/studio/preferences";
 
 import "./studio.css";
 
@@ -26,15 +32,22 @@ export function StudioShell() {
   const activeSection = useMemo(() => parseStudioSectionFromPathname(pathname), [pathname]);
 
   useEffect(() => {
-    document.documentElement.classList.add("studio-route-active", "theme-studio-light");
+    const root = document.documentElement;
+    root.classList.add("studio-route-active");
+    const theme = readStudioTheme();
+    applyStudioTheme(theme);
+    // Re-apply locale font now that studio class is present (Hebrew → Gladiaclm only here).
+    const lang = root.lang;
+    root.classList.toggle("font-hebrew", lang === "he");
     return () => {
-      document.documentElement.classList.remove("studio-route-active", "theme-studio-light");
+      root.classList.remove("studio-route-active", "theme-studio-light", "font-hebrew");
+      delete root.dataset.studioTheme;
     };
   }, []);
 
   const openItem = useCallback(
     (itemId: string) => {
-      const href = buildStudioHref({ item: itemId });
+      const href = buildStudioHref({ item: itemId, pathname });
       if (href !== pathname) {
         router.push(href);
       }
@@ -45,7 +58,7 @@ export function StudioShell() {
   const handleSectionChange = useCallback(
     (section: SectionId) => {
       if (activeItem) return;
-      const href = buildStudioHref({ section });
+      const href = buildStudioHref({ section, pathname });
       if (href !== pathname) {
         router.push(href);
       }
@@ -62,7 +75,7 @@ export function StudioShell() {
 
   const handleBack = useCallback(() => {
     const section = activeItem ? getSectionForItem(activeItem) ?? activeSection : activeSection;
-    const href = buildStudioHref({ section });
+    const href = buildStudioHref({ section, pathname });
     if (href !== pathname) {
       router.push(href);
     }
@@ -77,6 +90,8 @@ export function StudioShell() {
         <span className="studio-scene__orb studio-scene__orb--pink" />
         <span className="studio-scene__grid" />
       </div>
+
+      <StudioAccountMenu />
 
       <main className="studio-stage">
         <StudioTopMenu

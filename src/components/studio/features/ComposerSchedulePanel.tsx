@@ -6,7 +6,7 @@ import { DatePicker } from "@/components/ui/DatePicker";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { useI18n } from "@/contexts/i18n-context";
 import { intlLocale } from "@/i18n/config";
-import { composerFieldLabel } from "./ComposerContentPreview";
+import { ComposerFieldError, composerFieldLabel } from "./ComposerContentPreview";
 
 const panelClass =
   "overflow-hidden rounded-2xl border border-[var(--wrapper-color-rim)] bg-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)]";
@@ -22,6 +22,8 @@ type ComposerSchedulePanelProps = {
   timeValue: string;
   onTimeChange: (time: string) => void;
   stepMinutes?: number;
+  dateError?: string;
+  timeError?: string;
 };
 
 function parseDateKey(dateKey: string): Date | null {
@@ -41,6 +43,8 @@ export function ComposerSchedulePanel({
   timeValue,
   onTimeChange,
   stepMinutes = 5,
+  dateError,
+  timeError,
 }: ComposerSchedulePanelProps) {
   const { locale } = useI18n();
   const date = useMemo(() => parseDateKey(pickedDateKey), [pickedDateKey]);
@@ -90,6 +94,7 @@ export function ComposerSchedulePanel({
             widthClassName="w-full"
             onChange={onDateChange}
           />
+          <ComposerFieldError message={dateError} />
         </div>
 
         {showTime ? (
@@ -106,6 +111,7 @@ export function ComposerSchedulePanel({
               stepMinutes={stepMinutes}
               widthClassName="w-full"
             />
+            <ComposerFieldError message={timeError} />
           </div>
         ) : null}
       </div>

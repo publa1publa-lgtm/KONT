@@ -27,6 +27,7 @@ type CalendarDayPreviewPanelProps = {
   /** studio-toolbar: hide horizontal card strip when list lives in sidebar */
   showItemList?: boolean;
   showCreateButton?: boolean;
+  showMeta?: boolean;
 };
 
 export function CalendarDayPreviewPanel({
@@ -40,6 +41,7 @@ export function CalendarDayPreviewPanel({
   variant = "sidebar",
   showItemList = true,
   showCreateButton = true,
+  showMeta = true,
 }: CalendarDayPreviewPanelProps) {
   const { locale, messages } = useI18n();
   const S = messages.calendar.schedule;
@@ -116,43 +118,49 @@ export function CalendarDayPreviewPanel({
   }
 
   if (isStudioToolbar) {
-    return (
-      <aside
-        className={["studio-cal-preview--studio-toolbar", className].filter(Boolean).join(" ")}
-      >
-        <div className="studio-cal-preview__studio-top">
-          <div className="min-w-0">
-            <p className="studio-cal-preview__studio-label">{S.dayPreviewEyebrow}</p>
-            <p className="studio-cal-preview__studio-meta">
-              {!dayKey
-                ? S.dayPreviewPickDayHint
-                : dayItems.length === 0
-                  ? S.dayPreviewEmpty
-                  : S.dayPreviewCount.replace("{count}", String(dayItems.length))}
-            </p>
-          </div>
-          {dayKey && canAdd && showCreateButton ? (
-            <StudioCreateButton type="button" onClick={onAdd} className="studio-create-btn--toolbar">
-              {createLabel}
-            </StudioCreateButton>
-          ) : null}
+    const meta = showMeta ? (
+      <div className="studio-cal-preview__studio-top">
+        <div className="min-w-0">
+          <p className="studio-cal-preview__studio-label">{S.dayPreviewEyebrow}</p>
+          <p className="studio-cal-preview__studio-meta">
+            {!dayKey
+              ? S.dayPreviewPickDayHint
+              : dayItems.length === 0
+                ? S.dayPreviewEmpty
+                : S.dayPreviewCount.replace("{count}", String(dayItems.length))}
+          </p>
         </div>
-
-        {showItemList && dayKey && dayItems.length > 0 ? (
-          <div className="studio-cal-preview__studio-list">
-            <ul className="studio-cal-preview__items">
-              {dayItems.map((item) => (
-                <PreviewCard
-                  key={item.id}
-                  item={item}
-                  reelLabel={CC.typeReel}
-                  postLabel={CC.typePost}
-                  onSelect={() => onSelectItem(item.id)}
-                />
-              ))}
-            </ul>
-          </div>
+        {dayKey && canAdd && showCreateButton ? (
+          <StudioCreateButton type="button" onClick={onAdd} className="studio-create-btn--toolbar">
+            {createLabel}
+          </StudioCreateButton>
         ) : null}
+      </div>
+    ) : null;
+
+    const list =
+      showItemList && dayKey && dayItems.length > 0 ? (
+        <div className="studio-cal-preview__studio-list">
+          <ul className="studio-cal-preview__items">
+            {dayItems.map((item) => (
+              <PreviewCard
+                key={item.id}
+                item={item}
+                reelLabel={CC.typeReel}
+                postLabel={CC.typePost}
+                onSelect={() => onSelectItem(item.id)}
+              />
+            ))}
+          </ul>
+        </div>
+      ) : null;
+
+    if (!meta && !list) return null;
+
+    return (
+      <aside className={["studio-cal-preview--studio-toolbar", className].filter(Boolean).join(" ")}>
+        {meta}
+        {list}
       </aside>
     );
   }

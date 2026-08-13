@@ -3,11 +3,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
-import { I18nProvider } from "@/contexts/i18n-context";
-import { useMessages } from "@/contexts/messages-context";
-import type { AppLocale } from "@/i18n/config";
-import type { AppMessages } from "@/i18n/messages";
-
 import { ITEM_REGISTRY } from "./itemRegistry";
 import { StudioDetail } from "./StudioDetail";
 import type { SectionId } from "./sections";
@@ -28,7 +23,7 @@ function StudioFeatureFrame({ children }: { children: ReactNode }) {
   );
 }
 
-function StudioItemViewInner({ itemId, section, onBack }: StudioItemViewProps) {
+export function StudioItemView({ itemId, section, onBack }: StudioItemViewProps) {
   const reduced = useReducedMotion();
   const entry = ITEM_REGISTRY[itemId];
 
@@ -52,17 +47,5 @@ function StudioItemViewInner({ itemId, section, onBack }: StudioItemViewProps) {
         <View onBack={onBack} />
       </StudioFeatureFrame>
     </motion.section>
-  );
-}
-
-/** Wraps feature views with i18n context expected by ported contentfabric components. */
-export function StudioItemView(props: StudioItemViewProps) {
-  const messages = useMessages() as unknown as AppMessages;
-  const locale: AppLocale = "en";
-
-  return (
-    <I18nProvider locale={locale} messages={messages}>
-      <StudioItemViewInner {...props} />
-    </I18nProvider>
   );
 }

@@ -1,27 +1,26 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
+import { I18nProvider } from "@/contexts/i18n-context";
+import type { AppLocale } from "@/i18n/config";
 import type { AppMessages } from "@/i18n/messages";
 
-const MessagesContext = createContext<AppMessages | null>(null);
-
+/** @deprecated Use I18nProvider directly. Kept for gradual migration. */
 export function MessagesProvider({
+  locale,
   messages,
   children,
 }: {
+  locale: AppLocale;
   messages: AppMessages;
   children: ReactNode;
 }) {
   return (
-    <MessagesContext.Provider value={messages}>{children}</MessagesContext.Provider>
+    <I18nProvider locale={locale} messages={messages}>
+      {children}
+    </I18nProvider>
   );
 }
 
-export function useMessages(): AppMessages {
-  const ctx = useContext(MessagesContext);
-  if (!ctx) {
-    throw new Error("useMessages must be used within MessagesProvider");
-  }
-  return ctx;
-}
+export { useMessages } from "@/contexts/i18n-context";

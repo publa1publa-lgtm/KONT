@@ -5,18 +5,32 @@ import { motion } from "framer-motion";
 
 import { KontBrandLogo } from "@/components/brand/KontBrandLogo";
 import { useDemoModal } from "@/contexts/demo-modal-context";
+import { useI18n } from "@/contexts/i18n-context";
 import { useMessages } from "@/contexts/messages-context";
+import { withLocale, type AppLocale } from "@/i18n/config";
 
 type LandingFooterProps = {
   brandWordmark?: boolean;
   variant?: "default" | "landing";
 };
 
+function localizeHref(locale: AppLocale, href: string) {
+  if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("mailto:")) {
+    return href;
+  }
+  if (href.startsWith("/")) {
+    return withLocale(locale, href);
+  }
+  return href;
+}
+
 export function LandingFooter({ brandWordmark = false, variant = "default" }: LandingFooterProps) {
   const { story } = useMessages();
+  const { locale } = useI18n();
   const F = story.footer;
   const { openModal } = useDemoModal();
   const isLanding = variant === "landing";
+  const homeHref = withLocale(locale, "/");
 
   const trustItems = F.trustLine.split("·").map((item) => item.trim()).filter(Boolean);
 
@@ -30,7 +44,7 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
     }
 
     return (
-      <Link key={item.href} href={item.href} className={className}>
+      <Link key={item.href} href={localizeHref(locale, item.href)} className={className}>
         {item.label}
       </Link>
     );
@@ -48,7 +62,7 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
         >
           <div className="nh-footer__main">
             <div className="nh-footer__intro">
-              <Link href="/" className="nh-footer__brand" aria-label={story.brand}>
+              <Link href={homeHref} className="nh-footer__brand" aria-label={story.brand}>
                 <KontBrandLogo decorative className="nh-footer__logo" />
               </Link>
               <p className="nh-footer__tagline">{F.tagline}</p>
@@ -64,7 +78,7 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
                 <p className="nh-footer__label">{F.productColumn}</p>
                 <nav className="nh-footer__nav" aria-label={F.productColumn}>
                   {F.productLinks.map((item) => (
-                    <Link key={item.href} href={item.href} className="nh-footer__link">
+                    <Link key={item.href} href={localizeHref(locale, item.href)} className="nh-footer__link">
                       {item.label}
                     </Link>
                   ))}
@@ -144,7 +158,7 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
               {F.productLinks.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={localizeHref(locale, item.href)}
                   className="transition hover:text-[var(--fg)] hover:underline hover:underline-offset-4"
                 >
                   {item.label}

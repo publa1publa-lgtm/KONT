@@ -1,0 +1,305 @@
+/* Landing RTL — page chrome mirrors; EN demo widgets stay identical to /en. */
+
+[dir="rtl"] .nh-hybrid,
+[dir="rtl"] .home-page.nh-hybrid {
+  text-align: start;
+}
+
+/* ── Hebrew type: Syne has no HE glyphs; big letter-spacing looks broken ─── */
+
+[dir="rtl"] .hero2__title,
+[dir="rtl"] .hero2__sub,
+[dir="rtl"] .home-screen__title,
+[dir="rtl"] .home-screen__text,
+[dir="rtl"] .home-pillar__title,
+[dir="rtl"] .home-pillar__body,
+[dir="rtl"] .nh-shift__title,
+[dir="rtl"] .nh-shift__title-accent,
+[dir="rtl"] .nh-shift__lead,
+[dir="rtl"] .nh-shift-pane__title,
+[dir="rtl"] .nh-shift-pane__list,
+[dir="rtl"] .nh-product__head,
+[dir="rtl"] .home-cta-card,
+[dir="rtl"] .nh-footer__tagline,
+[dir="rtl"] .nh-footer__link,
+[dir="rtl"] .home-hero__accent {
+  font-family: "Segoe UI", Tahoma, "Noto Sans Hebrew", Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .home-screen__label,
+[dir="rtl"] .nh-shift__label,
+[dir="rtl"] .nh-shift-pane__tag,
+[dir="rtl"] .new-home-nav__link,
+[dir="rtl"] .home-hero__badge,
+[dir="rtl"] .hero2__platforms-label,
+[dir="rtl"] .nh-footer__label,
+[dir="rtl"] .nh-footer__trust li {
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+/* Gradient text clip is flaky on Hebrew fallback fonts → solid brand color */
+[dir="rtl"] .nh-shift__title-accent,
+[dir="rtl"] .home-hero__accent,
+[dir="rtl"] .nh-hybrid .hero2__title-line--accent .home-hero__accent {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #4f46e5;
+  -webkit-text-fill-color: currentColor;
+}
+
+[dir="rtl"] .new-home-nav__drawer-cta .home-screen__cta-icon,
+[dir="rtl"] .home-screen__cta-icon {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .home-screen__cta:hover .home-screen__cta-icon {
+  transform: scaleX(-1) translateX(-3px);
+}
+
+/* ── Nav (RTL): flex + absolute-centered links already mirror; HE density ── */
+
+[dir="rtl"] .new-home-nav__shell {
+  width: min(calc(100% - 1.5rem), 82rem);
+  gap: 0.5rem;
+}
+
+[dir="rtl"] .new-home-nav__brand,
+[dir="rtl"] .new-home-nav__links,
+[dir="rtl"] .new-home-nav__actions,
+[dir="rtl"] .new-home-nav__link,
+[dir="rtl"] .new-home-nav__sign-in,
+[dir="rtl"] .new-home-nav__sign-up,
+[dir="rtl"] .new-home-nav__studio,
+[dir="rtl"] .new-home-nav__cta {
+  font-family: "Segoe UI", Tahoma, "Noto Sans Hebrew", Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .new-home-nav__links {
+  gap: 0.1rem;
+  padding: 0.18rem;
+}
+
+[dir="rtl"] .new-home-nav__link {
+  padding: 0.42rem 0.72rem;
+  font-size: 0.6875rem;
+  font-weight: 650;
+  text-transform: none;
+}
+
+[dir="rtl"] .new-home-nav__actions {
+  gap: 0.38rem;
+}
+
+[dir="rtl"] .new-home-nav__sign-in,
+[dir="rtl"] .new-home-nav__sign-up,
+[dir="rtl"] .new-home-nav__studio,
+[dir="rtl"] .new-home-nav__cta {
+  height: 2.2rem;
+  padding-inline: 0.88rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  [dir="rtl"] .new-home-nav__sign-in,
+  [dir="rtl"] .new-home-nav__sign-up,
+  [dir="rtl"] .new-home-nav__studio,
+  [dir="rtl"] .new-home-nav__cta {
+    height: 2.35rem;
+    padding-inline: 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 1180px) {
+  [dir="rtl"] .new-home-nav__sign-in {
+    display: none;
+  }
+}
+
+@media (max-width: 1020px) {
+  [dir="rtl"] .new-home-nav__sign-up {
+    display: none;
+  }
+
+  [dir="rtl"] .new-home-nav__link {
+    padding-inline: 0.55rem;
+  }
+}
+
+[dir="rtl"] .new-home-nav__shell::before {
+  animation-name: nh-nav-sheen-rtl;
+}
+
+@keyframes nh-nav-sheen-rtl {
+  0% { transform: translateX(120%); }
+  55%, 100% { transform: translateX(-120%); }
+}
+
+/* ── Hero split background: light with copy, blue with visual ────────────── */
+
+[dir="rtl"] .hero2-bleed__left {
+  inset: 0 0 0 50%;
+}
+
+[dir="rtl"] .hero2-bleed__right {
+  inset: 0 50% 0 0;
+}
+
+[dir="rtl"] .hero2-bleed__bg::after {
+  -webkit-mask-image: linear-gradient(270deg, transparent 42%, #000 58%);
+  mask-image: linear-gradient(270deg, transparent 42%, #000 58%);
+}
+
+[dir="rtl"] .hero2-bleed__seam {
+  transform: translateX(-50%) skewX(6deg);
+}
+
+@media (max-width: 960px) {
+  [dir="rtl"] .hero2-bleed__left {
+    inset: 0;
+  }
+}
+
+[dir="rtl"] .hero2--split {
+  text-align: start;
+}
+
+[dir="rtl"] .hero2--split .hero2__copy {
+  align-items: flex-start;
+}
+
+[dir="rtl"] .hero2__copy-glow--a {
+  left: auto;
+  right: -12%;
+}
+
+[dir="rtl"] .hero2__copy-glow--b {
+  right: auto;
+  left: -8%;
+}
+
+[dir="rtl"] .hero2__visual::before {
+  right: auto;
+  left: 10%;
+}
+
+[dir="rtl"] .hero2__visual::after {
+  left: auto;
+  right: 8%;
+}
+
+/* Floating platform icons around the visual */
+[dir="rtl"] .hero2-float-icons__item--1 { left: auto; right: 3%; }
+[dir="rtl"] .hero2-float-icons__item--2 { right: auto; left: 3%; }
+[dir="rtl"] .hero2-float-icons__item--3 { left: auto; right: 1%; }
+[dir="rtl"] .hero2-float-icons__item--4 { right: auto; left: 2%; }
+[dir="rtl"] .hero2-float-icons__item--5 { left: auto; right: 3%; }
+[dir="rtl"] .hero2-float-icons__item--6 { right: auto; left: 3%; }
+[dir="rtl"] .hero2-float-icons__item--7 { right: auto; left: 2%; }
+[dir="rtl"] .hero2-float-icons__item--8 { left: auto; right: 1%; }
+
+@media (max-width: 900px) {
+  [dir="rtl"] .hero2-float-icons__item--1 { left: auto; right: 4%; }
+  [dir="rtl"] .hero2-float-icons__item--2 { right: auto; left: 4%; }
+  [dir="rtl"] .hero2-float-icons__item--3 { left: auto; right: 2%; }
+  [dir="rtl"] .hero2-float-icons__item--4 { right: auto; left: 4%; }
+  [dir="rtl"] .hero2-float-icons__item--5 { left: auto; right: 4%; }
+  [dir="rtl"] .hero2-float-icons__item--6 { right: auto; left: 4%; }
+}
+
+/*
+ * Demo chrome = English product mock. Keep whole trees LTR so calendars,
+ * inbox rows, and card headers match /en exactly (not half-mirrored).
+ */
+[dir="rtl"] .hero-orbit,
+[dir="rtl"] .hero-mobile,
+[dir="rtl"] .nh-constellation,
+[dir="rtl"] .nh-float .nh-glass-card,
+[dir="rtl"] .nh-float-card {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+[dir="rtl"] .nh-glass-card__head,
+[dir="rtl"] .nh-glass-card__mark,
+[dir="rtl"] .nh-float-card__head {
+  text-align: left;
+  align-items: flex-start;
+}
+
+/* ── Benefits / product section heads / footer (Hebrew chrome) ───────────── */
+
+[dir="rtl"] .nh-shift__bridge-core svg {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .nh-shift__glow--left {
+  left: auto;
+  right: -12%;
+}
+
+[dir="rtl"] .nh-shift__glow--right {
+  right: auto;
+  left: -14%;
+}
+
+[dir="rtl"] .nh-shift__head,
+[dir="rtl"] .nh-shift-pane__list,
+[dir="rtl"] .nh-shift-pillar__copy,
+[dir="rtl"] .nh-shift-pane--auto,
+[dir="rtl"] .nh-shift-pillar,
+[dir="rtl"] .nh-shift-pane__list li,
+[dir="rtl"] .nh-shift-pillar__outcome,
+[dir="rtl"] .home-screen__title:not(.home-screen__title--section):not(.home-screen__title--sm),
+[dir="rtl"] .home-screen__text:not(.home-screen__text--section),
+[dir="rtl"] .home-pillar__title,
+[dir="rtl"] .home-pillar__body,
+[dir="rtl"] .home-cta-card,
+[dir="rtl"] .home-cta-card__text,
+[dir="rtl"] .nh-footer__main,
+[dir="rtl"] .nh-footer__columns,
+[dir="rtl"] .nh-footer__intro,
+[dir="rtl"] .nh-shift-pane__title,
+[dir="rtl"] .nh-shift-pane__metric,
+[dir="rtl"] .nh-shift-metric {
+  text-align: start;
+}
+
+/* Section headlines stay centered like EN */
+[dir="rtl"] .nh-product__head,
+[dir="rtl"] .home-pillars__head,
+[dir="rtl"] .nh-hybrid .home-pillars__head,
+[dir="rtl"] .home-screen__title--section,
+[dir="rtl"] .home-screen__text--section {
+  text-align: center;
+}
+
+[dir="rtl"] .nh-footer__trust,
+[dir="rtl"] .nh-footer__nav {
+  align-items: flex-start;
+}
+
+[dir="rtl"] .nh-shift__label,
+[dir="rtl"] .home-screen__label {
+  flex-direction: row;
+}
+
+[dir="rtl"] .nh-shift__label::before,
+[dir="rtl"] .home-screen__label::before {
+  background: linear-gradient(270deg, var(--home-blue, #0071e3), var(--home-violet, #5e5ce6));
+}
+
+/* ── CTA orbit icons ─────────────────────────────────────────────────────── */
+
+[dir="rtl"] .home-cta-orbit__icon--a { left: auto; right: 8%; }
+[dir="rtl"] .home-cta-orbit__icon--b { right: auto; left: 9%; }
+[dir="rtl"] .home-cta-orbit__icon--c { left: auto; right: 12%; }
+[dir="rtl"] .home-cta-orbit__icon--d { right: auto; left: 12%; }
+[dir="rtl"] .home-cta-orbit__icon--e { left: auto; right: 4%; }
+[dir="rtl"] .home-cta-orbit__icon--f { right: auto; left: 4%; }

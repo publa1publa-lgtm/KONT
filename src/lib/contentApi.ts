@@ -78,11 +78,13 @@ export async function fetchContents(options: FetchContentsOptions = {}): Promise
       return { items: [], nextCursor: null, unauthorized: true };
     }
   } catch {
-    /* fall through to demo */
+    const { readDemoContent, shouldUseDemoContent } = await import("@/lib/studioDemo/contentStore");
+    if (shouldUseDemoContent()) {
+      return { items: readDemoContent(), nextCursor: null, unauthorized: false };
+    }
   }
 
-  const { readDemoContent } = await import("@/lib/studioDemo/contentStore");
-  return { items: readDemoContent(), nextCursor: null, unauthorized: false };
+  return { items: [], nextCursor: null, unauthorized: false };
 }
 
 /** Body sent to POST /api/content (matches server expectations). */

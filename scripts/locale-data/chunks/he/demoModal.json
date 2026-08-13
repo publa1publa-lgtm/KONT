@@ -1,0 +1,12 @@
+{
+  "demoModal.title": "בקשת הדגמה",
+  "demoModal.subtitle": "השאירו אימייל — ניצור קשר עם פרטי גישה מוקדמת.",
+  "demoModal.emailLabel": "אימייל עבודה",
+  "demoModal.emailPlaceholder": "you@company.com",
+  "demoModal.submit": "בקשת הדגמה",
+  "demoModal.submitting": "שולח…",
+  "demoModal.successTitle": "אתם ברשימה",
+  "demoModal.successBody": "תודה — ניצור קשר בקרוב.",
+  "demoModal.close": "סגירה",
+  "demoModal.errorInvalid": "הזינו כתובת אימייל תקינה."
+}

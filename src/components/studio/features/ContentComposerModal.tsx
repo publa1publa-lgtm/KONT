@@ -10,13 +10,14 @@ import { readConnectedReelPlatformAccounts } from "@/lib/studioPlatformsStorage"
 import { uploadMedia, type ContentApiItem } from "@/lib/contentApi";
 import { apiItemToPublishSelection, scheduledAtToDateKeyAndTime } from "@/lib/contentMappers";
 import type { ConnectedPlatformAccount, ComposerPublishSelection } from "@/lib/composerPublish";
-import { defaultPublishSelection, isPublishSelectionReady } from "@/lib/composerPublish";
+import { defaultPublishSelection } from "@/lib/composerPublish";
 import { probeImage, probeVideo } from "@/lib/media/probeClient";
 import { ComposerKindToggle, type ComposerKind } from "./ComposerKindToggle";
 import {
   ComposerPostPreview,
   ComposerReelPreview,
-  composerFieldInput,
+  ComposerFieldError,
+  composerInputClass,
   composerFieldLabel,
 } from "./ComposerContentPreview";
 import { ComposerMediaUpload } from "./ComposerMediaUpload";
@@ -87,7 +88,15 @@ function parseDateKeyToDate(dateKey: string): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-const MAX_VIDEO_BYTES = 8 * 1024 * 1024;
+type ComposerFieldErrors = {
+  media?: string;
+  title?: string;
+  body?: string;
+  publish?: string;
+  form?: string;
+};
+
+const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 export function ContentComposerModal({
@@ -108,7 +117,7 @@ export function ContentComposerModal({
   const C = CC.composer;
 
   const [kind, setKind] = useState<ComposerKind>(defaultKind);
-  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<ComposerFieldErrors>({});
 
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedPlatformAccount[]>([]);
   const [accountsLoaded, setAccountsLoaded] = useState(false);
@@ -153,7 +162,7 @@ export function ContentComposerModal({
       publishDefaultsSetRef.current = false;
       return;
     }
-    setError(null);
+    setFieldErrors({});
 
     if (initialData) {
       if (hydratedEditIdRef.current === initialData.id) return;
@@ -294,46 +303,30 @@ export function ContentComposerModal({
     };
   }, [open]);
 
-  const scheduleError = useMemo(() => {
-    if (!effectiveDate) return null;
-
+  const dateError = useMemo(() => {
+    if (!effectiveDate || initialData) return null;
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const selectedStart = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate()).getTime();
-    if (!initialData && selectedStart < todayStart) return C.errors.pastDay;
-
-    const t = kind === "reel" ? reel.time : post.time;
-    if (!initialData && requireTimeNow && /^\d{2}:\d{2}$/.test(t)) {
-      const [hh, mm] = t.split(":").map((x) => Number(x));
-      if (Number.isFinite(hh) && Number.isFinite(mm)) {
-        const scheduledAt = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate(), hh, mm, 0, 0).getTime();
-        if (selectedStart === todayStart && scheduledAt <= now.getTime()) return C.errors.pastTime;
-      }
-    }
-
+    if (selectedStart < todayStart) return C.errors.pastDay;
     return null;
-  }, [C.errors.pastDay, C.errors.pastTime, effectiveDate, initialData, kind, post.time, reel.time, requireTimeNow]);
+  }, [C.errors.pastDay, effectiveDate, initialData]);
 
-  const reelDetailsValid =
-    Boolean(reel.videoUrl) &&
-    reel.title.trim().length > 0 &&
-    (!requireTimeNow || /^\d{2}:\d{2}$/.test(reel.time)) &&
-    !scheduleError;
+  const timeError = useMemo(() => {
+    if (!effectiveDate || initialData || dateError) return null;
+    const t = kind === "reel" ? reel.time : post.time;
+    if (!requireTimeNow || !/^\d{2}:\d{2}$/.test(t)) return null;
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const selectedStart = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate()).getTime();
+    const [hh, mm] = t.split(":").map((x) => Number(x));
+    if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+    const scheduledAt = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate(), hh, mm, 0, 0).getTime();
+    if (selectedStart === todayStart && scheduledAt <= now.getTime()) return C.errors.pastTime;
+    return null;
+  }, [C.errors.pastTime, dateError, effectiveDate, initialData, kind, post.time, reel.time, requireTimeNow]);
 
-  const postDetailsValid =
-    post.title.trim().length > 0 &&
-    post.text.trim().length > 0 &&
-    (!requireTimeNow || /^\d{2}:\d{2}$/.test(post.time)) &&
-    !scheduleError;
-
-  const isEdit = Boolean(initialData);
-  const postPublishReady = isPublishSelectionReady(accountsLoaded, connectedAccounts, postPublish, { isEdit });
-  const reelPublishReady = isPublishSelectionReady(accountsLoaded, connectedAccounts, reelPublish, { isEdit });
-
-  const postCreateReady = postDetailsValid && postPublishReady;
-  const reelCreateReady = reelDetailsValid && reelPublishReady;
-
-  const createReady = kind === "reel" ? reelCreateReady : postCreateReady;
+  const scheduleError = dateError || timeError;
 
   if (!open) return null;
 
@@ -362,7 +355,10 @@ export function ContentComposerModal({
                 <ComposerKindToggle
                   kind={kind}
                   allowed={allowedKinds}
-                  onChange={setKind}
+                  onChange={(next) => {
+                    setKind(next);
+                    setFieldErrors({});
+                  }}
                   labels={{ post: CC.typePost, reel: CC.typeReel }}
                   ariaLabel={C.kindToggleAria}
                 />
@@ -393,12 +389,9 @@ export function ContentComposerModal({
                   else setPost((d) => ({ ...d, time: v }));
                 }}
                 stepMinutes={5}
+                dateError={dateError ?? undefined}
+                timeError={timeError ?? undefined}
               />
-              {scheduleError ? (
-                <p className="rounded-xl border border-[var(--ember)]/25 bg-[var(--ember)]/10 px-3 py-2 text-xs font-semibold text-[var(--ember)]">
-                  {scheduleError}
-                </p>
-              ) : null}
               {kind === "reel" ? (
                 <ComposerReelPreview
                   videoUrl={reel.videoUrl}
@@ -417,7 +410,11 @@ export function ContentComposerModal({
                   imageUrl={post.imageUrl}
                   title={post.title}
                   text={post.text}
-                  labels={{ noImage: C.noImageSelected }}
+                  hashtags={post.hashtags}
+                  labels={{
+                    noImage: C.noImageSelected,
+                    brand: C.preview.brand,
+                  }}
                 />
               )}
             </div>
@@ -428,22 +425,26 @@ export function ContentComposerModal({
                   <ComposerMediaUpload
                     label={C.video}
                     accept="video/*"
-                    hint="MP4, MOV · up to 8 MB"
+                    hint="MP4, MOV · up to 200 MB"
                     hasMedia={Boolean(reel.videoUrl)}
                     busy={uploadingMedia}
                     disabled={saving}
+                    error={fieldErrors.media}
                     onChange={async (e) => {
-                      setError(null);
+                      setFieldErrors((prev) => ({ ...prev, media: undefined }));
                       const input = e.target;
                       const file = input.files?.[0];
                       input.value = "";
                       if (!file) return;
                       if (!file.type.startsWith("video/")) {
-                        setError(C.errors.selectVideoFile);
+                        setFieldErrors((prev) => ({ ...prev, media: C.errors.selectVideoFile }));
                         return;
                       }
                       if (file.size > MAX_VIDEO_BYTES) {
-                        setError(C.errors.videoTooLarge.replace("{mb}", String(Math.round(file.size / (1024 * 1024)))));
+                        setFieldErrors((prev) => ({
+                          ...prev,
+                          media: C.errors.videoTooLarge.replace("{mb}", String(Math.round(file.size / (1024 * 1024)))),
+                        }));
                         return;
                       }
                       try {
@@ -452,29 +453,37 @@ export function ContentComposerModal({
                         const { media } = await uploadMedia(file, probe ?? undefined);
                         setReel((d) => ({ ...d, videoUrl: media.url }));
                       } catch (err) {
-                        setError(err instanceof Error ? err.message : C.errors.failedReadVideo);
+                        setFieldErrors((prev) => ({
+                          ...prev,
+                          media: err instanceof Error ? err.message : C.errors.failedReadVideo,
+                        }));
                       } finally {
                         setUploadingMedia(false);
                       }
                     }}
                   />
-                  <label className="grid gap-2">
+                  <label className="grid gap-1.5">
                     <span className={composerFieldLabel}>{C.title}</span>
                     <input
                       value={reel.title}
-                      onChange={(e) => setReel((d) => ({ ...d, title: e.target.value }))}
+                      onChange={(e) => {
+                        setReel((d) => ({ ...d, title: e.target.value }));
+                        setFieldErrors((prev) => ({ ...prev, title: undefined }));
+                      }}
                       placeholder={C.titlePlaceholder}
-                      className={composerFieldInput}
+                      className={composerInputClass(Boolean(fieldErrors.title))}
+                      aria-invalid={Boolean(fieldErrors.title)}
                     />
+                    <ComposerFieldError message={fieldErrors.title} />
                   </label>
-                  <label className="grid gap-2">
+                  <label className="grid gap-1.5">
                     <span className={composerFieldLabel}>{C.description}</span>
                     <textarea
                       value={reel.description}
                       onChange={(e) => setReel((d) => ({ ...d, description: e.target.value }))}
                       placeholder={C.descriptionPlaceholder}
                       rows={5}
-                      className={`${composerFieldInput} min-h-[7.5rem] resize-y`}
+                      className={`${composerInputClass()} min-h-[7.5rem] resize-y`}
                     />
                   </label>
                   <TagInput
@@ -483,6 +492,7 @@ export function ContentComposerModal({
                     value={reel.hashtags}
                     onChange={(hashtags) => setReel((d) => ({ ...d, hashtags }))}
                     placeholder={C.hashtagsPlaceholder}
+                    hint={C.hashtagsHint}
                   />
                 </>
               ) : (
@@ -494,18 +504,22 @@ export function ContentComposerModal({
                     hasMedia={Boolean(post.imageUrl)}
                     busy={uploadingMedia}
                     disabled={saving}
+                    error={fieldErrors.media}
                     onChange={async (e) => {
-                      setError(null);
+                      setFieldErrors((prev) => ({ ...prev, media: undefined }));
                       const input = e.target;
                       const file = input.files?.[0];
                       input.value = "";
                       if (!file) return;
                       if (!file.type.startsWith("image/")) {
-                        setError(C.errors.selectImageFile);
+                        setFieldErrors((prev) => ({ ...prev, media: C.errors.selectImageFile }));
                         return;
                       }
                       if (file.size > MAX_IMAGE_BYTES) {
-                        setError(C.errors.imageTooLarge.replace("{mb}", String(Math.round(file.size / (1024 * 1024)))));
+                        setFieldErrors((prev) => ({
+                          ...prev,
+                          media: C.errors.imageTooLarge.replace("{mb}", String(Math.round(file.size / (1024 * 1024)))),
+                        }));
                         return;
                       }
                       try {
@@ -514,30 +528,43 @@ export function ContentComposerModal({
                         const { media } = await uploadMedia(file, probe ?? undefined);
                         setPost((d) => ({ ...d, imageUrl: media.url }));
                       } catch (err) {
-                        setError(err instanceof Error ? err.message : C.errors.failedReadImage);
+                        setFieldErrors((prev) => ({
+                          ...prev,
+                          media: err instanceof Error ? err.message : C.errors.failedReadImage,
+                        }));
                       } finally {
                         setUploadingMedia(false);
                       }
                     }}
                   />
-                  <label className="grid gap-2">
+                  <label className="grid gap-1.5">
                     <span className={composerFieldLabel}>{C.title}</span>
                     <input
                       value={post.title}
-                      onChange={(e) => setPost((d) => ({ ...d, title: e.target.value }))}
+                      onChange={(e) => {
+                        setPost((d) => ({ ...d, title: e.target.value }));
+                        setFieldErrors((prev) => ({ ...prev, title: undefined }));
+                      }}
                       placeholder={C.titlePlaceholder}
-                      className={composerFieldInput}
+                      className={composerInputClass(Boolean(fieldErrors.title))}
+                      aria-invalid={Boolean(fieldErrors.title)}
                     />
+                    <ComposerFieldError message={fieldErrors.title} />
                   </label>
-                  <label className="grid gap-2">
+                  <label className="grid gap-1.5">
                     <span className={composerFieldLabel}>{C.text}</span>
                     <textarea
                       value={post.text}
-                      onChange={(e) => setPost((d) => ({ ...d, text: e.target.value }))}
+                      onChange={(e) => {
+                        setPost((d) => ({ ...d, text: e.target.value }));
+                        setFieldErrors((prev) => ({ ...prev, body: undefined }));
+                      }}
                       placeholder={C.textPlaceholder}
                       rows={5}
-                      className={`${composerFieldInput} min-h-[7.5rem] resize-y`}
+                      className={`${composerInputClass(Boolean(fieldErrors.body))} min-h-[7.5rem] resize-y`}
+                      aria-invalid={Boolean(fieldErrors.body)}
                     />
+                    <ComposerFieldError message={fieldErrors.body} />
                   </label>
                   <TagInput
                     variant="studio"
@@ -545,18 +572,23 @@ export function ContentComposerModal({
                     value={post.hashtags}
                     onChange={(hashtags) => setPost((d) => ({ ...d, hashtags }))}
                     placeholder={C.hashtagsPlaceholder}
+                    hint={C.hashtagsHint}
                   />
                 </>
               )}
-
-              {error ? <p className="text-xs font-semibold text-[var(--ember)]">{error}</p> : null}
 
               <ComposerPublishTargets
                 accounts={connectedAccounts}
                 loaded={accountsLoaded}
                 value={kind === "reel" ? reelPublish : postPublish}
-                onChange={kind === "reel" ? setReelPublish : setPostPublish}
+                onChange={(next) => {
+                  setFieldErrors((prev) => ({ ...prev, publish: undefined }));
+                  if (kind === "reel") setReelPublish(next);
+                  else setPostPublish(next);
+                }}
+                error={fieldErrors.publish}
               />
+              <ComposerFieldError message={fieldErrors.form} />
             </div>
           </div>
         </div>
@@ -575,49 +607,53 @@ export function ContentComposerModal({
           <StudioCreateButton
             type="button"
             className="studio-create-btn--sm"
-            disabled={saving || uploadingMedia || !createReady || !accountsLoaded}
+            disabled={saving || uploadingMedia || !accountsLoaded}
             onClick={async () => {
               const contentId = initialData?.id;
-              setError(null);
+              const nextErrors: ComposerFieldErrors = {};
+
               if (kind === "reel") {
-                if (!reelCreateReady || !reel.videoUrl) return;
+                if (!reel.videoUrl) nextErrors.media = C.errors.videoRequired;
+                if (!reel.title.trim()) nextErrors.title = C.errors.titleRequired;
                 if (reelPublish.kind === "platforms") {
-                  if (connectedAccounts.length === 0) {
-                    setError(C.errors.noPlatformsConnected);
-                    return;
-                  }
-                  if (reelPublish.platformIds.length === 0) {
-                    setError(C.errors.pickPublishTargets);
-                    return;
-                  }
+                  if (connectedAccounts.length === 0) nextErrors.publish = C.errors.noPlatformsConnected;
+                  else if (reelPublish.platformIds.length === 0) nextErrors.publish = C.errors.pickPublishTargets;
+                }
+                if (scheduleError || Object.keys(nextErrors).length) {
+                  setFieldErrors(nextErrors);
+                  return;
                 }
                 const title = reel.title.trim();
                 const dateKey = effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
                 try {
                   setSaving(true);
+                  setFieldErrors({});
                   await Promise.resolve(onCreateReel({ ...reel, title, dateKey, publish: reelPublish, contentId }));
                   onClose();
                 } catch (e) {
-                  setError(e instanceof Error ? e.message : messages.studio.content.errors.saveFailed);
+                  setFieldErrors({
+                    form: e instanceof Error ? e.message : messages.studio.content.errors.saveFailed,
+                  });
                 } finally {
                   setSaving(false);
                 }
                 return;
               }
-              if (!postCreateReady) return;
+
+              if (!post.title.trim()) nextErrors.title = C.errors.titleRequired;
+              if (!post.text.trim()) nextErrors.body = C.errors.textRequired;
               if (postPublish.kind === "platforms") {
-                if (connectedAccounts.length === 0) {
-                  setError(C.errors.noPlatformsConnected);
-                  return;
-                }
-                if (postPublish.platformIds.length === 0) {
-                  setError(C.errors.pickPublishTargets);
-                  return;
-                }
+                if (connectedAccounts.length === 0) nextErrors.publish = C.errors.noPlatformsConnected;
+                else if (postPublish.platformIds.length === 0) nextErrors.publish = C.errors.pickPublishTargets;
+              }
+              if (scheduleError || Object.keys(nextErrors).length) {
+                setFieldErrors(nextErrors);
+                return;
               }
               const dk = effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
               try {
                 setSaving(true);
+                setFieldErrors({});
                 await Promise.resolve(
                   onCreatePost({
                     ...post,
@@ -631,7 +667,9 @@ export function ContentComposerModal({
                 );
                 onClose();
               } catch (e) {
-                setError(e instanceof Error ? e.message : messages.studio.content.errors.saveFailed);
+                setFieldErrors({
+                  form: e instanceof Error ? e.message : messages.studio.content.errors.saveFailed,
+                });
               } finally {
                 setSaving(false);
               }

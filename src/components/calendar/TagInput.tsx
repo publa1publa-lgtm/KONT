@@ -1,6 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { X } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 function normalizeTag(raw: string): string | null {
   const t = raw.trim().replace(/^#+/, "");
@@ -8,33 +11,25 @@ function normalizeTag(raw: string): string | null {
   return t.replace(/\s+/g, "_");
 }
 
-const studioInputClass =
-  "w-full rounded-xl border border-[var(--wrapper-color-rim)] bg-white/95 px-3 py-2 text-sm text-[var(--fg)] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] placeholder:text-[var(--muted)]/55 focus:border-[var(--ice)]/35 focus:outline-none focus:ring-2 focus:ring-[var(--ice)]/20";
-
 export function TagInput({
   label,
   placeholder,
+  hint,
   value,
   onChange,
+  error,
   variant = "default",
 }: {
   label: string;
   placeholder?: string;
+  hint?: string;
   value: string[];
   onChange: (next: string[]) => void;
+  error?: string;
   variant?: "default" | "studio";
 }) {
   const [text, setText] = useState("");
   const isStudio = variant === "studio";
-
-  const chips = useMemo(() => value, [value]);
-
-  const add = (raw: string) => {
-    const t = normalizeTag(raw);
-    if (!t) return;
-    if (value.includes(t)) return;
-    onChange([...value, t]);
-  };
 
   const addFromText = () => {
     const parts = text.split(/[, ]+/g).map((x) => x.trim()).filter(Boolean);
@@ -50,58 +45,79 @@ export function TagInput({
     setText("");
   };
 
+  const remove = (tag: string) => onChange(value.filter((x) => x !== tag));
+
   return (
-    <div className="grid gap-2">
-      <div className={isStudio ? "text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]" : "text-xs font-semibold text-[var(--muted)]"}>
+    <div className="grid gap-1.5">
+      <div
+        className={
+          isStudio
+            ? "text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]"
+            : "text-xs font-semibold text-[var(--muted)]"
+        }
+      >
         {label}
       </div>
-      <div className="flex flex-wrap gap-2">
-        {chips.map((t) => (
+
+      <div className="flex flex-wrap items-center gap-2">
+        {value.map((t) => (
           <span
             key={t}
-            className={
-              isStudio
-                ? "inline-flex items-center gap-2 rounded-full border border-[var(--line)]/80 bg-white/90 px-3 py-1 text-xs font-semibold text-[var(--fg)] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]"
-                : "inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-[var(--fg)]"
-            }
+            className="inline-flex max-w-full items-center gap-1 rounded-lg bg-[#E8F4FD] py-1 pe-1 ps-2.5 text-[12px] font-medium leading-none text-[#00376b]"
           >
-            <span className="font-mono text-[var(--ice)]">#{t}</span>
+            <span className="truncate">#{t}</span>
             <button
               type="button"
-              onClick={() => onChange(value.filter((x) => x !== t))}
-              className={
-                isStudio
-                  ? "rounded-full border border-[var(--wrapper-color-rim)] bg-white/90 px-2 py-0.5 text-[10px] text-[var(--muted)] hover:bg-[var(--wrapper-color-soft)]"
-                  : "rounded-full border border-white/10 bg-black/30 px-2 py-0.5 text-[10px] text-[var(--muted)] hover:bg-black/40"
-              }
+              onClick={() => remove(t)}
+              className="grid size-4 shrink-0 place-items-center rounded-md text-[#00376b]/55 transition hover:bg-[#00376b]/10 hover:text-[#00376b]"
               aria-label={`Remove ${t}`}
             >
-              ×
+              <X className="size-3" strokeWidth={2.25} aria-hidden />
             </button>
           </span>
         ))}
+
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === ",") {
+              e.preventDefault();
+              addFromText();
+            }
+            if (e.key === "Backspace" && !text && value.length) {
+              e.preventDefault();
+              onChange(value.slice(0, -1));
+            }
+          }}
+          onBlur={() => {
+            if (text.trim()) addFromText();
+          }}
+          placeholder={placeholder ?? "Type tag and press Enter"}
+          className={cn(
+            "min-w-[8rem] flex-1 text-sm outline-none transition placeholder:text-[var(--muted)]/55",
+            value.length ? "min-h-[2.25rem] py-1.5" : "min-h-[42px] py-2.5",
+            isStudio
+              ? "rounded-xl border bg-white/95 px-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] focus:outline-none focus:ring-2"
+              : "rounded-xl border border-white/10 bg-black/30 px-3 py-2",
+            isStudio && error
+              ? "border-[var(--ember)]/55 focus:border-[var(--ember)]/70 focus:ring-[var(--ember)]/20"
+              : isStudio
+                ? "border-[var(--wrapper-color-rim)] focus:border-[var(--ice)]/35 focus:ring-[var(--ice)]/20"
+                : "",
+          )}
+        />
       </div>
 
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            addFromText();
-          }
-        }}
-        onBlur={() => {
-          if (text.trim()) addFromText();
-        }}
-        placeholder={placeholder ?? "Type tag and press Enter"}
-        className={
-          isStudio
-            ? studioInputClass
-            : "w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-[var(--fg)] outline-none ring-[var(--ice)]/50 placeholder:text-white/25 focus:ring-2"
-        }
-      />
-      <div className="text-[11px] text-[var(--muted)]">Enter to add multiple tags. “#” optional.</div>
+      {error ? (
+        <p className="text-[12px] leading-snug text-[var(--ember)]" role="alert">
+          {error}
+        </p>
+      ) : hint ? (
+        <div className="text-[11px] text-[var(--muted)]">{hint}</div>
+      ) : isStudio ? null : (
+        <div className="text-[11px] text-[var(--muted)]">Enter to add multiple tags. “#” optional.</div>
+      )}
     </div>
   );
 }

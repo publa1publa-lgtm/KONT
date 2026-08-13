@@ -11,7 +11,7 @@ type Props = {
 export function ComposerKindMetaChip({ kind, label }: Props) {
   const reel = kind === "reel";
   const Icon = reel ? Clapperboard : ImageIcon;
-  const ratio = reel ? "9:16" : "1:1";
+  const ratio = reel ? "9:16" : "4:5";
 
   return (
     <div

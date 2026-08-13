@@ -1,9 +1,12 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
 import type { AppLocale } from "@/i18n/config";
+import { replaceLocaleInPath } from "@/i18n/config";
 import type { AppMessages } from "@/i18n/messages";
+import { applyDocumentLocale, writeStudioLocale } from "@/lib/studio/preferences";
 
 type I18nContextValue = {
   locale: AppLocale;
@@ -34,6 +37,7 @@ export function I18nProvider({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const t = useMemo(
     () =>
@@ -45,14 +49,18 @@ export function I18nProvider({
 
   const setLocale = useCallback(
     async (next: AppLocale) => {
+      applyDocumentLocale(next);
+      writeStudioLocale(next);
       await fetch("/api/locale", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ locale: next }),
       });
+      const nextPath = replaceLocaleInPath(pathname || "/", next);
+      router.push(nextPath);
       router.refresh();
     },
-    [router],
+    [pathname, router],
   );
 
   const value = useMemo(() => ({ locale, messages, setLocale, t }), [locale, messages, setLocale, t]);
@@ -66,4 +74,9 @@ export function useI18n(): I18nContextValue {
     throw new Error("useI18n must be used within I18nProvider");
   }
   return ctx;
+}
+
+/** Shorthand for components that only need the message tree. */
+export function useMessages(): AppMessages {
+  return useI18n().messages;
 }

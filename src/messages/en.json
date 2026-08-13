@@ -7,9 +7,13 @@
     "brand": "KONT",
     "nav": {
       "howItWorks": "How it works",
+      "product": "Product",
       "benefits": "Why KONT",
       "studio": "Studio",
-      "cta": "Request demo"
+      "signIn": "Sign in",
+      "signUp": "Sign up",
+      "cta": "Request demo",
+      "language": "Language"
     },
     "footer": {
       "tagline": "The content workspace that keeps creators shipping: plan faster, publish safely, and turn performance into the next week's plan.",
@@ -679,8 +683,9 @@
         "textPlaceholder": "Write something...",
         "description": "Description",
         "descriptionPlaceholder": "Description…",
-        "hashtags": "HashTags",
-        "hashtagsPlaceholder": "e.g. #creator #reels #tiktok",
+        "hashtags": "Hashtags",
+        "hashtagsPlaceholder": "e.g. creator reels tiktok",
+        "hashtagsHint": "Press Enter or comma to add. # is optional.",
         "video": "Video",
         "image": "Image",
         "noImageSelected": "No image selected",
@@ -695,6 +700,9 @@
           "selectImageFile": "Please select an image file.",
           "imageTooLarge": "Image is too large ({mb}MB). Try a smaller one.",
           "failedReadImage": "Failed to read image.",
+          "titleRequired": "Enter a title.",
+          "textRequired": "Write some text.",
+          "videoRequired": "Add a video.",
           "pastDay": "You can’t add a post to a past date.",
           "pastTime": "You can’t add a post to a time earlier than now.",
           "noPlatformsConnected": "No connected platforms. Connect at least one platform to publish.",
@@ -903,6 +911,13 @@
     "subtitle": "Three spaces. One flow. Choose where you want to work.",
     "back": "Back",
     "sectionInfo": "About this section",
+    "account": {
+      "label": "Account",
+      "logout": "Log out",
+      "support": "Contact support",
+      "settings": "Settings",
+      "supportEmail": "support@kont.app"
+    },
     "createCta": "Create {label}",
     "sections": {
       "create": {
@@ -1104,6 +1119,65 @@
         "pickDate": "Pick a date.",
         "pastDay": "You can’t add a post to a past date.",
         "pastTime": "You can’t add a post to a time earlier than now."
+      }
+    }
+  },
+  "auth": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "cancel": "Cancel",
+    "validation": {
+      "required": "This field is required.",
+      "identifierRequired": "Enter your email or username.",
+      "invalidEmail": "Enter a valid email address.",
+      "passwordMin": "Use at least 8 characters.",
+      "passwordsMismatch": "Passwords do not match.",
+      "nameRequired": "Enter your name.",
+      "loginPattern": "Use 3–30 lowercase letters, numbers, or underscore.",
+      "emailTaken": "This email is already registered.",
+      "loginTaken": "This username is already taken.",
+      "invalidCredentials": "Invalid email, login, or password.",
+      "ambiguousLogin": "Several accounts match this name. Sign in with your full email."
+    },
+    "login": {
+      "welcome": "Welcome back to KONT.",
+      "title": "Sign in",
+      "subtitle": "Use your email or username and password.",
+      "emailLabel": "Email or username",
+      "passwordLabel": "Password",
+      "errorLabel": "Error",
+      "invalidCredentials": "Invalid email, login, or password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "No account yet?",
+      "createOne": "Create one"
+    },
+    "register": {
+      "brand": "KONT",
+      "modalTitle": "Create your KONT account",
+      "title": "Create account",
+      "subtitle": "Start with a calm workspace for every channel.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "login": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "loginPattern": "3–30 characters: letters, numbers, underscore",
+      "loginHint": "Lowercase letters, numbers, and underscore only.",
+      "marketingOptIn": "Send me product updates and tips (optional).",
+      "errorTitle": "Could not create account",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "placeholders": {
+        "firstName": "Alex",
+        "lastName": "Morgan",
+        "login": "alex_morgan",
+        "email": "you@company.com",
+        "password": "At least 8 characters",
+        "confirmPassword": "Repeat password"
       }
     }
   },

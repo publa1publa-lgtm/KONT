@@ -5,12 +5,15 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
 import { KontBrandLogo } from "@/components/brand/KontBrandLogo";
-import { useDemoModal } from "@/contexts/demo-modal-context";
-import { useMessages } from "@/contexts/messages-context";
+import { NavLocaleSwitch } from "@/components/new_home/NavLocaleSwitch";
+import { useAuthModal } from "@/contexts/auth-modal-context";
+import { useI18n } from "@/contexts/i18n-context";
+import { withLocale } from "@/i18n/config";
 
 export function NewHomeNav() {
-  const { story } = useMessages();
-  const { openModal } = useDemoModal();
+  const { locale, messages } = useI18n();
+  const { story } = messages;
+  const { openLogin, openRegister } = useAuthModal();
   const menuId = useId();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -29,17 +32,18 @@ export function NewHomeNav() {
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+  const homeHref = withLocale(locale, "/");
 
   const navLinks = [
     { href: "#pillars", label: story.nav.howItWorks },
-    { href: "#product", label: "Product" },
+    { href: "#product", label: story.nav.product },
     { href: "#benefits", label: story.nav.benefits },
   ] as const;
 
   return (
     <header className="new-home-nav">
       <nav className="new-home-nav__shell" aria-label="Main">
-        <Link href="/" className="new-home-nav__brand cursor-pointer" aria-label={story.brand}>
+        <Link href={homeHref} className="new-home-nav__brand cursor-pointer" aria-label={story.brand}>
           <KontBrandLogo decorative className="new-home-nav__logo" priority />
         </Link>
 
@@ -52,11 +56,12 @@ export function NewHomeNav() {
         </div>
 
         <div className="new-home-nav__actions">
-          <Link href="/studio" className="new-home-nav__studio">
-            {story.nav.studio}
-          </Link>
-          <button type="button" onClick={openModal} className="new-home-nav__cta cursor-pointer">
-            {story.nav.cta}
+          <NavLocaleSwitch />
+          <button type="button" onClick={openLogin} className="new-home-nav__sign-in cursor-pointer">
+            {story.nav.signIn}
+          </button>
+          <button type="button" onClick={openRegister} className="new-home-nav__cta cursor-pointer">
+            {story.nav.signUp}
           </button>
 
           <button
@@ -72,45 +77,38 @@ export function NewHomeNav() {
         </div>
       </nav>
 
-      <div
-        id={menuId}
-        className={`new-home-nav__mobile${menuOpen ? " is-open" : ""}`}
-        aria-hidden={!menuOpen}
-      >
-        <button
-          type="button"
-          className="new-home-nav__mobile-backdrop"
-          aria-label="Close menu"
-          tabIndex={menuOpen ? 0 : -1}
-          onClick={closeMenu}
-        />
-
-        <div className="new-home-nav__mobile-panel" role="dialog" aria-modal="true" aria-label="Navigation">
-          <div className="new-home-nav__mobile-links">
+      {menuOpen ? (
+        <div id={menuId} className="new-home-nav__drawer" role="dialog" aria-modal="true">
+          <div className="new-home-nav__drawer-links">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="new-home-nav__mobile-link" onClick={closeMenu}>
+              <a key={link.href} href={link.href} className="new-home-nav__drawer-link" onClick={closeMenu}>
                 {link.label}
               </a>
             ))}
-          </div>
-
-          <div className="new-home-nav__mobile-actions">
-            <Link href="/studio" className="new-home-nav__mobile-studio" onClick={closeMenu}>
-              {story.nav.studio}
-            </Link>
+            <NavLocaleSwitch variant="drawer" />
             <button
               type="button"
-              className="new-home-nav__mobile-cta cursor-pointer"
+              className="new-home-nav__drawer-link cursor-pointer text-start"
               onClick={() => {
                 closeMenu();
-                openModal();
+                openLogin();
               }}
             >
-              {story.nav.cta}
+              {story.nav.signIn}
+            </button>
+            <button
+              type="button"
+              className="new-home-nav__drawer-cta cursor-pointer"
+              onClick={() => {
+                closeMenu();
+                openRegister();
+              }}
+            >
+              {story.nav.signUp}
             </button>
           </div>
         </div>
-      </div>
+      ) : null}
     </header>
   );
 }

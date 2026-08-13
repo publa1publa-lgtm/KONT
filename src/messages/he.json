@@ -1,0 +1,1217 @@
+{
+  "meta": {
+    "title": "KONT — סביבת עבודה אחת לכל ערוץ",
+    "description": "תכנון, פרסום וצמיחה בפלטפורמות חברתיות מסביבת עבודה אחת ושקטה — בנוי ליוצרים ולצוותים."
+  },
+  "story": {
+    "brand": "KONT",
+    "nav": {
+      "howItWorks": "איך זה עובד",
+      "product": "מוצר",
+      "benefits": "למה KONT",
+      "studio": "סטודיו",
+      "signIn": "התחברות",
+      "signUp": "הרשמה",
+      "cta": "בקשת הדגמה",
+      "language": "שפה"
+    },
+    "footer": {
+      "tagline": "סביבת העבודה לתוכן שעוזרת ליוצרים להמשיך לשחרר: תכנון מהיר יותר, פרסום בטוח, והפיכת ביצועים לתוכנית של השבוע הבא.",
+      "trustLine": "APIs רשמיים · OAuth · בלי סיסמאות משותפות",
+      "productColumn": "מוצר",
+      "resourcesColumn": "גלה",
+      "companyColumn": "משפטי",
+      "productLinks": [
+        {
+          "label": "איך זה עובד",
+          "href": "#pillars"
+        },
+        {
+          "label": "למה צוותים עוברים",
+          "href": "#benefits"
+        },
+        {
+          "label": "התחלה",
+          "href": "#cta"
+        }
+      ],
+      "resourceLinks": [
+        {
+          "label": "בקשת הדגמה",
+          "href": "#"
+        },
+        {
+          "label": "סטודיו",
+          "href": "/studio"
+        }
+      ],
+      "companyLinks": [
+        {
+          "label": "פרטיות",
+          "href": "#"
+        },
+        {
+          "label": "תנאים",
+          "href": "#"
+        }
+      ]
+    }
+  },
+  "landing": {
+    "scrollHint": "גלול כדי לגלות",
+    "hero": {
+      "label": "סביבת העבודה לתוכן",
+      "badge": "גישה מוקדמת פתוחה",
+      "title": "ערימת הכאוס שלכם.",
+      "titleAccent": "סביבת העבודה השקטה שלנו.",
+      "text": "תכנון, פרסום ומדידה בכל ערוץ מסביבת עבודה אחת. בנוי ליוצרים ולצוותים שמשחררים כל שבוע.",
+      "ctaPrimary": "קבלו גישה מוקדמת",
+      "ctaSecondary": "ראו איך זה עובד",
+      "trust": "APIs רשמיים של פלטפורמות · OAuth בלבד · בלי סיסמאות משותפות",
+      "platforms": [
+        "Instagram",
+        "TikTok",
+        "YouTube",
+        "X",
+        "Telegram",
+        "LinkedIn"
+      ],
+      "multiChannel": {
+        "kicker": "רב-ערוצי",
+        "title": "פוסט אחד. כל פלטפורמה."
+      },
+      "social": {
+        "count": "1,200+ יוצרים",
+        "text": "ברשימת הגישה המוקדמת",
+        "worksWith": "מפרסם ל"
+      },
+      "tags": [
+        "OAuth בלבד",
+        "עיצוב אוטומטי",
+        "תזמון חכם"
+      ],
+      "secure": {
+        "kicker": "חיבור מאובטח",
+        "title": "OAuth בלבד. אתם שולטים.",
+        "line": "בלי סיסמאות משותפות · ביטול גישה בכל עת"
+      },
+      "pulse": {
+        "kicker": "דופק חי",
+        "activities": [
+          {
+            "action": "פורסם",
+            "detail": "Instagram Reel · באוויר עכשיו",
+            "icon": "/home/icons/color/instagram.svg"
+          },
+          {
+            "action": "מתוזמן",
+            "detail": "YouTube Short · 18:00",
+            "icon": "/home/icons/color/youtube.svg"
+          },
+          {
+            "action": "עוצב אוטומטית",
+            "detail": "TikTok · 3 חיתוכים מוכנים",
+            "icon": "/home/icons/color/tiktok.svg"
+          }
+        ],
+        "insights": [
+          {
+            "value": "94%",
+            "label": "שיעור פרסום בזמן"
+          },
+          {
+            "value": "2m",
+            "label": "כל הערוצים מסונכרנים"
+          },
+          {
+            "value": "847",
+            "label": "פוסטים מתוזמנים השבוע"
+          }
+        ],
+        "metrics": [
+          {
+            "value": "3.2×",
+            "label": "מחזורי פרסום מהירים יותר"
+          },
+          {
+            "value": "12+",
+            "label": "פלטפורמות במקום אחד"
+          }
+        ]
+      },
+      "quickWins": {
+        "kicker": "ניצחונות מהירים",
+        "title": "שחררו יותר, עם פחות חיכוך",
+        "items": [
+          "תזמנו שבוע שלם בפעולה אחת",
+          "עיצוב אוטומטי לכל ערוץ",
+          "תגובות נשארות על הפוסט"
+        ]
+      },
+      "timing": {
+        "kicker": "תזמון חכם",
+        "title": "פרסמו כשהקהל שלכם פעיל",
+        "chips": [
+          "שעות שיא",
+          "מודע לזמן מקומי",
+          "משבצות מומלצות"
+        ]
+      }
+    },
+    "pillars": {
+      "label": "איך זה עובד",
+      "title": "CREATE . MANAGE . GROW",
+      "text": "שלושה מרחבים. זרימה אחת. אותה סביבת עבודה שקטה — מהטיוטה הראשונה ועד ההוכחה שזה עבד.",
+      "items": [
+        {
+          "id": "create",
+          "title": "CREATE .",
+          "body": "כתיבה. כיתוב. אוטומציה. פוסטים, רילס ותהליכי עבודה מתחילים על קנבס אחד — התאימו פעם אחת, פרסמו לכל ערוץ."
+        },
+        {
+          "id": "manage",
+          "title": "MANAGE .",
+          "body": "תכנון. סקירה. פרסום. לוח שנה, תיבת דואר נכנס וחשבונות מחוברים שומרים כל פוסט במסלול — בלי כאוס של לשוניות."
+        },
+        {
+          "id": "grow",
+          "title": "GROW .",
+          "body": "מדידה. למידה. פעולה. אנליטיקה ותובנות מראות מה עובד — כדי שהצעד הבא יהיה מושכל, לא ניחוש."
+        }
+      ]
+    },
+    "benefits": {
+      "label": "למה צוותים עוברים",
+      "title": "הריפוד",
+      "titleAccent": "נגמר כאן.",
+      "text": "צוותים מובילים לא צריכים עוד כלים — הם צריכים משטח אחד שקט, בנוי לאיך פרסום באמת עובד.",
+      "compare": {
+        "before": {
+          "tag": "מפוצל",
+          "title": "שש לשוניות לריל אחד",
+          "items": [
+            "טיוטות מפוזרות ב-Notion, Drive והודעות פרטיות",
+            "אישורים קבורים בשרשורי Slack",
+            "תזמון בכלי אחד, אנליטיקה בשלושה אחרים",
+            "כל יום פרסום מתחיל בארכיאולוגיה של לשוניות"
+          ],
+          "metric": "6 כלים · ~47 דק' אבודות לפוסט"
+        },
+        "after": {
+          "tag": "מאוחד",
+          "title": "סביבת עבודה אחת, כל ערוץ",
+          "items": [
+            "כתבו פעם אחת — עיצוב אוטומטי ל-Reels, Shorts ופוסטים",
+            "אישורים ותגובות על הנכס, לא בצ'אט",
+            "לוח שנה, תיבת דואר נכנס ואנליטיקה באותה תצוגה",
+            "פרסמו ל-12+ פלטפורמות בלי לעזוב את סביבת העבודה"
+          ],
+          "metric": "סביבת עבודה אחת · ממוצע מתחת ל-6 דק'"
+        }
+      },
+      "stats": [
+        {
+          "value": 3.2,
+          "decimals": 1,
+          "suffix": "×",
+          "label": "מחזורי פרסום מהירים יותר"
+        },
+        {
+          "value": 12,
+          "suffix": "+",
+          "label": "פלטפורמות במקום אחד"
+        },
+        {
+          "value": 40,
+          "suffix": "%",
+          "label": "פחות זמן אבוד במעבר בין לשוניות"
+        },
+        {
+          "value": 1,
+          "suffix": "",
+          "label": "מקור אמת אחד לצוות"
+        }
+      ],
+      "items": [
+        {
+          "title": "סיימו את מרתון הלשוניות",
+          "body": "הפסיקו להעתיק כיתובים בין כלים. תכננו, ערכו ותזמנו מקנבס אחד — כולל משבצות מותאמות לערוץ.",
+          "outcome": "מחזורים מהירים פי 3.2"
+        },
+        {
+          "title": "תבניות שמשחררות, לא תוקעות",
+          "body": "פורמטים לשימוש חוזר לכל פלטפורמה, קול מותג קבוע, ואפס כתיבה מחדש ברגע האחרון לפני פרסום.",
+          "outcome": "70% פחות כתיבה מחדש"
+        },
+        {
+          "title": "אותות שאפשר לפעול לפיהם",
+          "body": "ביצועים חוצי-פלטפורמות בקריאה אחת — הכפילו את המנצחים במקום לנחש מארבעה דשבורדים.",
+          "outcome": "אמת אנליטית אחת"
+        }
+      ],
+      "testimonial": {
+        "quote": "פעם איבדנו חצי יום בכל פעם ששחררנו קמפיין. עכשיו כל הצוות רואה לוח שנה אחד, תיבת דואר נכנס אחת, אמת אחת.",
+        "author": "Maya Chen",
+        "role": "ראש תוכן · סטודיו של 8 אנשים",
+        "metric": "תפעול שבועי: 12 ש' → 3 ש'"
+      }
+    },
+    "bento": {
+      "label": "תצוגה מקדימה של המוצר",
+      "title": "ראו את המוצר, לא מצגת",
+      "text": "ליבת הסטודיו — לוח שנה, תיבת דואר נכנס מאוחדת, מפת קהל, חשבונות מחוברים, אוטומציות ואנליטיקה. ווידג'טים חיים, לא צילומי מסך.",
+      "tabs": {
+        "calendar": "לוח שנה",
+        "automation": "אוטומציות",
+        "dashboard": "דשבורד",
+        "inbox": "תיבת דואר נכנס",
+        "accounts": "חשבונות",
+        "insights": "תובנות",
+        "audience": "קהל"
+      },
+      "features": [
+        {
+          "id": "calendar",
+          "title": "לוח תוכן",
+          "body": "תכנון שבועי ויזואלי עם משבצות מותאמות לערוץ, אישורים ותזמון בגרירה."
+        },
+        {
+          "id": "automation",
+          "title": "בונה אוטומציות",
+          "body": "שרשרו העלאה → שינוי גודל → תזמון → פרסום בכל פלטפורמה שחשובה לכם."
+        },
+        {
+          "id": "dashboard",
+          "title": "דשבורד יוצר",
+          "body": "אנליטיקה חוצת-ערוצים בכרטיסים שקטים — חשיפה, מעורבות וצמיחה שאפשר לפעול לפיהן היום."
+        }
+      ]
+    },
+    "cta": {
+      "label": "מוכנים כשאתם",
+      "badge": "גישה מוקדמת מוגבלת",
+      "title": "התחילו את סביבת העבודה תוך דקות",
+      "text": "חברו את הערוצים, הזמינו את הצוות, ופרסמו את האצווה הראשונה השבוע — בלי כרטיס אשראי.",
+      "primary": "קבלו גישה מוקדמת",
+      "secondary": "ראו מה בפנים",
+      "trust": [
+        "חיבורים ב-OAuth בלבד",
+        "ביטול בכל עת",
+        "מוכן לצוות מהיום הראשון"
+      ],
+      "note": "חינם להתחלה · בלי כרטיס אשראי"
+    }
+  },
+  "studio": {
+    "nav": {
+      "calendar": "לוח שנה",
+      "content": "תוכן",
+      "platforms": "פלטפורמות",
+      "linktree": "LinkTree",
+      "linktree2": "LinkTree · חדש",
+      "inbox": "תיבת דואר נכנס",
+      "automations": "אוטומציות",
+      "bots": "בוטים"
+    },
+    "navMenu": {
+      "allFlows": "כל התהליכים",
+      "createFlow": "יצירת תהליך",
+      "allBots": "כל הבוטים",
+      "createBot": "יצירת בוט"
+    },
+    "placeholders": {
+      "pickAutomations": "פתחו אוטומציות בתפריט, ואז בחרו «כל התהליכים» או «יצירת תהליך».",
+      "pickBots": "פתחו בוטים בתפריט, ואז בחרו «כל הבוטים» או «יצירת בוט»."
+    },
+    "linkStudio": {
+      "label": "דף קישורים",
+      "subtitle": "בנו דף ציבורי בסגנון Linktree: כתובת קצרה, כותרת, ביו וכפתורים נוחים למגע לביוגרפיה שלכם.",
+      "handle": "שם משתמש ציבורי",
+      "handleHint": "הדף שלכם ב-/u/your-handle — 3–32 תווים: אותיות קטנות, ספרות ומקף בודד בלבד.",
+      "handlePlaceholder": "your-name",
+      "title": "כותרת",
+      "titlePlaceholder": "השם או המותג שלכם",
+      "bio": "ביו",
+      "bioPlaceholder": "שורה אחת מתחת לכותרת…",
+      "linksHeading": "כפתורים",
+      "linkLabel": "תווית",
+      "linkUrl": "URL",
+      "enabled": "גלוי",
+      "addLink": "הוספת כפתור",
+      "remove": "הסרה",
+      "moveUp": "הזזה למעלה",
+      "moveDown": "הזזה למטה",
+      "save": "שמירה",
+      "saving": "שומר…",
+      "saved": "נשמר.",
+      "loading": "טוען…",
+      "copyPublicUrl": "העתקת קישור ציבורי",
+      "copied": "הועתק!",
+      "openPublic": "פתיחת דף ציבורי",
+      "publicPage": "דף ציבורי",
+      "loadError": "לא ניתן לטעון את דף הקישורים.",
+      "saveError": "לא ניתן לשמור. בדקו את שם המשתמש וה-URLs.",
+      "emptyLinksHint": "הוסיפו כפתורים עם תווית ו-URL (https://…). שורות ריקות מתעלמות בשמירה.",
+      "mobileEditor": "עורך",
+      "mobilePreview": "תצוגה מקדימה",
+      "mobileStepCounter": "שלב {n} מתוך {t}",
+      "mobileStepAddress": "כתובת",
+      "mobileStepProfile": "פרופיל",
+      "mobileStepLinks": "קישורים",
+      "mobileHintAddress": "בחרו קודם שם משתמש קצר — כך אנשים פותחים את הדף.",
+      "mobileHintProfile": "כותרת ושורה מתחת — כמו הביוגרפיה ברשתות.",
+      "mobileHintLinks": "כפתורים מלמעלה למטה. שורות ריקות לא יישמרו.",
+      "mobileHintPreview": "טיוטה: אחרי שמירה, כך יראו המבקרים.",
+      "mobileSaveReminder": "הקישו שמירה למעלה כשסיימתם.",
+      "mobileStickyEditHint": "עברו בין שלבים באמצעות הסרגל בטופס למטה.",
+      "mobileDesktopLastStepHint": "בדקו את הקישור הציבורי, ואז הקישו שמירה למעלה.",
+      "mobileBack": "חזרה",
+      "mobileNext": "הבא",
+      "mobileViewPreview": "צפייה בתצוגה מקדימה",
+      "mobilePreviewTitle": "בדף שלכם",
+      "mobilePreviewEmptyHandle": "הגדירו שם משתמש בשלב 1 כדי לראות קישור ותצוגה מקדימה.",
+      "mobilePreviewNoLinks": "אין כפתורים עדיין — הוסיפו בשלב הקישורים.",
+      "crossLinkFull": "רוצים 25 תבניות ותצוגה מקדימה בטלפון? נסו LinkTree בסטודיו.",
+      "crossLinkFullCta": "פתיחת LinkTree",
+      "profileEditor": {
+        "title": "שם וביו",
+        "description": "שם תצוגה, שם משתמש וטקסט הדף. תמונה אופציונלית — לעיתים מ-Instagram אחרי חיבור.",
+        "displayName": "שם או שם משתמש",
+        "username": "שם משתמש ב-URL",
+        "usernameHint": "a–z, 0–9, _",
+        "pageUrl": "דף:",
+        "pageUrlPlaceholder": "your-handle",
+        "bio": "עליכם",
+        "bioPlaceholder": "משפט או שניים: מה אתם עושים ומה המבקרים צריכים לדעת.",
+        "photoTitle": "תמונת פרופיל",
+        "photoHint": "אופציונלי — Instagram או URL לתמונה.",
+        "connectInstagram": "Instagram",
+        "connectSoon": "Instagram: חיבור בקרוב — נמשוך את תמונת הפרופיל.",
+        "avatarManual": "או הדביקו URL לתמונה ידנית",
+        "avatarPlaceholder": "URL לתמונה (אופציונלי)"
+      },
+      "linksEditor": {
+        "urlOk": "ה-URL נראה תקין",
+        "urlAuto": "אפשר להשמיט https:// — נוסיף אוטומטית.",
+        "urlInvalid": "בדקו את פורמט ה-URL."
+      },
+      "templatePicker": {
+        "variants": "{count} ערכות נושא · תצוגה מקדימה ופלטה",
+        "closeAria": "סגירה"
+      }
+    },
+    "linkTreeStudio": {
+      "label": "LinkTree",
+      "subtitle": "25 ערכות נושא, תצוגה מקדימה חיה, פרופיל וכפתורים — לקישור בביוגרפיה.",
+      "badge": "קישור בביוגרפיה",
+      "save": "שמירה",
+      "saving": "שומר…",
+      "public": "דף ציבורי",
+      "loadError": "לא ניתן לטעון את הטיוטה.",
+      "saveError": "לא ניתן לשמור.",
+      "saved": "נשמר.",
+      "publicToast": "דף ציבורי:",
+      "stepTemplate": "תבנית",
+      "stepProfile": "פרופיל",
+      "stepLinks": "קישורים",
+      "saveReminder": "הקישו שמירה בכותרת כשסיימתם.",
+      "autoSaveHint": "עריכות נשמרות אוטומטית אחרי הפסקת הקלדה.",
+      "desktopHint": "עברו בשלבים למעלה: תבנית, פרופיל, קישורים — התצוגה המקדימה מימין מתעדכנת בזמן אמת.",
+      "mobileEditor": "עורך",
+      "mobilePreview": "תצוגה מקדימה",
+      "mobileBack": "חזרה",
+      "mobileNext": "הבא",
+      "mobileViewPreview": "צפייה בתצוגה מקדימה",
+      "previewAside": "כך יראו המבקרים. במסכים גדולים התצוגה המקדימה נשארת קבועה.",
+      "previewRight": "תצוגה מקדימה מימין",
+      "live": "חי",
+      "design": {
+        "title": "תבנית",
+        "description": "התחילו מתבנית מוכנה — התצוגה המקדימה מתעדכנת מיד. כווננו צבעים ב«התאמה אישית».",
+        "templateLabel": "תבנית",
+        "gallery": "גלריה",
+        "tweaks": "התאמה אישית",
+        "customColors": "צבעים מותאמים",
+        "colorsAndShape": "צבעים וצורה",
+        "palette": "פלטה",
+        "reset": "איפוס",
+        "bg": "רקע",
+        "text": "טקסט",
+        "buttons": "כפתורים",
+        "buttonText": "טקסט כפתור",
+        "radius": "רדיוס פינות",
+        "size": "גודל",
+        "font": "גופן",
+        "buttonSizeAria": "גודל כפתור בדף",
+        "fontAria": "גופן הדף",
+        "fonts": {
+          "inter": "גוף",
+          "syne": "הדגשה",
+          "mono": "Mono"
+        },
+        "sizes": {
+          "sm": "קטן יותר",
+          "md": "בינוני",
+          "lg": "גדול יותר"
+        },
+        "pickTemplateAria": "בחירת תבנית «{name}»",
+        "demoBio": "ביו קצר"
+      },
+      "templatePicker": {
+        "title": "תבניות",
+        "variants": "{count} ערכות נושא · תצוגה מקדימה ופלטה",
+        "close": "סגירה"
+      },
+      "linksSection": {
+        "title": "כפתורים וקישורים",
+        "description": "רשימה מלמעלה למטה — האורחים רואים אותו סדר. גררו את הידית השמאלית לסידור מחדש.",
+        "addButton": "הוספת קישור",
+        "emptyTitle": "אין קישורים עדיין",
+        "emptyBody": "הוסיפו את הראשון: תווית קצרה ו-URL. מופיע בתצוגה המקדימה מיד.",
+        "emptyCta": "הוספת קישור ראשון",
+        "listSummary": "ברשימה: {count} · סדר = סדר בדף",
+        "addAnother": "הוספת עוד",
+        "quickAddPlaceholder": "הדביקו קישור ולחצו Enter",
+        "quickAddButton": "הוספה",
+        "addManual": "שורה ריקה",
+        "tapToEdit": "הקישו לעריכה",
+        "doneEdit": "סיום",
+        "positionTitle": "מיקום בדף",
+        "dragAria": "גרירה לסידור מחדש (מיקום נוכחי {index})",
+        "dragHint": "גרירה",
+        "buttonLabel": "תווית כפתור",
+        "buttonPlaceholder": "למשל YouTube, חנות, Telegram",
+        "linkLabel": "קישור",
+        "linkPlaceholder": "https://… או youtube.com/…",
+        "urlAutoHint": "https:// אופציונלי — נוסיף אוטומטית.",
+        "removeButton": "הסרת כפתור",
+        "removeHint": "הסרה"
+      },
+      "preview": {
+        "emptyLinks": "הוסיפו קישורים משמאל"
+      },
+      "urlInvalid": "הזינו URL תקין של http(s)",
+      "themes": {
+        "light": {
+          "title": "Light",
+          "description": "נקי ורב-תכליתי"
+        },
+        "paper": {
+          "title": "Paper",
+          "description": "חום עיתונאי"
+        },
+        "slate": {
+          "title": "Slate",
+          "description": "טון מקצועי שקט"
+        },
+        "sand": {
+          "title": "Sand",
+          "description": "שמש מדברית"
+        },
+        "lavender": {
+          "title": "Lavender",
+          "description": "סגול רך"
+        },
+        "blush": {
+          "title": "Blush",
+          "description": "ורוד עיתונאי רך"
+        },
+        "arctic": {
+          "title": "Arctic",
+          "description": "קרח ואוויר קריר"
+        },
+        "dark": {
+          "title": "Dark",
+          "description": "קלאסי בניגודיות גבוהה"
+        },
+        "noir": {
+          "title": "Noir",
+          "description": "דרמה בשחור-לבן"
+        },
+        "midnight": {
+          "title": "Midnight",
+          "description": "לילה כחול וזהב"
+        },
+        "cosmos": {
+          "title": "Cosmos",
+          "description": "עומק כוכבי"
+        },
+        "gold": {
+          "title": "Gold",
+          "description": "ברק פרימיום"
+        },
+        "obsidian": {
+          "title": "Obsidian",
+          "description": "זכוכית וולקנית"
+        },
+        "sunset": {
+          "title": "Sunset",
+          "description": "דמדומים חמים"
+        },
+        "ember": {
+          "title": "Ember",
+          "description": "גחלים זוהרות"
+        },
+        "candy": {
+          "title": "Candy",
+          "description": "ורוד ניאון מתוק"
+        },
+        "gradient": {
+          "title": "Gradient",
+          "description": "זרימה סגול-ורוד"
+        },
+        "ocean": {
+          "title": "Ocean",
+          "description": "עומק מים"
+        },
+        "forest": {
+          "title": "Forest",
+          "description": "צל אורן"
+        },
+        "aurora": {
+          "title": "Aurora",
+          "description": "זוהר צפוני"
+        },
+        "coral": {
+          "title": "Coral",
+          "description": "שונית וטורקיז"
+        },
+        "neon": {
+          "title": "Neon",
+          "description": "זוהר סייבר"
+        },
+        "retro": {
+          "title": "Retro",
+          "description": "סינת'ווייב של שנות ה-80"
+        },
+        "cyber": {
+          "title": "Cyber",
+          "description": "צהוב על שחור"
+        },
+        "electric": {
+          "title": "Electric",
+          "description": "ליים על אינדיגו"
+        }
+      }
+    },
+    "linkTreeStudio2": {
+      "label": "קישור בביוגרפיה",
+      "badge": "עורך חדש",
+      "subtitle": "שלבים נקיים יותר משמאל, תצוגה מקדימה חיה בטלפון מימין — אותו דף, פריסה מרעננת.",
+      "stepTemplateHint": "בחרו ערכת נושא; צבעים וגופנים מתעדכנים בתצוגה המקדימה תוך כדי.",
+      "stepProfileHint": "שם, שם משתמש וביו — מה שמבקרים רואים בראש הדף.",
+      "stepLinksHint": "הוסיפו כפתורים נוחים למגע; גררו סדר ברשימה לפי הצורך.",
+      "desktopHint": "עברו בשלבים בסרגל הצד. התצוגה המקדימה נשארת גלויה בזמן העריכה.",
+      "previewTitle": "תצוגה מקדימה חיה",
+      "previewCaption": "מה שאורחים רואים בטלפון",
+      "editorPanelTitle": "שלב",
+      "continueLabel": "המשך",
+      "finishPreviewLabel": "בדיקת תצוגה מקדימה"
+    },
+    "user": {
+      "settings": "הגדרות",
+      "billing": "חיוב",
+      "logout": "התנתקות",
+      "devEmail": "Dev: Hello World",
+      "devEmailSending": "שולח…",
+      "sendEmailSuccess": "נשלח «Hello World» אל {email}",
+      "sendEmailFailed": "לא ניתן לשלוח אימייל",
+      "sendEmailDevSkipped": "Add SMTP_* to .env (see .env.example)",
+      "modals": {
+        "close": "סגירה",
+        "cancel": "ביטול",
+        "settingsTitle": "הגדרות",
+        "settingsSubtitle": "התאימו את הסטודיו למכשיר שלכם.",
+        "billingTitle": "חיוב",
+        "billingSubtitle": "חיוב יגיע בקרוב. בינתיים, צרו קשר כדי להפעיל גישה.",
+        "reducedMotion": {
+          "label": "הפחתת תנועה",
+          "hint": "הפחיתו אנימציות לנוחות וביצועים."
+        },
+        "links": {
+          "title": "קישורים מהירים",
+          "terms": "תנאים",
+          "privacy": "פרטיות",
+          "contact": "יצירת קשר"
+        }
+      },
+      "theme": {
+        "label": "ערכת נושא",
+        "luxury": "Luxury",
+        "dark": "Dark"
+      }
+    },
+    "mobile": {
+      "active": "פעיל:"
+    },
+    "content": {
+      "label": "תוכן",
+      "subtitle": "הוסיפו פוסטים ורילס, סקרו את כל מה שמתוזמן.",
+      "addContent": "הוספת תוכן",
+      "createCta": "יצירת {label}",
+      "library": "ספרייה",
+      "allContent": "כל התוכן",
+      "noItems": "אין פריטים עדיין.",
+      "tableTitle": "כותרת",
+      "tableType": "סוג",
+      "tablePlatforms": "פלטפורמות",
+      "tableStatus": "סטטוס",
+      "tableScheduled": "מתוזמן",
+      "tableHashtags": "האשטאגים",
+      "tableCreated": "נוצר",
+      "tableActions": "פעולות",
+      "typeReel": "Reel",
+      "typePost": "פוסט",
+      "edit": "עריכה",
+      "duplicate": "העתקה",
+      "archive": "ארכיון",
+      "delete": "מחיקה",
+      "duplicateTitleSuffix": " (עותק)",
+      "composerTitle": "תוכן",
+      "composerSubtitle": "יצירת תוכן",
+      "composer": {
+        "close": "סגירה",
+        "editContent": "עריכת תוכן",
+        "createContent": "יצירת תוכן",
+        "kindToggleAria": "סוג תוכן: פוסט או reel",
+        "date": "תאריך",
+        "time": "שעה",
+        "schedule": "תזמון",
+        "title": "כותרת",
+        "titlePlaceholder": "כותרת",
+        "text": "טקסט",
+        "textPlaceholder": "כתבו משהו...",
+        "description": "תיאור",
+        "descriptionPlaceholder": "תיאור…",
+        "hashtags": "האשטאגים",
+        "hashtagsPlaceholder": "למשל creator reels tiktok",
+        "hashtagsHint": "Enter או פסיק להוספה. # אופציונלי.",
+        "video": "וידאו",
+        "image": "תמונה",
+        "noImageSelected": "לא נבחרה תמונה",
+        "cancel": "ביטול",
+        "save": "שמירה",
+        "create": "יצירה",
+        "saving": "שומר…",
+        "errors": {
+          "selectVideoFile": "בחרו קובץ וידאו.",
+          "videoTooLarge": "הווידאו גדול מדי ({mb}MB). נסו קובץ קטן יותר.",
+          "failedReadVideo": "קריאת הווידאו נכשלה.",
+          "selectImageFile": "בחרו קובץ תמונה.",
+          "imageTooLarge": "התמונה גדולה מדי ({mb}MB). נסו קובץ קטן יותר.",
+          "failedReadImage": "קריאת התמונה נכשלה.",
+          "titleRequired": "הזינו כותרת.",
+          "textRequired": "כתבו טקסט.",
+          "videoRequired": "הוסיפו וידאו.",
+          "pastDay": "לא ניתן להוסיף פוסט לתאריך שעבר.",
+          "pastTime": "לא ניתן להוסיף פוסט לשעה שעברה.",
+          "noPlatformsConnected": "אין פלטפורמות מחוברות. חברו לפחות פלטפורמה אחת לפרסום.",
+          "pickPublishTargets": "בחרו לפחות חשבון מחובר אחד לפרסום."
+        },
+        "publishing": {
+          "title": "פרסום",
+          "loadingAccounts": "טוען חשבונות מחוברים…",
+          "draftOnlyTitle": "טיוטה",
+          "draftOnlyBody": "נשמר בספרייה בלבד. חברו Instagram או TikTok תחת פלטפורמות כדי לפרסם כאן.",
+          "intro": "טיוטה שומרת את הפריט מקומית. או בחרו חשבונות מחוברים ליעד פרסום.",
+          "draftLabel": "טיוטה",
+          "draftHint": "ספרייה בלבד — אין יעדי פרסום עדיין.",
+          "connectedLabel": "חשבונות מחוברים"
+        },
+        "preview": {
+          "reels": "Reels",
+          "feedPreview": "תצוגה מקדימה של פיד",
+          "brand": "Content Fabric",
+          "captionEmpty": "כותרת או תיאור יופיעו כאן"
+        }
+      },
+      "errors": {
+        "signInToLoad": "התחברו כדי לטעון את התוכן.",
+        "signInToEdit": "התחברו כדי לערוך.",
+        "couldNotOpenForEditing": "לא ניתן לפתוח פריט זה לעריכה.",
+        "couldNotLoadContent": "לא ניתן לטעון תוכן.",
+        "loadFailed": "הטעינה נכשלה",
+        "saveFailed": "השמירה נכשלה",
+        "archiveFailed": "העברה לארכיון נכשלה",
+        "deleteFailed": "המחיקה נכשלה",
+        "duplicateFailed": "לא ניתן לשכפל",
+        "pickDateTime": "בחרו תאריך ושעה.",
+        "pickDate": "בחרו תאריך.",
+        "videoRequired": "וידאו נדרש."
+      },
+      "dialogs": {
+        "archiveTitle": "העברת תוכן לארכיון",
+        "archiveMessage": "להעביר פריט זה לארכיון? הוא יוסתר מלוח השנה ולא יפורסם.",
+        "archiveConfirm": "ארכיון",
+        "deleteTitle": "מחיקת תוכן",
+        "deleteMessage": "למחוק פריט זה לצמיתות? לא ניתן לבטל.",
+        "deleteConfirm": "מחיקה"
+      }
+    },
+    "platforms": {
+      "connectedLabel": "פלטפורמות מחוברות",
+      "connectedSubtitle": "הקישו על פלטפורמה לפרטים",
+      "connectedCount": "מחובר:",
+      "connectedHintNone": "חברו לפחות פלטפורמה אחת כדי להתחיל.",
+      "connectedHintSome": "הקישו על פלטפורמה לפרטים ←",
+      "noConnected": "אין פלטפורמות מחוברות עדיין.",
+      "yourPlatforms": "הפלטפורמות שלכם",
+      "statusOverview": "סקירת סטטוס",
+      "searchPlaceholder": "חיפוש (שם, רמז, חשבון)…",
+      "connectedOnly": "מחוברות בלבד",
+      "resetDemo": "איפוס דמו",
+      "noMatch": "אין פלטפורמות שתואמות לסינון.",
+      "account": "חשבון",
+      "lastSync": "סנכרון אחרון",
+      "sync": "סנכרון",
+      "disconnect": "ניתוק",
+      "connect": "חיבור",
+      "noSync": "ללא סנכרון",
+      "pinterestConnectFailed": "Pinterest: לא ניתן לחבר חשבון",
+      "pinterestNetworkError": "Pinterest: שגיאת רשת"
+    },
+    "inbox": {
+      "label": "תיבת דואר נכנס",
+      "subtitle": "מקום אחד לתגובות, הודעות פרטיות ואזכורים בערוצים מחוברים — תצוגה מקדימה לסקירה.",
+      "demoBanner": "נתוני תצוגה מקדימה בלבד. מסך זה לא מחובר לרשתות חיות.",
+      "demoEyebrow": "דמו",
+      "unreadBadge": "לא נקרא",
+      "unreadSummary": "{count} לא נקראו",
+      "threads": "שרשורים",
+      "listEmpty": "אין התאמה לסינון.",
+      "pickThread": "בחרו שרשור מהרשימה לקריאת הודעות וניסיון תיבת התשובה.",
+      "back": "שרשורים",
+      "connectedAs": "מחובר כ",
+      "notConnected": "לא מחובר בדמו זה",
+      "sampleDisconnected": "דוגמה",
+      "markRead": "סימון כנקרא",
+      "readState": "נקרא",
+      "conversation": "שיחה",
+      "replyLabel": "תשובה",
+      "replyPlaceholder": "כתבו תשובה קצרה…",
+      "replyHint": "דמו: תשובות נשמרות במושב הדפדפן ולא נשלחות לשום פלטפורמה.",
+      "send": "שליחה",
+      "sentDemo": "נשמר למושב זה (דמו).",
+      "justNow": "עכשיו",
+      "kindComment": "תגובה",
+      "kindDm": "הודעה פרטית",
+      "kindMention": "אזכור",
+      "sort": {
+        "label": "מיון",
+        "newest": "החדש ביותר",
+        "oldest": "הישן ביותר",
+        "unread": "לא נקראו קודם"
+      },
+      "filter": {
+        "all": "הכל",
+        "channels": "ערוצים",
+        "connectedOnly": "ערוצים מחוברים בלבד"
+      },
+      "dialog": {
+        "title": "מיון וערוצים",
+        "subtitle": "בחרו איך לסדר שרשורים ואילו מקורות להציג. פלטפורמות שלא חיברתם נשארות מושבתות — הוסיפו אותן תחת פלטפורמות עם «תיבת דואר נכנס מאוחדת».",
+        "done": "סיום",
+        "cancel": "ביטול",
+        "openButtonAria": "פתיחת אפשרויות מיון וערוצים",
+        "sortSection": "סדר",
+        "channelsSection": "פלטפורמות",
+        "channelUnavailable": "חברו בפלטפורמות עם תיבת דואר נכנס מאוחדת כדי להשתמש בסינון."
+      },
+      "noSourcesTitle": "אין מקורות לתיבת דואר נכנס",
+      "noSourcesBody": "פתחו פלטפורמות, חברו ערוץ והפעילו «תיבת דואר נכנס מאוחדת» בהרשאות. רק ערוצים אלה יופיעו כאן כסינון, והשרשורים שלהם ברשימה.",
+      "platform": {
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "tiktok": "TikTok",
+        "facebook": "Facebook",
+        "pinterest": "Pinterest",
+        "linkedin": "LinkedIn",
+        "telegram": "Telegram"
+      }
+    },
+    "connection": {
+      "online": "מחובר",
+      "offline": "לא מחובר",
+      "ariaConnected": "{state}, מחובר",
+      "ariaDisconnected": "{state}, לא מחובר"
+    },
+    "locale": {
+      "label": "שפה",
+      "en": "English",
+      "he": "עברית",
+      "ru": "Русский"
+    },
+    "automations": {
+      "subtitleAll": "נהלו תהליכים ובנו לוגיקת אוטומציה.",
+      "flowNamePlaceholder": "שם תהליך",
+      "allFlows": "כל התהליכים",
+      "createFlow": "יצירת תהליך",
+      "creating": "יוצר…",
+      "saving": "שומר…",
+      "edit": "עריכה",
+      "delete": "מחיקה",
+      "noFlows": "אין תהליכים עדיין. לחצו",
+      "noFlowsCta": "יצירת תהליך",
+      "stepSettings": "הגדרות שלב",
+      "type": "סוג",
+      "message": "הודעה",
+      "notificationPlaceholder": "טקסט התראה",
+      "contentType": "סוג תוכן",
+      "json": "JSON",
+      "selectStep": "בחרו שלב לעריכת הגדרות.",
+      "backToAll": "חזרה לכל התהליכים",
+      "deleteFlow": "מחיקת תהליך",
+      "deleteConfirm": "למחוק את {name}? לא ניתן לבטל.",
+      "updatedAt": "{status} • עודכן {date}"
+    },
+    "bots": {
+      "subtitleAll": "צרו בוטים לתשובות לתגובות/הודעות פרטיות, ואז השתמשו בהם כצמתים בתהליכים.",
+      "botNamePlaceholder": "שם בוט",
+      "allBots": "כל הבוטים",
+      "createBot": "יצירת בוט",
+      "rulesLabel": "כללים (טקסט פשוט)",
+      "rulesPlaceholder": "תארו מתי הבוט צריך להגיב…",
+      "noBots": "אין בוטים עדיין.",
+      "noBotsCta": "יצירת בוט",
+      "behaviorTitle": "התנהגות",
+      "behaviorHint": "placeholder קל. הבא: כללים מובנים (כוונות, מילות מפתח, תבניות) וקונסולת בדיקה.",
+      "botInfoTitle": "מידע על הבוט",
+      "useInFlows": "הבא: חשיפת בוט זה כצומת פעולה באוטומציות."
+    },
+    "reelPlatforms": {
+      "title": "בחירת פלטפורמות",
+      "subtitle": "בחרו לאן לפרסם reel זה.",
+      "platformSubtitles": {
+        "youtube": "סרטונים ותזמון",
+        "tiktok": "הפצת תוכן קצר",
+        "instagram": "Reels ופרסום חוצה",
+        "facebook": "דפים ופרסום וידאו",
+        "pinterest": "Pins ולוחות",
+        "linkedin": "פוסטים ומאמרים"
+      }
+    },
+    "platformConnect": {
+      "permissions": "הרשאות",
+      "connect": "חיבור {platform}",
+      "intro": "בחרו למה לאפליקציה יש גישה. אפשר לשנות זאת מאוחר יותר בהגדרות.",
+      "agreeTitle": "סקרתי ואני מסכים/ה",
+      "agreeBody": "אני מבין/ה אילו נתונים ייגשו אליהם ואני מסכים/ה להעניק את ההרשאות שנבחרו.",
+      "requiredHint": "היקפים נדרשים נעולים כדי למנוע חיבורים שבורים.",
+      "continue": "המשך"
+    },
+    "preview": {
+      "live": "חי",
+      "avatar": "avatar",
+      "publicPath": "/u/{handle}"
+    },
+    "metaTitle": "KONT Studio — סביבת העבודה השקטה לתוכן",
+    "metaDescription": "יצירה, ניהול וצמיחה של התוכן שלכם מסביבת עבודה אחת שקטה וממוקדת.",
+    "kicker": "KONT Studio",
+    "title": "איפה שהעבודה נשארת שקטה",
+    "subtitle": "שלושה מרחבים. זרימה אחת. בחרו איפה לעבוד.",
+    "back": "חזרה",
+    "sectionInfo": "על מקטע זה",
+    "account": {
+      "label": "חשבון",
+      "logout": "התנתקות",
+      "support": "יצירת קשר עם התמיכה",
+      "settings": "הגדרות",
+      "supportEmail": "support@kont.app"
+    },
+    "createCta": "יצירת {label}",
+    "sections": {
+      "create": {
+        "label": "יצירה",
+        "tagline": "הפכו רעיונות למציאות — כתיבה, כיתוב ואוטומציה מקנבס אחד שקט."
+      },
+      "manage": {
+        "label": "ניהול",
+        "tagline": "שמרו כל פוסט במסלול — תכנון, סקירה ופרסום בלי רעש."
+      },
+      "grow": {
+        "label": "צמיחה",
+        "tagline": "הפכו ביצועים לצעד הבא — קראו את האותות, פעלו לפי מה שעובד."
+      }
+    },
+    "items": {
+      "content": {
+        "label": "תוכן",
+        "hint": "טיוטה אחת, כל ערוץ"
+      },
+      "sub": {
+        "label": "כתוביות",
+        "hint": "כיתובים בלי עבודה סיזיפית"
+      },
+      "bot": {
+        "label": "עוזר",
+        "hint": "רעיונות כשצריך"
+      },
+      "automations": {
+        "label": "אוטומציות",
+        "hint": "תהליכי עבודה על טייס אוטומטי"
+      },
+      "calendar": {
+        "label": "לוח שנה",
+        "hint": "השבוע שלכם, ממופה"
+      },
+      "inbox": {
+        "label": "תיבת דואר נכנס",
+        "hint": "כל תשובה, שולחן אחד"
+      },
+      "drafts": {
+        "label": "טיוטות",
+        "hint": "רעיונות שממתינים לשחרור"
+      },
+      "accounts": {
+        "label": "חשבונות",
+        "hint": "כל הערוצים, קישור אחד"
+      },
+      "queue": {
+        "label": "תור",
+        "hint": "הבא בתור, תמיד ברור"
+      },
+      "archive": {
+        "label": "ארכיון",
+        "hint": "כל מה ששחררתם"
+      },
+      "analytics": {
+        "label": "אנליטיקה",
+        "hint": "צמיחה שאפשר לקרוא"
+      },
+      "insights": {
+        "label": "תובנות",
+        "hint": "אותות שכדאי לפעול לפיהם"
+      },
+      "reports": {
+        "label": "דוחות",
+        "hint": "ניצחונות, משותפים בנקיות"
+      },
+      "audience": {
+        "label": "קהל",
+        "hint": "דעו מי צופה"
+      },
+      "experiments": {
+        "label": "ניסויים",
+        "hint": "בדקו. למדו. חזרו."
+      }
+    },
+    "detail": {
+      "kicker": "בסטודיו",
+      "body": "מרחב זה מתגבש. בקרוב תעבדו כאן בפרטים שקטים וממוקדים — בלי עומס, בלי לחץ.",
+      "primary": "הודיעו לי כשמוכן",
+      "secondary": "חזרה ל{section}"
+    },
+    "itemDetails": {
+      "sub": {
+        "body": "כתוביות אוטומטיות לכל clip — תזמון, סגנון ושפה בפאנל שקט אחד.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "drafts": {
+        "body": "הרעיונות הלא גמורים שלכם כאן — המשיכו מאיפה שעצרתם, בלי לחפש בתיקיות.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "queue": {
+        "body": "ראו מה יוצא הבא, לפי סדר. גררו, השהו או תזמנו מחדש בלי לשבור את הזרימה.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "archive": {
+        "body": "כל מה שכבר פרסמתם — ניתן לחיפוש, לסינון, תמיד בהישג יד.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "analytics": {
+        "body": "חשיפה, מעורבות וצמיחה בקריאה אחת שקטה — בלי דשבורדים שצועקים.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "insights": {
+        "body": "אותות שאפשר באמת לפעול לפיהם. לא גרפים לכבוד — צעדים ברורים הבאים.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "reports": {
+        "body": "שתפו ניצחונות אוטומטית. סיכומים שבועיים שהצוות באמת יקרא.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "audience": {
+        "body": "הבינו מי באמת צופה — קטעים, הרגלים ודפוסים שקטים.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "experiments": {
+        "body": "בדקו hooks, תמונות ממוזערות ותזמון. למדו מהר, חזרו על מה שעובד.",
+        "primary": "הצטרפות לרשימת המתנה"
+      }
+    }
+  },
+  "demoModal": {
+    "title": "בקשת הדגמה",
+    "subtitle": "השאירו אימייל — ניצור קשר עם פרטי גישה מוקדמת.",
+    "emailLabel": "אימייל עבודה",
+    "emailPlaceholder": "you@company.com",
+    "submit": "בקשת הדגמה",
+    "submitting": "שולח…",
+    "successTitle": "אתם ברשימה",
+    "successBody": "תודה — ניצור קשר בקרוב.",
+    "close": "סגירה",
+    "errorInvalid": "הזינו כתובת אימייל תקינה."
+  },
+  "calendar": {
+    "back": "חזרה",
+    "title": "לוח שנה",
+    "subtitle": "תכננו רילס ופוסטים. הקישו על יום עתידי ליצירת תוכן או סקירת מה שמתוזמן.",
+    "month": "חודש",
+    "year": "שנה",
+    "prevMonth": "חודש קודם",
+    "nextMonth": "חודש הבא",
+    "today": "היום",
+    "cellAria": "פתיחת אירועים ל-{dateKey}",
+    "otherMonth": "אחר",
+    "more": "+{count} נוספים…",
+    "schedule": {
+      "studioSubtitle": "בחרו יום משמאל לתצוגה מקדימה של תוכן מתוזמן. הוסיפו או פתחו פריט מהפאנל מימין.",
+      "monthHeading": "תקופה נוכחית",
+      "gridHint": "הקישו על יום לתצוגה מקדימה של התוכן. החליקו את לוח השנה אופקית במסכים צרים.",
+      "scrollCalendarHint": "החליקו את לוח השנה שמאלה או ימינה לראות את כל הימים.",
+      "dayPreviewEyebrow": "תצוגה מקדימה ליום",
+      "dayPreviewPickDay": "בחרו יום",
+      "dayPreviewPickDayHint": "הקישו על יום בלוח השנה לראות פוסטים ורילס מתוזמנים.",
+      "dayPreviewEmpty": "אין תוכן מתוזמן ליום זה.",
+      "dayPreviewCount": "{count} מתוזמנים",
+      "dayPreviewAdd": "הוספת תוכן",
+      "eventsEyebrow": "אירועים",
+      "eventsTitle": "אירועי וידאו",
+      "postsEyebrow": "פוסטים",
+      "postsTitle": "פוסטים מתוזמנים",
+      "postsMonthEyebrow": "החודש",
+      "postsMonthTitle": "פוסטים מתוזמנים",
+      "postsMonthSubtitle": "רק פוסטים מהיום ועד סוף החודש שנבחר. Reels, פריטים ישנים והרשימה המלאה ב«תוכן».",
+      "noPostsThisWindow": "אין פוסטים מתוזמנים בתקופה זו.",
+      "pastMonthCalendar": "החודש כבר הסתיים. פתחו «תוכן» לעיון בארכיון המלא.",
+      "colDate": "תאריך",
+      "colTime": "שעה",
+      "colTitle": "כותרת",
+      "colHashtags": "האשטאגים",
+      "colActions": "פעולות",
+      "noEvents": "אין אירועי וידאו עדיין.",
+      "noPosts": "אין פוסטים מתוזמנים עדיין.",
+      "cellPostsCount": "פוסטים {count}",
+      "cellReelsCount": "Reels {count}"
+    },
+    "modal": {
+      "closeOverlay": "סגירת חלון",
+      "newVideoEvent": "אירוע וידאו חדש",
+      "eventDetails": "פרטי אירוע",
+      "dateKey": "מפתח תאריך: {dateKey}",
+      "close": "סגירה",
+      "cancel": "ביטול",
+      "video": "וידאו",
+      "autoTags": "תגיות אוטומטיות",
+      "pickPlatforms": "בחרו פלטפורמות ליצירת תגיות",
+      "title": "כותרת",
+      "titlePlaceholder": "למשל טיזר להשקת מוצר",
+      "time": "שעה",
+      "description": "תיאור",
+      "descriptionPlaceholder": "הוסיפו הערות…",
+      "hashtags": "האשטאגים",
+      "hashtagsPlaceholder": "למשל #creator #reels #tiktok",
+      "saveEvent": "שמירת אירוע",
+      "errors": {
+        "selectVideoFile": "בחרו קובץ וידאו.",
+        "videoTooLarge": "הווידאו גדול מדי ל-localStorage ({mb}MB). נסו קובץ קטן יותר.",
+        "failedReadVideo": "קריאת הווידאו נכשלה.",
+        "pickDate": "בחרו תאריך.",
+        "pastDay": "לא ניתן להוסיף פוסט לתאריך שעבר.",
+        "pastTime": "לא ניתן להוסיף פוסט לשעה שעברה."
+      }
+    }
+  },
+  "auth": {
+    "showPassword": "הצגת סיסמה",
+    "hidePassword": "הסתרת סיסמה",
+    "cancel": "ביטול",
+    "validation": {
+      "required": "שדה חובה.",
+      "identifierRequired": "הזינו אימייל או שם משתמש.",
+      "invalidEmail": "הזינו כתובת אימייל תקינה.",
+      "passwordMin": "לפחות 8 תווים.",
+      "passwordsMismatch": "הסיסמאות אינן תואמות.",
+      "nameRequired": "הזינו שם.",
+      "loginPattern": "3–30 תווים: אותיות קטנות, ספרות או קו תחתון.",
+      "emailTaken": "האימייל כבר רשום.",
+      "loginTaken": "שם המשתמש כבר תפוס.",
+      "invalidCredentials": "אימייל, שם משתמש או סיסמה לא תקינים.",
+      "ambiguousLogin": "כמה חשבונות תואמים לשם זה. התחברו עם כתובת האימייל המלאה."
+    },
+    "login": {
+      "welcome": "ברוכים השבים ל-KONT.",
+      "title": "התחברות",
+      "subtitle": "השתמשו באימייל או שם משתמש וסיסמה.",
+      "emailLabel": "אימייל או שם משתמש",
+      "passwordLabel": "סיסמה",
+      "errorLabel": "שגיאה",
+      "invalidCredentials": "אימייל, שם משתמש או סיסמה לא תקינים",
+      "submit": "התחברות",
+      "submitting": "מתחבר…",
+      "noAccount": "אין חשבון עדיין?",
+      "createOne": "צרו אחד"
+    },
+    "register": {
+      "brand": "KONT",
+      "modalTitle": "יצירת חשבון KONT",
+      "title": "יצירת חשבון",
+      "subtitle": "התחילו עם סביבת עבודה שקטה לכל ערוץ.",
+      "firstName": "שם פרטי",
+      "lastName": "שם משפחה",
+      "login": "שם משתמש",
+      "email": "אימייל",
+      "password": "סיסמה",
+      "confirmPassword": "אימות סיסמה",
+      "loginPattern": "3–30 תווים: אותיות, ספרות, קו תחתון",
+      "loginHint": "אותיות קטנות, ספרות וקו תחתון בלבד.",
+      "marketingOptIn": "שלחו לי עדכוני מוצר וטיפים (אופציונלי).",
+      "errorTitle": "לא ניתן ליצור חשבון",
+      "submit": "יצירת חשבון",
+      "submitting": "יוצר חשבון…",
+      "hasAccount": "כבר יש חשבון?",
+      "signIn": "התחברות",
+      "placeholders": {
+        "firstName": "Alex",
+        "lastName": "Morgan",
+        "login": "alex_morgan",
+        "email": "you@company.com",
+        "password": "לפחות 8 תווים",
+        "confirmPassword": "חזרה על הסיסמה"
+      }
+    }
+  },
+  "common": {
+    "breadcrumb": {
+      "home": "בית",
+      "info": "מידע",
+      "permissions": "הרשאות",
+      "aboutUs": "אודות",
+      "products": "מוצרים"
+    },
+    "loading": {
+      "page": "טוען דף",
+      "preview": "טוען תצוגה מקדימה",
+      "editor": "טוען עורך",
+      "studio": "טוען סטודיו",
+      "register": "טוען…"
+    },
+    "theme": {
+      "label": "ערכת נושא",
+      "luxury": "Luxury",
+      "dark": "Dark"
+    },
+    "enabled": "מופעל",
+    "disabled": "מושבת",
+    "close": "סגירה",
+    "cancel": "ביטול",
+    "save": "שמירה",
+    "edit": "עריכה",
+    "delete": "מחיקה",
+    "required": "נדרש",
+    "panel": "פאנל",
+    "back": "חזרה",
+    "draft": "טיוטה",
+    "updated": "עודכן"
+  }
+}

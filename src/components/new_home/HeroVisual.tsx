@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useMessages } from "@/contexts/messages-context";
 import { useCountUp } from "@/hooks/useCountUp";
+import { landingDemoEn } from "@/lib/i18n/landingDemoEn";
 
 const METRIC_ICONS = [TrendingUp, Layers, LayoutGrid] as const;
 const TAG_ICONS = [Shield, Sparkles, Activity] as const;
@@ -178,8 +178,8 @@ function HeroMobileSideStat({
 }
 
 function HeroVisualMobile() {
-  const { landing } = useMessages();
-  const h = landing.hero;
+  // Demo UI stays English regardless of site locale.
+  const h = landingDemoEn.hero;
   const metrics = h.pulse.metrics;
   const tags = h.tags;
   const activities = h.pulse.activities;
@@ -309,11 +309,12 @@ function HeroVisualMobile() {
 }
 
 export function HeroVisual() {
-  const { landing } = useMessages();
-  const metrics = landing.hero.pulse.metrics;
-  const tags = landing.hero.tags;
-  const activities = landing.hero.pulse.activities;
-  const insights = landing.hero.pulse.insights;
+  // Demo UI stays English regardless of site locale.
+  const h = landingDemoEn.hero;
+  const metrics = h.pulse.metrics;
+  const tags = h.tags;
+  const activities = h.pulse.activities;
+  const insights = h.pulse.insights;
   const orbitRef = useRef<HTMLDivElement>(null);
 
   const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {

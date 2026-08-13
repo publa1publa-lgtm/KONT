@@ -1,16 +1,15 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import { Inter, Syne } from "next/font/google";
+import localFont from "next/font/local";
+import { headers } from "next/headers";
 
-import { DemoModalProvider } from "@/contexts/demo-modal-context";
-import { MessagesProvider } from "@/contexts/messages-context";
-import { loadMessages } from "@/i18n/messages";
-import { RequestDemoModal } from "@/components/layout/RequestDemoModal";
+import { DEFAULT_LOCALE, isRtlLocale, isValidLocale, type AppLocale } from "@/i18n/config";
 
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin", "latin-ext", "cyrillic"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
@@ -22,7 +21,11 @@ const syne = Syne({
   display: "swap",
 });
 
-const messages = loadMessages();
+const hebrewFont = localFont({
+  src: "../../public/fonts/gladiaclm_he.ttf",
+  variable: "--font-hebrew",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   themeColor: "#08080c",
@@ -31,39 +34,22 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export const metadata: Metadata = {
-  title: messages.meta.title,
-  description: messages.meta.description,
-  icons: {
-    icon: [{ url: "/brand/kont-logo.svg", type: "image/svg+xml" }],
-    apple: "/brand/kont-logo.svg",
-  },
-  openGraph: {
-    title: messages.meta.title,
-    description: messages.meta.description,
-    type: "website",
-  },
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerLocale = (await headers()).get("x-kont-locale");
+  const locale: AppLocale = isValidLocale(headerLocale) ? headerLocale : DEFAULT_LOCALE;
+  const dir = isRtlLocale(locale) ? "rtl" : "ltr";
+
   return (
     <html
-      lang="en"
-      className={`${inter.variable} ${syne.variable} h-full scroll-smooth antialiased`}
+      lang={locale}
+      dir={dir}
+      className={`${inter.variable} ${syne.variable} ${hebrewFont.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="font-body flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)]">
-        <MessagesProvider messages={messages}>
-          <DemoModalProvider>
-            <div className="grain" aria-hidden />
-            <div className="relative z-10 flex min-h-full flex-col">{children}</div>
-            <RequestDemoModal />
-          </DemoModalProvider>
-        </MessagesProvider>
-      </body>
+      <body className="font-body flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)]">{children}</body>
     </html>
   );
 }

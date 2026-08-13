@@ -15,7 +15,7 @@ import type { ContentApiItem } from "@/lib/contentApi";
 import { CONTENT_LIST_CHANGED_EVENT, deleteContent, fetchContents, notifyContentListChanged, updateContent } from "@/lib/contentApi";
 import { contentsToCalendarMaps } from "@/lib/contentMappers";
 import { saveComposerPost, saveComposerReel, updateComposerPost, updateComposerReel } from "@/lib/saveComposerContent";
-import { formatStudioCreateCta } from "./StudioCreateButton";
+import { formatStudioCreateCta, StudioCreateButton } from "./StudioCreateButton";
 
 export function CalendarView() {
   const { locale, messages } = useI18n();
@@ -184,21 +184,18 @@ export function CalendarView() {
                 {isSelectedToday ? <span className="studio-calendar__today-pill">{C.today}</span> : null}
               </div>
             </div>
+            {previewDayKey && previewCanAdd ? (
+              <StudioCreateButton
+                type="button"
+                onClick={openAddForPreviewDay}
+                className="studio-create-btn--toolbar shrink-0"
+              >
+                {formatStudioCreateCta(messages.studio.createCta, messages.studio.items.content.label)}
+              </StudioCreateButton>
+            ) : null}
           </div>
 
           {error ? <p className="studio-calendar__error">{error}</p> : null}
-
-          <CalendarDayPreviewPanel
-            className="studio-calendar__preview"
-            variant="studio-toolbar"
-            showItemList={narrowLayout}
-            dayKey={previewDayKey}
-            items={apiItems}
-            canAdd={previewCanAdd}
-            createLabel={formatStudioCreateCta(messages.studio.createCta, messages.studio.items.content.label)}
-            onSelectItem={(id) => void openEditFromApi(id)}
-            onAdd={openAddForPreviewDay}
-          />
 
           <div className="studio-calendar__controls">
             <div className="studio-calendar__nav">
@@ -211,7 +208,7 @@ export function CalendarView() {
                 <CaretLeftIcon className="h-5 w-5" weight="bold" aria-hidden />
               </button>
 
-              <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-2 lg:flex lg:flex-none lg:gap-2">
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-2 sm:flex sm:flex-none sm:gap-2">
                 <SelectMenu
                   variant="studio"
                   label={C.month}
@@ -241,6 +238,22 @@ export function CalendarView() {
                 <CaretRightIcon className="h-5 w-5" weight="bold" aria-hidden />
               </button>
             </div>
+
+            {narrowLayout ? (
+              <CalendarDayPreviewPanel
+                className="studio-calendar__preview-strip"
+                variant="studio-toolbar"
+                showMeta={false}
+                showItemList
+                showCreateButton={false}
+                dayKey={previewDayKey}
+                items={apiItems}
+                canAdd={previewCanAdd}
+                createLabel={formatStudioCreateCta(messages.studio.createCta, messages.studio.items.content.label)}
+                onSelectItem={(id) => void openEditFromApi(id)}
+                onAdd={openAddForPreviewDay}
+              />
+            ) : null}
           </div>
         </header>
 

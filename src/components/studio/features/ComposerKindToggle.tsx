@@ -76,7 +76,7 @@ export function ComposerKindToggle({ kind, allowed, onChange, labels, ariaLabel 
           onClick={() => onChange("post")}
           icon={ImageIcon}
           label={labels.post}
-          ratio="1:1"
+          ratio="4:5"
           selectedClass="text-[var(--fg)]"
         />
       ) : null}
