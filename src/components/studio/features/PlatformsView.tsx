@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronRight, Link2, Search } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import {
   STUDIO_PLATFORMS_STORAGE_KEY,
@@ -9,7 +10,6 @@ import {
 } from "@/lib/studioPlatformsStorage";
 import { isReelPlatformId } from "@/lib/reelPlatformIds";
 import { INBOX_UNIFIED_PERMISSION_ID } from "@/lib/studioInboxPermissions";
-import { ChevronDown } from "lucide-react";
 import {
   DiscordLogo,
   DropboxLogo,
@@ -29,7 +29,17 @@ import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { StudioHeader } from "./StudioHeader";
 import { ConnectionToggle } from "./ConnectionToggle";
 import { PlatformPermissionsModal } from "./PlatformPermissionsModal";
-import { PLATFORM_CARD_ACCENT, PLATFORM_CARD_SURFACE_CLASS, PLATFORM_CARD_ACCENT_OVERLAY_OPACITY, PLATFORM_CHIP_ACCENT_OVERLAY_OPACITY, PLATFORM_PANEL_SURFACE_CLASS, platformAccentOverlay, platformIconTileStyle } from "./platformCardStyles";
+import { StudioWrapperList, StudioWrapperListBody, StudioWrapperListRow } from "./StudioWrapperList";
+import {
+  PLATFORM_CARD_ACCENT,
+  PLATFORM_CARD_ACCENT_OVERLAY_OPACITY,
+  PLATFORM_CARD_SURFACE_CLASS,
+  PLATFORM_PANEL_SURFACE_CLASS,
+  platformAccentOverlay,
+  platformBrandAccent,
+  platformGroupAccent,
+  platformIconTileStyle,
+} from "./platformCardStyles";
 
 type PlatformId =
   | "youtube"
@@ -67,7 +77,6 @@ const PLATFORM_META: Array<{
   label: string;
   subtitle: string;
   hint: string;
-  accent: string;
 }> = [
   {
     id: "youtube",
@@ -75,7 +84,6 @@ const PLATFORM_META: Array<{
     label: "YouTube",
     subtitle: "Upload & schedule videos",
     hint: "OAuth (Google) — scopes, channel access",
-    accent: "var(--ice)",
   },
   {
     id: "tiktok",
@@ -83,7 +91,6 @@ const PLATFORM_META: Array<{
     label: "TikTok",
     subtitle: "Short-form distribution",
     hint: "OAuth — account + posting permissions",
-    accent: "var(--ice)",
   },
   {
     id: "instagram",
@@ -91,7 +98,6 @@ const PLATFORM_META: Array<{
     label: "Instagram",
     subtitle: "Reels & cross-post",
     hint: "Meta — IG account + page linkage",
-    accent: "var(--ice)",
   },
   {
     id: "facebook",
@@ -99,7 +105,6 @@ const PLATFORM_META: Array<{
     label: "Facebook",
     subtitle: "Pages & video publishing",
     hint: "Meta — pages_manage_posts, publish_video",
-    accent: "var(--ice)",
   },
   {
     id: "pinterest",
@@ -107,7 +112,6 @@ const PLATFORM_META: Array<{
     label: "Pinterest",
     subtitle: "Pins & boards",
     hint: "OAuth — create pins, read boards",
-    accent: "var(--ice)",
   },
   {
     id: "linkedin",
@@ -115,7 +119,6 @@ const PLATFORM_META: Array<{
     label: "LinkedIn",
     subtitle: "Posts & articles",
     hint: "OAuth — organization & member publishing",
-    accent: "var(--ice)",
   },
   {
     id: "telegram",
@@ -123,7 +126,6 @@ const PLATFORM_META: Array<{
     label: "Telegram",
     subtitle: "Bots & notifications",
     hint: "Bot API — token-based, no heavy review",
-    accent: "var(--ice)",
   },
   {
     id: "discord",
@@ -131,7 +133,6 @@ const PLATFORM_META: Array<{
     label: "Discord",
     subtitle: "Team notifications",
     hint: "Webhook — paste URL, send messages",
-    accent: "var(--ice)",
   },
   {
     id: "email",
@@ -139,7 +140,6 @@ const PLATFORM_META: Array<{
     label: "Email",
     subtitle: "Universal alerts",
     hint: "SMTP / provider API key",
-    accent: "var(--ice)",
   },
   {
     id: "notion",
@@ -147,7 +147,6 @@ const PLATFORM_META: Array<{
     label: "Notion",
     subtitle: "Content planning database",
     hint: "Integration token + shared pages/databases",
-    accent: "var(--ice)",
   },
   {
     id: "googleDrive",
@@ -155,7 +154,6 @@ const PLATFORM_META: Array<{
     label: "Google Drive",
     subtitle: "Import/export assets",
     hint: "OAuth — Drive scopes",
-    accent: "var(--ice)",
   },
   {
     id: "dropbox",
@@ -163,9 +161,10 @@ const PLATFORM_META: Array<{
     label: "Dropbox",
     subtitle: "Import/export assets",
     hint: "OAuth — Dropbox scopes",
-    accent: "var(--ice)",
   },
 ];
+
+const GROUP_ORDER: PlatformGroupId[] = ["social", "messengers", "productivity", "storage", "notifications"];
 
 function PlatformIcon({ id, className }: { id: PlatformId; className?: string }) {
   switch (id) {
@@ -196,6 +195,17 @@ function PlatformIcon({ id, className }: { id: PlatformId; className?: string })
   }
 }
 
+function formatRelative(ms: number): string {
+  const d = Math.max(0, Date.now() - ms);
+  const min = Math.round(d / 60_000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const h = Math.round(min / 60);
+  if (h < 48) return `${h}h ago`;
+  const days = Math.round(h / 24);
+  return `${days}d ago`;
+}
+
 function defaultState(): PlatformState[] {
   return PLATFORM_META.map((p) => ({ id: p.id, connected: false, account: null, grantedPermissionIds: [] }));
 }
@@ -220,13 +230,14 @@ function safeParse(raw: string | null): PlatformState[] {
       const account =
         accountRaw &&
         typeof accountRaw === "object" &&
-        typeof (accountRaw as any).displayName === "string" &&
-        typeof (accountRaw as any).connectedAt === "number" &&
-        (typeof (accountRaw as any).lastSyncAt === "number" || (accountRaw as any).lastSyncAt === null)
+        typeof (accountRaw as { displayName?: unknown }).displayName === "string" &&
+        typeof (accountRaw as { connectedAt?: unknown }).connectedAt === "number" &&
+        (typeof (accountRaw as { lastSyncAt?: unknown }).lastSyncAt === "number" ||
+          (accountRaw as { lastSyncAt?: unknown }).lastSyncAt === null)
           ? ({
-              displayName: (accountRaw as any).displayName,
-              connectedAt: (accountRaw as any).connectedAt,
-              lastSyncAt: (accountRaw as any).lastSyncAt,
+              displayName: (accountRaw as ConnectedAccount).displayName,
+              connectedAt: (accountRaw as ConnectedAccount).connectedAt,
+              lastSyncAt: (accountRaw as ConnectedAccount).lastSyncAt,
             } satisfies ConnectedAccount)
           : null;
 
@@ -261,16 +272,11 @@ export function PlatformsView() {
   const [activeId, setActiveId] = useState<PlatformId | null>(null);
   const [query, setQuery] = useState("");
   const [connectedOnly, setConnectedOnly] = useState(false);
+  const [groupFilter, setGroupFilter] = useState<PlatformGroupId | "all">("all");
   const [qcOpen, setQcOpen] = useState(false);
   const [permOpen, setPermOpen] = useState(false);
   const [permPlatformId, setPermPlatformId] = useState<PlatformId | null>(null);
-  const [openGroups, setOpenGroups] = useState<Record<PlatformGroupId, boolean>>({
-    social: true,
-    messengers: true,
-    storage: true,
-    productivity: true,
-    notifications: true,
-  });
+  const catalogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const parsed = readStoredPlatforms();
@@ -290,15 +296,22 @@ export function PlatformsView() {
   }, [platforms]);
 
   const connectedCount = useMemo(() => platforms.filter((p) => p.connected).length, [platforms]);
+  const connectedPlatforms = useMemo(() => platforms.filter((p) => p.connected), [platforms]);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
     const merged = PLATFORM_META.map((meta) => {
-      const state = platforms.find((p) => p.id === meta.id) ?? { id: meta.id, connected: false, account: null };
+      const state = platforms.find((p) => p.id === meta.id) ?? {
+        id: meta.id,
+        connected: false,
+        account: null,
+        grantedPermissionIds: [],
+      };
       return { meta, state };
     });
-    const filtered = merged.filter(({ meta, state }) => {
+    return merged.filter(({ meta, state }) => {
       if (connectedOnly && !state.connected) return false;
+      if (groupFilter !== "all" && meta.group !== groupFilter) return false;
       if (!q) return true;
       return (
         meta.label.toLowerCase().includes(q) ||
@@ -307,26 +320,17 @@ export function PlatformsView() {
         (state.account?.displayName ?? "").toLowerCase().includes(q)
       );
     });
-    // Keep a stable order (no UI jumping on connect/disconnect)
-    return filtered;
-  }, [connectedOnly, platforms, query]);
+  }, [connectedOnly, groupFilter, platforms, query]);
 
-  const groups = useMemo(() => {
-    const byGroup = new Map<PlatformGroupId, typeof list>();
-    for (const g of ["social", "messengers", "productivity", "storage", "notifications"] as const) byGroup.set(g, []);
-    for (const item of list) byGroup.get(item.meta.group)!.push(item);
-    return byGroup;
-  }, [list]);
-
-  const groupMeta: Record<PlatformGroupId, { title: string; subtitle: string }> = useMemo(
+  const groupLabels: Record<PlatformGroupId, string> = useMemo(
     () => ({
-      social: { title: "Social networks", subtitle: "Publish and manage content on social platforms" },
-      messengers: { title: "Messengers", subtitle: "Fast token-based messaging integrations" },
-      productivity: { title: "Productivity", subtitle: "Docs and planning tools (databases, pages)" },
-      storage: { title: "Storage", subtitle: "Import/export assets to cloud storage" },
-      notifications: { title: "Notifications", subtitle: "Send alerts to your team or inbox" },
+      social: P.groupSocial,
+      messengers: P.groupMessengers,
+      productivity: P.groupProductivity,
+      storage: P.groupStorage,
+      notifications: P.groupNotifications,
     }),
-    [],
+    [P.groupMessengers, P.groupNotifications, P.groupProductivity, P.groupSocial, P.groupStorage],
   );
 
   const activePlatform = useMemo(() => {
@@ -338,9 +342,9 @@ export function PlatformsView() {
 
   useEffect(() => {
     if (!activeId) return;
-    const stillVisible = list.some((x) => x.meta.id === activeId);
-    if (!stillVisible) setActiveId(list[0]?.meta.id ?? null);
-  }, [activeId, list]);
+    const stillVisible = list.some((x) => x.meta.id === activeId) || connectedPlatforms.some((p) => p.id === activeId);
+    if (!stillVisible && list[0]) setActiveId(list[0].meta.id);
+  }, [activeId, connectedPlatforms, list]);
 
   async function connect(platformId: PlatformId, grantedPermissionIds: string[]) {
     let displayName =
@@ -401,6 +405,7 @@ export function PlatformsView() {
       ),
     );
     setActiveId(platformId);
+    setQcOpen(true);
     if (isReelPlatformId(platformId)) {
       void syncReelPlatformConnectionToServer(platformId, true, account.displayName);
     }
@@ -428,8 +433,17 @@ export function PlatformsView() {
     );
   }
 
+  function openManage(platformId: PlatformId) {
+    setActiveId(platformId);
+    setQcOpen(true);
+  }
+
+  function scrollToCatalog() {
+    catalogRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-5">
       <PlatformPermissionsModal
         open={permOpen}
         platformId={permPlatformId}
@@ -438,297 +452,327 @@ export function PlatformsView() {
         onConfirm={(picked) => {
           setPermOpen(false);
           if (!permPlatformId) return;
-          connect(permPlatformId, picked);
+          void connect(permPlatformId, picked);
         }}
       />
 
-      <div className="cal-surface rounded-3xl p-5">
-        <StudioHeader
-          label={P.connectedLabel}
-          subtitle={P.connectedSubtitle}
-          right={
-            <div className="flex flex-wrap items-center gap-3">
-              <div className={`rounded-2xl border px-3 py-2 text-xs font-semibold text-[var(--fg)] ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                {P.connectedCount} <span className="text-[var(--ice)]">{connectedCount}</span> / {PLATFORM_META.length}
-              </div>
-              <div className="text-xs font-medium text-[var(--muted)]">
-                {connectedCount === 0 ? P.connectedHintNone : P.connectedHintSome}
-              </div>
-            </div>
-          }
+      <div className="cal-surface relative overflow-hidden rounded-3xl p-5 sm:p-6">
+        <div
+          className="pointer-events-none absolute -end-16 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--ice)_22%,transparent),transparent_70%)] opacity-80"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -bottom-20 -start-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--electric)_14%,transparent),transparent_72%)] opacity-70"
+          aria-hidden
         />
 
-        <div className="mt-4 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-3">
-          {platforms.filter((p) => p.connected).length === 0 ? (
-            <div className={`col-span-full rounded-2xl border px-4 py-3 text-sm text-[var(--muted)] ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-              {P.noConnected}
-            </div>
-          ) : (
-            platforms
-              .filter((p) => p.connected)
-              .map((p) => {
-                const meta = PLATFORM_META.find((m) => m.id === p.id)!;
-                const selected = activeId === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => {
-                      setActiveId(p.id);
-                      setQcOpen(true);
-                    }}
-                    className={[
-                      "group relative flex min-w-0 w-full items-center gap-3 overflow-hidden rounded-2xl border px-3 py-2.5 text-start transition duration-300",
-                      PLATFORM_CARD_SURFACE_CLASS,
-                      "shadow-[var(--studio-card-stack-shadow)]",
-                      selected
-                        ? "border-[var(--ice)]/30 ring-1 ring-[var(--ice)]/18"
-                        : "border-[var(--line)] hover:border-[var(--line)] hover:shadow-[0_20px_44px_-38px_rgba(0,0,0,0.14)]",
-                    ].join(" ")}
-                  >
-                    <span
-                      className="pointer-events-none absolute inset-0"
-                      style={{ ...platformAccentOverlay(PLATFORM_CARD_ACCENT), opacity: PLATFORM_CHIP_ACCENT_OVERLAY_OPACITY }}
-                      aria-hidden
-                    />
-                    <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--ice)]/13 to-transparent" aria-hidden />
-                    <span
-                      className="relative z-[1] flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                      style={platformIconTileStyle(PLATFORM_CARD_ACCENT)}
-                    >
-                      <PlatformIcon id={p.id} className="h-4 w-4 text-[var(--fg)]/90" />
-                    </span>
-                    <span className="relative z-[1] min-w-0">
-                      <span className="block truncate text-sm font-semibold tracking-tight text-[var(--fg)]">{meta.label}</span>
-                      <span className="block truncate text-xs text-[var(--muted)]">{p.account?.displayName ?? meta.subtitle}</span>
-                    </span>
-                    <span className="relative z-[1] ms-auto h-2 w-2 shrink-0 rounded-full bg-[var(--ice)]/80 ring-[3px] ring-[var(--ice)]/12" />
-                  </button>
-                );
-              })
-          )}
-        </div>
-
-        <div className="mt-4">
-          <QuickConnectionsPanel
-            open={qcOpen}
-            active={
-              activePlatform
-                ? {
-                    meta: {
-                      id: activePlatform.meta.id,
-                      label: activePlatform.meta.label,
-                      subtitle: activePlatform.meta.subtitle,
-                      hint: activePlatform.meta.hint,
-                      accent: activePlatform.meta.accent,
-                    },
-                    state: {
-                      id: activePlatform.id,
-                      connected: activePlatform.connected,
-                      account: activePlatform.account,
-                      grantedPermissionIds: activePlatform.grantedPermissionIds,
-                    },
-                  }
-                : null
+        <div className="relative z-[1]">
+          <StudioHeader
+            label={P.connectedLabel}
+            title={P.connectedLabel}
+            subtitle={P.connectedSubtitle}
+            right={
+              <div className="flex items-end gap-3">
+                <div className="text-end">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                    {P.connectedCount}
+                  </div>
+                  <div className="mt-0.5 font-semibold tabular-nums tracking-tight text-[var(--fg)]">
+                    <span className="text-2xl leading-none text-[var(--ice)]">{connectedCount}</span>
+                    <span className="ms-1 text-sm text-[var(--muted)]">/ {PLATFORM_META.length}</span>
+                  </div>
+                </div>
+              </div>
             }
-            onClose={() => setQcOpen(false)}
-            onConnect={(id) => openPermissions(id)}
-            onDisconnect={(id) => disconnect(id)}
-            onSyncNow={(id) => syncNow(id)}
           />
+
+          <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-[var(--muted)]">
+            {connectedCount === 0 ? P.connectedHintNone : P.connectedHintSome}
+          </p>
+
+          <div className="mt-5">
+            {connectedPlatforms.length === 0 ? (
+              <div
+                className={`relative overflow-hidden rounded-2xl border px-5 py-8 text-center sm:px-8 ${PLATFORM_PANEL_SURFACE_CLASS}`}
+              >
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-70"
+                  style={platformAccentOverlay("var(--ice)")}
+                  aria-hidden
+                />
+                <div className="relative z-[1] mx-auto flex max-w-md flex-col items-center">
+                  <span
+                    className="grid size-14 place-items-center rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                    style={platformIconTileStyle("var(--ice)")}
+                  >
+                    <Link2 className="size-6" strokeWidth={2.25} aria-hidden />
+                  </span>
+                  <h3 className="mt-4 text-base font-semibold tracking-tight text-[var(--fg)]">
+                    {P.emptyConnectedTitle}
+                  </h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-[var(--muted)]">{P.emptyConnectedBody}</p>
+                  <StudioCreateButton type="button" className="studio-create-btn--sm mt-5" onClick={scrollToCatalog}>
+                    {P.connect}
+                  </StudioCreateButton>
+                </div>
+              </div>
+            ) : (
+              <StudioWrapperList>
+                <StudioWrapperListBody as="ul" className="gap-2">
+                  {connectedPlatforms.map((p) => {
+                    const meta = PLATFORM_META.find((m) => m.id === p.id)!;
+                    const accent = platformBrandAccent(p.id);
+                    const selected = activeId === p.id && qcOpen;
+                    return (
+                      <StudioWrapperListRow as="li" key={p.id} className="p-0 overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => openManage(p.id)}
+                          className={[
+                            "group flex w-full cursor-pointer items-center gap-3 px-3.5 py-3 text-start transition-colors duration-200 sm:gap-4 sm:px-4",
+                            selected
+                              ? "bg-[color-mix(in_srgb,var(--ice)_8%,transparent)]"
+                              : "hover:bg-[color-mix(in_srgb,var(--wrapper-color-soft)_55%,transparent)]",
+                          ].join(" ")}
+                        >
+                          <span
+                            className="grid size-11 shrink-0 place-items-center rounded-xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                            style={platformIconTileStyle(accent)}
+                          >
+                            <PlatformIcon id={p.id} className="size-[1.15rem]" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="flex flex-wrap items-center gap-2">
+                              <span className="truncate text-[15px] font-semibold tracking-tight text-[var(--fg)]">
+                                {meta.label}
+                              </span>
+                              <ConnectionToggle connected className="!rounded-md" />
+                            </span>
+                            <span className="mt-0.5 block truncate text-xs text-[var(--muted)]">
+                              {p.account?.displayName ?? meta.subtitle}
+                              {p.account?.lastSyncAt
+                                ? ` · ${P.lastSync} ${formatRelative(p.account.lastSyncAt)}`
+                                : ` · ${P.noSync}`}
+                            </span>
+                          </span>
+                          <span className="hidden items-center gap-1 text-xs font-semibold text-[var(--muted)] transition-colors group-hover:text-[var(--fg)] sm:inline-flex">
+                            {P.manage}
+                            <ChevronRight className="size-3.5 opacity-70 rtl:rotate-180" aria-hidden />
+                          </span>
+                          <ChevronRight
+                            className="size-4 shrink-0 text-[var(--muted)] opacity-70 sm:hidden rtl:rotate-180"
+                            aria-hidden
+                          />
+                        </button>
+                      </StudioWrapperListRow>
+                    );
+                  })}
+                </StudioWrapperListBody>
+              </StudioWrapperList>
+            )}
+          </div>
+
+          <div className="mt-4">
+            <QuickConnectionsPanel
+              open={qcOpen}
+              active={
+                activePlatform
+                  ? {
+                      meta: {
+                        id: activePlatform.meta.id,
+                        label: activePlatform.meta.label,
+                        subtitle: activePlatform.meta.subtitle,
+                        hint: activePlatform.meta.hint,
+                        accent: platformBrandAccent(activePlatform.meta.id),
+                      },
+                      state: {
+                        id: activePlatform.id,
+                        connected: activePlatform.connected,
+                        account: activePlatform.account,
+                        grantedPermissionIds: activePlatform.grantedPermissionIds,
+                      },
+                    }
+                  : null
+              }
+              onClose={() => setQcOpen(false)}
+              onConnect={(id) => openPermissions(id)}
+              onDisconnect={(id) => disconnect(id)}
+              onSyncNow={(id) => syncNow(id)}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="cal-surface rounded-3xl p-5">
+      <div ref={catalogRef} className="cal-surface rounded-3xl p-5 sm:p-6">
         <StudioHeader
           label={P.yourPlatforms}
-          title={`Integrations: ${PLATFORM_META.length}`}
+          title={P.yourPlatforms}
+          subtitle={P.catalogSubtitle}
           right={
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="relative">
-                <span className="sr-only">{P.searchPlaceholder}</span>
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={P.searchPlaceholder}
-                  className="w-[260px] max-w-full rounded-xl border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-2 text-sm text-[var(--fg)] outline-none ring-[var(--ice)]/35 placeholder:text-[var(--muted)]/60 focus:ring-2"
-                />
-              </label>
-              <button
-                type="button"
-                onClick={() => setConnectedOnly((v) => !v)}
-                className={
-                  connectedOnly
-                    ? "studio-create-btn studio-create-btn--sm"
-                    : "studio-btn-ghost studio-btn-ghost--sm"
-                }
-                aria-pressed={connectedOnly}
-              >
-                {P.connectedOnly}
-              </button>
-              <StudioGhostButton
-                type="button"
-                className="studio-btn-ghost--sm"
-                onClick={() => {
-                  setPlatforms(defaultState());
-                  setActiveId("youtube");
-                  setQuery("");
-                  setConnectedOnly(false);
-                }}
-              >
-                {P.resetDemo}
-              </StudioGhostButton>
-            </div>
+            <StudioGhostButton
+              type="button"
+              className="studio-btn-ghost--sm"
+              onClick={() => {
+                setPlatforms(defaultState());
+                setActiveId("youtube");
+                setQuery("");
+                setConnectedOnly(false);
+                setGroupFilter("all");
+                setQcOpen(false);
+              }}
+            >
+              {P.resetDemo}
+            </StudioGhostButton>
           }
         />
 
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <label className="relative block min-w-0 flex-1 sm:max-w-sm">
+            <span className="sr-only">{P.searchPlaceholder}</span>
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]"
+              aria-hidden
+            />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={P.searchPlaceholder}
+              className="w-full rounded-xl border border-[var(--line)] bg-[var(--studio-surface-3)] py-2.5 pe-3 ps-9 text-sm text-[var(--fg)] outline-none ring-[var(--ice)]/35 placeholder:text-[var(--muted)]/60 focus:ring-2"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => setConnectedOnly((v) => !v)}
+            className={connectedOnly ? "studio-create-btn studio-create-btn--sm" : "studio-btn-ghost studio-btn-ghost--sm"}
+            aria-pressed={connectedOnly}
+          >
+            {P.connectedOnly}
+          </button>
+        </div>
+
+        <div className="platform-group-tags mt-4">
+          {(
+            [
+              ["all", P.allGroups] as const,
+              ...GROUP_ORDER.map((g) => [g, groupLabels[g]] as const),
+            ] as const
+          ).map(([id, label]) => {
+            const active = groupFilter === id;
+            const groupColor = id === "all" ? "var(--ice)" : platformGroupAccent(id);
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setGroupFilter(id)}
+                className={[
+                  "platform-group-tag",
+                  id === "all" ? "is-all" : "",
+                  active ? "is-active" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                style={{ ["--platform-group" as string]: groupColor }}
+                aria-pressed={active}
+              >
+                <span className="platform-group-tag__dot" aria-hidden />
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
         {list.length === 0 ? (
-          <div className={`mt-5 rounded-2xl border p-4 text-sm text-[var(--muted)] ${PLATFORM_PANEL_SURFACE_CLASS}`}>
+          <div className={`mt-5 rounded-2xl border p-5 text-sm text-[var(--muted)] ${PLATFORM_PANEL_SURFACE_CLASS}`}>
             {P.noMatch}
           </div>
         ) : (
-          <div className="mt-5 grid gap-3">
-            {(["social", "messengers", "productivity", "storage", "notifications"] as const)
-              .filter((g) => (groups.get(g)?.length ?? 0) > 0)
-              .map((g) => {
-                const open = openGroups[g];
-                const items = groups.get(g) ?? [];
-                const gm = groupMeta[g];
-                return (
-                  <div key={g} className={`overflow-hidden rounded-3xl border ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-[color-mix(in_srgb,var(--wrapper-color-soft)_38%,#fff)]"
-                      onClick={() => setOpenGroups((prev) => ({ ...prev, [g]: !prev[g] }))}
-                    >
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <div className="text-sm font-semibold text-[var(--fg)]">{gm.title}</div>
-                          <div className="rounded-full border border-[var(--line)] bg-[var(--studio-surface-3)] px-2 py-0.5 text-[11px] font-semibold text-[var(--muted)]">
-                            {items.length}
-                          </div>
-                        </div>
-                        <div className="mt-1 text-xs text-[var(--muted)]">{gm.subtitle}</div>
-                      </div>
-                      <div
-                        className={[
-                          "h-9 w-9 rounded-2xl border border-[var(--line)] bg-[var(--studio-surface-3)] text-[var(--fg)]/70",
-                          "grid place-items-center transition-transform duration-200",
-                          open ? "rotate-180" : "rotate-0",
-                        ].join(" ")}
-                        aria-hidden
-                      >
-                        <ChevronDown className="h-5 w-5" strokeWidth={2.5} />
-                      </div>
-                    </button>
+          <div className="platform-grid-wrap mt-5">
+          <div className="platform-grid">
+            {list.map(({ meta, state }) => {
+              const connected = state.connected;
+              const account = state.account;
+              const accent = platformBrandAccent(meta.id);
+              const selected = meta.id === activeId && qcOpen;
+              return (
+                <article
+                  key={meta.id}
+                  className={[
+                    "platform-catalog-card",
+                    PLATFORM_CARD_SURFACE_CLASS,
+                    connected ? "is-connected" : "",
+                    selected ? "is-selected" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  style={{
+                    ["--platform-accent" as string]: accent,
+                    ["--platform-group" as string]: platformGroupAccent(meta.group),
+                  }}
+                >
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{ ...platformAccentOverlay(PLATFORM_CARD_ACCENT), opacity: PLATFORM_CARD_ACCENT_OVERLAY_OPACITY }}
+                    aria-hidden
+                  />
+                  <div className="platform-catalog-card__ring" aria-hidden />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--ice)]/16 to-transparent"
+                    aria-hidden
+                  />
 
-                    {open ? (
-                      <div className="border-t border-[var(--line)] px-4 py-4">
-                        <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 lg:grid-cols-3">
-                          {items.map(({ meta, state }) => {
-                            const connected = state.connected;
-                            const account = state.account;
-                            const selected = meta.id === activeId;
-                            return (
-                              <div
-                                key={meta.id}
-                                role="button"
-                                tabIndex={0}
-                                onClick={() => setActiveId(meta.id)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") setActiveId(meta.id);
-                                }}
-                                className={[
-                                  "group relative min-w-0 cursor-pointer overflow-hidden rounded-[1.25rem] border p-[1.125rem] outline-none transition duration-300",
-                                  PLATFORM_CARD_SURFACE_CLASS,
-                                  "shadow-[var(--studio-card-stack-shadow)]",
-                                  selected
-                                    ? "border-[var(--ice)]/32 ring-1 ring-[var(--ice)]/16"
-                                    : "hover:border-[var(--line)] hover:shadow-[var(--studio-card-stack-shadow),0_26px_58px_-44px_rgba(0,234,255,0.05)]",
-                                ].join(" ")}
-                                aria-selected={selected}
-                              >
-                                <div
-                                  className="pointer-events-none absolute inset-0"
-                                  style={{ ...platformAccentOverlay(PLATFORM_CARD_ACCENT), opacity: PLATFORM_CARD_ACCENT_OVERLAY_OPACITY }}
-                                  aria-hidden
-                                />
-                                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--ice)]/13 to-transparent" aria-hidden />
-                                <div className="relative z-[1]">
-                                  <div className="flex items-start justify-between gap-4">
-                                    <div className="min-w-0">
-                                      <div className="flex items-center gap-3">
-                                        <div
-                                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
-                                          style={platformIconTileStyle(PLATFORM_CARD_ACCENT)}
-                                        >
-                                          <PlatformIcon id={meta.id} className="h-[1.35rem] w-[1.35rem] text-[var(--fg)]/92" />
-                                        </div>
-                                        <div className="min-w-0">
-                                          <div className="truncate text-[15px] font-semibold leading-snug tracking-tight text-[var(--fg)]">{meta.label}</div>
-                                          <div className="mt-0.5 truncate text-[11px] leading-snug text-[var(--muted)]">
-                                            {connected ? (account?.displayName ?? "—") : meta.subtitle}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <ConnectionToggle connected={connected} />
-                                  </div>
-
-                                  <div className="mt-4 flex flex-wrap items-center gap-2">
-                                    {connected ? (
-                                      <>
-                                        <StudioGhostButton
-                                          type="button"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            syncNow(meta.id);
-                                          }}
-                                        >
-                                          {P.sync}
-                                        </StudioGhostButton>
-                                        <StudioGhostButton
-                                          type="button"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            disconnect(meta.id);
-                                          }}
-                                        >
-                                          {P.disconnect}
-                                        </StudioGhostButton>
-                                      </>
-                                    ) : (
-                                      <StudioCreateButton
-                                        type="button"
-                                        className="studio-create-btn--compact"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          openPermissions(meta.id);
-                                        }}
-                                      >
-                                        {P.connect}
-                                      </StudioCreateButton>
-                                    )}
-                                    {!connected ? (
-                                      <span className="min-w-0 max-w-full truncate text-[11px] leading-snug text-[var(--muted)]">{meta.hint}</span>
-                                    ) : null}
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
+                  <div className="relative z-[1] flex min-h-0 flex-1 flex-col">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="platform-catalog-card__icon">
+                        <PlatformIcon id={meta.id} />
                       </div>
-                    ) : null}
+                      <span className="platform-catalog-card__status">
+                        <span className="platform-catalog-card__status-dot" aria-hidden />
+                        {connected ? (
+                          <span className="platform-catalog-card__status-label">{P.onlineLabel}</span>
+                        ) : null}
+                      </span>
+                    </div>
+
+                    <h3 className="platform-catalog-card__name mt-3">{meta.label}</h3>
+                    <p className="platform-catalog-card__meta">
+                      {connected ? (account?.displayName ?? meta.subtitle) : meta.subtitle}
+                    </p>
+                    <span className="platform-catalog-card__chip">{groupLabels[meta.group]}</span>
+                    <p className="platform-catalog-card__hint">
+                      {connected
+                        ? account?.lastSyncAt
+                          ? `${P.lastSync}: ${formatRelative(account.lastSyncAt)}`
+                          : P.noSync
+                        : meta.hint}
+                    </p>
                   </div>
-                );
-              })}
+
+                  <div className="platform-catalog-card__footer">
+                    {connected ? (
+                      <StudioGhostButton
+                        type="button"
+                        className="studio-btn-ghost--md"
+                        onClick={() => openManage(meta.id)}
+                      >
+                        {P.manage}
+                      </StudioGhostButton>
+                    ) : (
+                      <StudioCreateButton
+                        type="button"
+                        className="studio-create-btn--sm"
+                        onClick={() => openPermissions(meta.id)}
+                      >
+                        {P.connect}
+                      </StudioCreateButton>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
           </div>
         )}
       </div>
-
     </div>
   );
 }
-

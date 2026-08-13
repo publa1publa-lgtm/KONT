@@ -8,6 +8,7 @@ import { useI18n } from "@/contexts/i18n-context";
 import { subscribeStudioPlatforms } from "@/lib/studioInboxPermissions";
 import { readConnectedReelPlatformAccounts } from "@/lib/studioPlatformsStorage";
 import { uploadMedia, type ContentApiItem } from "@/lib/contentApi";
+import type { EventApiItem } from "@/lib/eventsApi";
 import { apiItemToPublishSelection, scheduledAtToDateKeyAndTime } from "@/lib/contentMappers";
 import type { ConnectedPlatformAccount, ComposerPublishSelection } from "@/lib/composerPublish";
 import { defaultPublishSelection } from "@/lib/composerPublish";
@@ -16,15 +17,18 @@ import { ComposerKindToggle, type ComposerKind } from "./ComposerKindToggle";
 import {
   ComposerPostPreview,
   ComposerReelPreview,
+  EventColorPicker,
   ComposerFieldError,
   composerInputClass,
   composerFieldLabel,
 } from "./ComposerContentPreview";
+import { EventPreviewCard } from "./EventPreviewCard";
 import { ComposerMediaUpload } from "./ComposerMediaUpload";
 import { ComposerPublishTargets } from "./ComposerPublishTargets";
 import { ComposerKindMetaChip } from "./ComposerKindMetaChip";
 import { ComposerSchedulePanel } from "./ComposerSchedulePanel";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
+import { DEFAULT_EVENT_COLOR, normalizeEventColor } from "@/lib/eventColors";
 
 type ReelDraft = {
   kind: "reel";
@@ -44,19 +48,31 @@ type PostDraft = {
   hashtags: string[];
 };
 
+type EventDraft = {
+  kind: "event";
+  title: string;
+  description: string;
+  showDescription: boolean;
+  color: string;
+  time: string;
+};
+
 type Props = {
   open: boolean;
   allowedKinds: ComposerKind[];
   defaultKind: ComposerKind;
   title: string;
   subtitle?: string;
-  /** When set, form is prefilled and submit sends `contentId` on the payload. */
+  /** When set, form is prefilled for POST/REEL and submit sends `contentId` on the payload. */
   initialData?: ContentApiItem | null;
+  /** When set, form is prefilled for PlanEvent and submit sends `contentId` from the event id. */
+  initialEvent?: EventApiItem | null;
   date?: Date | null;
   requireTime?: boolean;
   onClose: () => void;
   onCreateReel: (payload: ReelDraft & { dateKey?: string; publish: ComposerPublishSelection; contentId?: string }) => void | Promise<void>;
   onCreatePost: (payload: PostDraft & { dateKey?: string; publish: ComposerPublishSelection; contentId?: string }) => void | Promise<void>;
+  onCreateEvent: (payload: EventDraft & { dateKey?: string; contentId?: string }) => void | Promise<void>;
 };
 
 function defaultTime(): string {
@@ -106,12 +122,15 @@ export function ContentComposerModal({
   title,
   subtitle,
   initialData = null,
+  initialEvent = null,
   date,
   requireTime,
   onClose,
   onCreateReel,
   onCreatePost,
+  onCreateEvent,
 }: Props) {
+  const isEditing = Boolean(initialData || initialEvent);
   const { messages } = useI18n();
   const CC = messages.studio.content;
   const C = CC.composer;
@@ -149,6 +168,15 @@ export function ContentComposerModal({
     hashtags: [],
   });
 
+  const [event, setEvent] = useState<EventDraft>({
+    kind: "event",
+    title: "",
+    description: "",
+    showDescription: false,
+    color: DEFAULT_EVENT_COLOR,
+    time: defaultTime(),
+  });
+
   const [saving, setSaving] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState(false);
 
@@ -164,11 +192,50 @@ export function ContentComposerModal({
     }
     setFieldErrors({});
 
+    if (initialEvent) {
+      if (hydratedEditIdRef.current === initialEvent.id) return;
+      hydratedEditIdRef.current = initialEvent.id;
+
+      setKind("event");
+      setPostPublish(defaultPublishSelection());
+      setReelPublish(defaultPublishSelection());
+      const slot = scheduledAtToDateKeyAndTime(initialEvent.scheduledAt);
+      const baseDate = date ?? (slot ? parseDateKeyToDate(slot.dateKey) : null);
+      setPickedDateKey(slot?.dateKey ?? (baseDate ? dateKeyLocal(baseDate) : dateKeyLocal(new Date())));
+      const t = slot?.time ?? (baseDate ? defaultTimeForDate(baseDate) : defaultTime());
+      setEvent({
+        kind: "event",
+        title: initialEvent.title,
+        description: initialEvent.description ?? "",
+        showDescription: initialEvent.showDescription === true,
+        color: normalizeEventColor(initialEvent.color),
+        time: t,
+      });
+      setPost({
+        kind: "post",
+        title: "",
+        text: "",
+        imageUrl: null,
+        time: t,
+        hashtags: [],
+      });
+      setReel({
+        kind: "reel",
+        videoUrl: null,
+        title: "",
+        description: "",
+        time: t,
+        hashtags: [],
+      });
+      return;
+    }
+
     if (initialData) {
       if (hydratedEditIdRef.current === initialData.id) return;
       hydratedEditIdRef.current = initialData.id;
 
-      const k: ComposerKind = String(initialData.type).toUpperCase() === "REEL" ? "reel" : "post";
+      const typeUpper = String(initialData.type).toUpperCase();
+      const k: ComposerKind = typeUpper === "REEL" ? "reel" : "post";
       setKind(k);
       const pub = apiItemToPublishSelection(initialData);
       setPostPublish(pub);
@@ -178,7 +245,7 @@ export function ContentComposerModal({
       setPickedDateKey(slot?.dateKey ?? (baseDate ? dateKeyLocal(baseDate) : dateKeyLocal(new Date())));
       const t = slot?.time ?? (baseDate ? defaultTimeForDate(baseDate) : defaultTime());
 
-      if (String(initialData.type).toUpperCase() === "POST") {
+      if (typeUpper === "POST") {
         setPost({
           kind: "post",
           title: initialData.title,
@@ -194,6 +261,14 @@ export function ContentComposerModal({
           description: "",
           time: t,
           hashtags: [],
+        });
+        setEvent({
+          kind: "event",
+          title: "",
+          description: "",
+          showDescription: false,
+          color: DEFAULT_EVENT_COLOR,
+          time: t,
         });
       } else {
         setReel({
@@ -212,6 +287,14 @@ export function ContentComposerModal({
           time: t,
           hashtags: [],
         });
+        setEvent({
+          kind: "event",
+          title: "",
+          description: "",
+          showDescription: false,
+          color: DEFAULT_EVENT_COLOR,
+          time: t,
+        });
       }
       return;
     }
@@ -221,12 +304,13 @@ export function ContentComposerModal({
     setPostPublish(defaultPublishSelection());
     setReelPublish(defaultPublishSelection());
     setPickedDateKey(date ? dateKeyLocal(date) : dateKeyLocal(new Date()));
+    const resetTime = date ? defaultTimeForDate(date) : defaultTime();
     setReel({
       kind: "reel",
       videoUrl: null,
       title: "",
       description: "",
-      time: date ? defaultTimeForDate(date) : defaultTime(),
+      time: resetTime,
       hashtags: [],
     });
     setPost({
@@ -234,12 +318,20 @@ export function ContentComposerModal({
       title: "",
       text: "",
       imageUrl: null,
-      time: date ? defaultTimeForDate(date) : defaultTime(),
+      time: resetTime,
       hashtags: [],
     });
-    // Intentionally omit `initialData` from deps: same `id` must not re-hydrate (list refresh); we read latest fields when id/open/date/defaultKind changes.
+    setEvent({
+      kind: "event",
+      title: "",
+      description: "",
+      showDescription: false,
+      color: DEFAULT_EVENT_COLOR,
+      time: resetTime,
+    });
+    // Intentionally omit full initial* objects from deps: same `id` must not re-hydrate (list refresh).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultKind, open, date, initialData?.id]);
+  }, [defaultKind, open, date, initialData?.id, initialEvent?.id]);
 
   useEffect(() => {
     if (!open) return;
@@ -281,13 +373,13 @@ export function ContentComposerModal({
   }, [open]);
 
   useEffect(() => {
-    if (!open || !accountsLoaded || initialData || publishDefaultsSetRef.current) return;
+    if (!open || !accountsLoaded || isEditing || publishDefaultsSetRef.current) return;
     if (connectedAccounts.length === 0) return;
     publishDefaultsSetRef.current = true;
     const ids = connectedAccounts.map((a) => a.platformId);
     setPostPublish({ kind: "platforms", platformIds: ids });
     setReelPublish({ kind: "platforms", platformIds: ids });
-  }, [open, accountsLoaded, connectedAccounts, initialData]);
+  }, [open, accountsLoaded, connectedAccounts, isEditing]);
 
   useEffect(() => {
     if (!open) return;
@@ -304,17 +396,17 @@ export function ContentComposerModal({
   }, [open]);
 
   const dateError = useMemo(() => {
-    if (!effectiveDate || initialData) return null;
+    if (!effectiveDate || isEditing) return null;
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const selectedStart = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate()).getTime();
     if (selectedStart < todayStart) return C.errors.pastDay;
     return null;
-  }, [C.errors.pastDay, effectiveDate, initialData]);
+  }, [C.errors.pastDay, effectiveDate, isEditing]);
 
   const timeError = useMemo(() => {
-    if (!effectiveDate || initialData || dateError) return null;
-    const t = kind === "reel" ? reel.time : post.time;
+    if (!effectiveDate || isEditing || dateError) return null;
+    const t = kind === "reel" ? reel.time : kind === "event" ? event.time : post.time;
     if (!requireTimeNow || !/^\d{2}:\d{2}$/.test(t)) return null;
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -324,7 +416,7 @@ export function ContentComposerModal({
     const scheduledAt = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate(), hh, mm, 0, 0).getTime();
     if (selectedStart === todayStart && scheduledAt <= now.getTime()) return C.errors.pastTime;
     return null;
-  }, [C.errors.pastTime, dateError, effectiveDate, initialData, kind, post.time, reel.time, requireTimeNow]);
+  }, [C.errors.pastTime, dateError, effectiveDate, event.time, isEditing, kind, post.time, reel.time, requireTimeNow]);
 
   const scheduleError = dateError || timeError;
 
@@ -346,7 +438,7 @@ export function ContentComposerModal({
             <div className="min-w-0 justify-self-start">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">{title}</p>
               <h2 id="composer-modal-title" className="mt-1 text-lg font-semibold leading-tight text-[var(--fg)]">
-                {initialData ? C.editContent : subtitle ?? C.createContent}
+                {isEditing ? C.editContent : subtitle ?? C.createContent}
               </h2>
             </div>
 
@@ -359,13 +451,13 @@ export function ContentComposerModal({
                     setKind(next);
                     setFieldErrors({});
                   }}
-                  labels={{ post: CC.typePost, reel: CC.typeReel }}
+                  labels={{ post: CC.typePost, reel: CC.typeReel, event: CC.typeEvent }}
                   ariaLabel={C.kindToggleAria}
                 />
               ) : (
                 <ComposerKindMetaChip
                   kind={kind}
-                  label={kind === "reel" ? CC.typeReel : CC.typePost}
+                  label={kind === "reel" ? CC.typeReel : kind === "event" ? CC.typeEvent : CC.typePost}
                 />
               )}
             </div>
@@ -380,12 +472,13 @@ export function ContentComposerModal({
                 dateLabel={C.date}
                 timeLabel={C.time}
                 pickedDateKey={pickedDateKey}
-                minDateKey={initialData ? undefined : dateKeyLocal(new Date())}
+                minDateKey={isEditing ? undefined : dateKeyLocal(new Date())}
                 onDateChange={setPickedDateKey}
                 showTime={showTimeInput}
-                timeValue={kind === "reel" ? reel.time : post.time}
+                timeValue={kind === "reel" ? reel.time : kind === "event" ? event.time : post.time}
                 onTimeChange={(v) => {
                   if (kind === "reel") setReel((d) => ({ ...d, time: v }));
+                  else if (kind === "event") setEvent((d) => ({ ...d, time: v }));
                   else setPost((d) => ({ ...d, time: v }));
                 }}
                 stepMinutes={5}
@@ -404,6 +497,18 @@ export function ContentComposerModal({
                     reels: C.preview.reels,
                     captionEmpty: C.preview.captionEmpty,
                   }}
+                />
+              ) : kind === "event" ? (
+                <EventPreviewCard
+                  className="studio-event-composer-preview"
+                  title={event.title}
+                  time={event.time}
+                  dateKey={pickedDateKey}
+                  description={event.description}
+                  showDescription={event.showDescription}
+                  color={event.color}
+                  eventLabel={CC.typeEvent}
+                  untitledLabel={C.titlePlaceholder}
                 />
               ) : (
                 <ComposerPostPreview
@@ -495,6 +600,52 @@ export function ContentComposerModal({
                     hint={C.hashtagsHint}
                   />
                 </>
+              ) : kind === "event" ? (
+                <>
+                  <label className="grid gap-1.5">
+                    <span className={composerFieldLabel}>{C.title}</span>
+                    <input
+                      value={event.title}
+                      onChange={(e) => {
+                        setEvent((d) => ({ ...d, title: e.target.value }));
+                        setFieldErrors((prev) => ({ ...prev, title: undefined }));
+                      }}
+                      placeholder={C.titlePlaceholder}
+                      className={composerInputClass(Boolean(fieldErrors.title))}
+                      aria-invalid={Boolean(fieldErrors.title)}
+                    />
+                    <ComposerFieldError message={fieldErrors.title} />
+                  </label>
+                  <label className="grid gap-1.5">
+                    <span className={composerFieldLabel}>{C.description}</span>
+                    <textarea
+                      value={event.description}
+                      onChange={(e) => setEvent((d) => ({ ...d, description: e.target.value }))}
+                      placeholder={C.descriptionPlaceholder}
+                      rows={4}
+                      className={`${composerInputClass()} min-h-[6rem] resize-y`}
+                    />
+                  </label>
+                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--line)] bg-[var(--studio-surface-3)]/80 px-3 py-2.5 transition hover:bg-[var(--studio-surface-2)]">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5"
+                      checked={event.showDescription}
+                      onChange={(e) => setEvent((d) => ({ ...d, showDescription: e.target.checked }))}
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-[var(--fg)]">{C.showDescriptionInPreview}</span>
+                      <span className="mt-0.5 block text-xs text-[var(--muted)]">{C.showDescriptionInPreviewHint}</span>
+                    </span>
+                  </label>
+                  <EventColorPicker
+                    value={event.color}
+                    onChange={(color) => setEvent((d) => ({ ...d, color: normalizeEventColor(color) }))}
+                    label={C.eventColor}
+                    ariaLabel={C.eventColorAria}
+                    customLabel={C.eventColorCustom}
+                  />
+                </>
               ) : (
                 <>
                   <ComposerMediaUpload
@@ -577,17 +728,19 @@ export function ContentComposerModal({
                 </>
               )}
 
-              <ComposerPublishTargets
-                accounts={connectedAccounts}
-                loaded={accountsLoaded}
-                value={kind === "reel" ? reelPublish : postPublish}
-                onChange={(next) => {
-                  setFieldErrors((prev) => ({ ...prev, publish: undefined }));
-                  if (kind === "reel") setReelPublish(next);
-                  else setPostPublish(next);
-                }}
-                error={fieldErrors.publish}
-              />
+              {kind !== "event" ? (
+                <ComposerPublishTargets
+                  accounts={connectedAccounts}
+                  loaded={accountsLoaded}
+                  value={kind === "reel" ? reelPublish : postPublish}
+                  onChange={(next) => {
+                    setFieldErrors((prev) => ({ ...prev, publish: undefined }));
+                    if (kind === "reel") setReelPublish(next);
+                    else setPostPublish(next);
+                  }}
+                  error={fieldErrors.publish}
+                />
+              ) : null}
               <ComposerFieldError message={fieldErrors.form} />
             </div>
           </div>
@@ -607,9 +760,9 @@ export function ContentComposerModal({
           <StudioCreateButton
             type="button"
             className="studio-create-btn--sm"
-            disabled={saving || uploadingMedia || !accountsLoaded}
+            disabled={saving || uploadingMedia || !(accountsLoaded || kind === "event")}
             onClick={async () => {
-              const contentId = initialData?.id;
+              const contentId = initialEvent?.id ?? initialData?.id;
               const nextErrors: ComposerFieldErrors = {};
 
               if (kind === "reel") {
@@ -629,6 +782,38 @@ export function ContentComposerModal({
                   setSaving(true);
                   setFieldErrors({});
                   await Promise.resolve(onCreateReel({ ...reel, title, dateKey, publish: reelPublish, contentId }));
+                  onClose();
+                } catch (e) {
+                  setFieldErrors({
+                    form: e instanceof Error ? e.message : messages.studio.content.errors.saveFailed,
+                  });
+                } finally {
+                  setSaving(false);
+                }
+                return;
+              }
+
+              if (kind === "event") {
+                if (!event.title.trim()) nextErrors.title = C.errors.titleRequired;
+                if (scheduleError || Object.keys(nextErrors).length) {
+                  setFieldErrors(nextErrors);
+                  return;
+                }
+                const dateKey = effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
+                try {
+                  setSaving(true);
+                  setFieldErrors({});
+                  await Promise.resolve(
+                    onCreateEvent({
+                      ...event,
+                      title: event.title.trim(),
+                      description: event.description.trim(),
+                      showDescription: event.showDescription,
+                      color: normalizeEventColor(event.color),
+                      dateKey,
+                      contentId,
+                    }),
+                  );
                   onClose();
                 } catch (e) {
                   setFieldErrors({
@@ -675,7 +860,7 @@ export function ContentComposerModal({
               }
             }}
           >
-            {saving || uploadingMedia ? C.saving : initialData ? C.save : C.create}
+            {saving || uploadingMedia ? C.saving : isEditing ? C.save : C.create}
           </StudioCreateButton>
         </div>
         </div>

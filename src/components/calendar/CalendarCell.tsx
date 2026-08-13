@@ -1,15 +1,17 @@
 "use client";
 
-import { Clapperboard, ImageIcon } from "lucide-react";
+import { CalendarDays, Clapperboard, ImageIcon } from "lucide-react";
 import { dateKeyLocal, isSameDay, isSameMonth } from "./dateUtils";
-import type { CalendarEvent, ScheduledPost } from "./types";
+import type { CalendarEvent, ScheduledPlanEvent, ScheduledPost } from "./types";
 import { useI18n } from "@/contexts/i18n-context";
+import { normalizeEventColor } from "@/lib/eventColors";
 
 type Props = {
   date: Date;
   month: Date;
   events?: CalendarEvent[];
   posts?: ScheduledPost[];
+  planEvents?: ScheduledPlanEvent[];
   onSelectDate: (date: Date) => void;
   nowMs: number;
   selected?: boolean;
@@ -22,6 +24,7 @@ export function CalendarCell({
   month,
   events = [],
   posts = [],
+  planEvents = [],
   onSelectDate,
   nowMs,
   selected = false,
@@ -43,9 +46,14 @@ export function CalendarCell({
 
   const postCount = posts.length;
   const reelCount = events.length;
+  const eventCount = planEvents.length;
+  const hasAny = postCount > 0 || reelCount > 0 || eventCount > 0;
+  const eventAccent = eventCount > 0 ? normalizeEventColor(planEvents[0]?.color) : "#f59e0b";
+
   const kindsLabel = [
     postCount > 0 ? `${postCount} ${CC.typePost}` : null,
     reelCount > 0 ? `${reelCount} ${CC.typeReel}` : null,
+    eventCount > 0 ? `${eventCount} ${CC.typeEvent}` : null,
   ]
     .filter(Boolean)
     .join(", ");
@@ -78,30 +86,79 @@ export function CalendarCell({
       }
     >
       <div className="cal-cell-head">
-        <div
-          className={[
-            "cal-day-num",
-            selected ? "is-selected" : "",
-            today && !selected ? "is-today" : "",
-          ].join(" ")}
-        >
-          {date.getDate()}
-        </div>
-        {postCount > 0 || reelCount > 0 ? (
-          <div className="cal-cell-kinds">
-            {postCount > 0 ? (
-              <span className="cal-cell-kind cal-cell-kind--post">
-                {postCount}
-                <ImageIcon aria-hidden />
-              </span>
-            ) : null}
-            {reelCount > 0 ? (
-              <span className="cal-cell-kind cal-cell-kind--reel">
-                {reelCount}
-                <Clapperboard aria-hidden />
-              </span>
-            ) : null}
+        <div className="cal-cell-day">
+          <div
+            className={[
+              "cal-day-num",
+              selected ? "is-selected" : "",
+              today && !selected ? "is-today" : "",
+            ].join(" ")}
+          >
+            {date.getDate()}
           </div>
+
+          {/* Narrow: colored dots only */}
+          {hasAny ? (
+            <div className="cal-cell-dots" aria-hidden>
+              {postCount > 0 ? <span className="cal-cell-dot cal-cell-dot--post" /> : null}
+              {reelCount > 0 ? <span className="cal-cell-dot cal-cell-dot--reel" /> : null}
+              {eventCount > 0 ? (
+                <span className="cal-cell-dot cal-cell-dot--event" style={{ background: eventAccent }} />
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+
+        {hasAny ? (
+          <>
+            {/* Medium: icon pills in a row */}
+            <div className="cal-cell-icons" aria-hidden>
+              {postCount > 0 ? (
+                <span className="cal-cell-icon cal-cell-icon--post" title={`${postCount} ${CC.typePost}`}>
+                  <ImageIcon aria-hidden />
+                </span>
+              ) : null}
+              {reelCount > 0 ? (
+                <span className="cal-cell-icon cal-cell-icon--reel" title={`${reelCount} ${CC.typeReel}`}>
+                  <Clapperboard aria-hidden />
+                </span>
+              ) : null}
+              {eventCount > 0 ? (
+                <span
+                  className="cal-cell-icon cal-cell-icon--event"
+                  title={`${eventCount} ${CC.typeEvent}`}
+                  style={{ color: eventAccent, borderColor: `color-mix(in srgb, ${eventAccent} 40%, transparent)` }}
+                >
+                  <CalendarDays aria-hidden />
+                </span>
+              ) : null}
+            </div>
+
+            {/* Wide: chips with counts */}
+            <div className="cal-cell-kinds" aria-hidden>
+              {postCount > 0 ? (
+                <span className="cal-cell-kind cal-cell-kind--post">
+                  {postCount}
+                  <ImageIcon aria-hidden />
+                </span>
+              ) : null}
+              {reelCount > 0 ? (
+                <span className="cal-cell-kind cal-cell-kind--reel">
+                  {reelCount}
+                  <Clapperboard aria-hidden />
+                </span>
+              ) : null}
+              {eventCount > 0 ? (
+                <span
+                  className="cal-cell-kind cal-cell-kind--event"
+                  style={{ color: eventAccent, borderColor: `color-mix(in srgb, ${eventAccent} 35%, transparent)` }}
+                >
+                  {eventCount}
+                  <CalendarDays aria-hidden />
+                </span>
+              ) : null}
+            </div>
+          </>
         ) : null}
       </div>
     </div>

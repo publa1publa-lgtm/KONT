@@ -276,7 +276,9 @@
 [dir="rtl"] .home-pillars__head,
 [dir="rtl"] .nh-hybrid .home-pillars__head,
 [dir="rtl"] .home-screen__title--section,
-[dir="rtl"] .home-screen__text--section {
+[dir="rtl"] .home-screen__text--section,
+[dir="rtl"] .home-cta-email__error,
+[dir="rtl"] .home-cta-success {
   text-align: center;
 }
 

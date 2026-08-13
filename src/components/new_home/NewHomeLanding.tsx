@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { LandingFooter } from "@/components/layout/LandingFooter";
 import { HeroFloatingIcons } from "@/components/new_home/HeroFloatingIcons";
 import { HeroVisual } from "@/components/new_home/HeroVisual";
+import { HomeCtaCard } from "@/components/new_home/HomeCtaCard";
 import { NewHomeNav } from "@/components/new_home/NewHomeNav";
 import { BenefitsSection } from "@/components/new_home/sections/BenefitsSection";
 import { ProductSection } from "@/components/new_home/sections/ProductSection";
@@ -198,29 +199,7 @@ export function NewHomeLanding() {
           </div>
 
           <div className="home-section__inner home-section__inner--cta home-reveal" data-reveal>
-            <div className="home-cta-card">
-              <span className="home-cta-card__badge">
-                <span className="home-hero__badge-dot" aria-hidden />
-                {landing.cta.badge}
-              </span>
-              <h2 className="home-screen__title home-screen__title--sm">{landing.cta.title}</h2>
-              <p className="home-screen__text home-cta-card__text">{landing.cta.text}</p>
-              <div className="home-cta-card__actions">
-                <button type="button" className="home-screen__cta cursor-pointer" onClick={openModal}>
-                  {landing.cta.primary}
-                  <ArrowRight className="home-screen__cta-icon" aria-hidden />
-                </button>
-                <a className="home-cta-card__link" href="#product">
-                  {landing.cta.secondary}
-                </a>
-              </div>
-              <ul className="home-cta-card__trust" aria-label="Trust indicators">
-                {landing.cta.trust.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
-              <p className="home-screen__note">{landing.cta.note}</p>
-            </div>
+            <HomeCtaCard />
           </div>
         </section>
       </main>

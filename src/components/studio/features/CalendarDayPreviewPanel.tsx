@@ -3,7 +3,9 @@
 import { useMemo } from "react";
 import { scheduledAtToDateKeyAndTime } from "@/lib/contentMappers";
 import type { ContentApiItem } from "@/lib/contentApi";
-import { ContentKindBadge } from "./ContentKindBadge";
+import type { EventApiItem } from "@/lib/eventsApi";
+import { ContentKindBadge, contentKindFromApiType } from "./ContentKindBadge";
+import { EventPreviewCard } from "./EventPreviewCard";
 import { StudioCreateButton } from "./StudioCreateButton";
 import { useI18n } from "@/contexts/i18n-context";
 import { intlLocale } from "@/i18n/config";
@@ -15,9 +17,16 @@ function excerpt(text: string | null | undefined, max = 56): string | null {
   return `${t.slice(0, max - 1)}…`;
 }
 
+type DayPreviewItem = ContentApiItem | EventApiItem;
+
+function isPlanEventItem(item: DayPreviewItem): item is EventApiItem {
+  return !("type" in item);
+}
+
 type CalendarDayPreviewPanelProps = {
   dayKey: string | null;
   items: ContentApiItem[];
+  events?: EventApiItem[];
   canAdd: boolean;
   onSelectItem: (id: string) => void;
   onAdd: () => void;
@@ -33,6 +42,7 @@ type CalendarDayPreviewPanelProps = {
 export function CalendarDayPreviewPanel({
   dayKey,
   items,
+  events = [],
   canAdd,
   onSelectItem,
   onAdd,
@@ -51,13 +61,26 @@ export function CalendarDayPreviewPanel({
   const isStudioSidebar = variant === "studio-sidebar";
 
   const dayItems = useMemo(() => {
-    if (!dayKey) return [];
-    return items.filter((c) => {
+    if (!dayKey) return [] as DayPreviewItem[];
+    const contentForDay = items.filter((c) => {
       if (c.status === "ARCHIVED" || !c.scheduledAt) return false;
       const slot = scheduledAtToDateKeyAndTime(c.scheduledAt);
       return slot?.dateKey === dayKey;
     });
-  }, [dayKey, items]);
+    const eventsForDay = events.filter((e) => {
+      if (e.archivedAt) return false;
+      const slot = scheduledAtToDateKeyAndTime(e.scheduledAt);
+      return slot?.dateKey === dayKey;
+    });
+    const merged: DayPreviewItem[] = [...contentForDay, ...eventsForDay];
+    merged.sort((a, b) => {
+      const sa = scheduledAtToDateKeyAndTime(a.scheduledAt!)!;
+      const sb = scheduledAtToDateKeyAndTime(b.scheduledAt!)!;
+      if (sa.time !== sb.time) return sa.time.localeCompare(sb.time);
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+    return merged;
+  }, [dayKey, items, events]);
 
   const dayLabel = useMemo(() => {
     if (!dayKey) return null;
@@ -107,6 +130,8 @@ export function CalendarDayPreviewPanel({
                   item={item}
                   reelLabel={CC.typeReel}
                   postLabel={CC.typePost}
+                  eventLabel={CC.typeEvent}
+                  layout="stack"
                   onSelect={() => onSelectItem(item.id)}
                 />
               ))}
@@ -148,6 +173,8 @@ export function CalendarDayPreviewPanel({
                 item={item}
                 reelLabel={CC.typeReel}
                 postLabel={CC.typePost}
+                eventLabel={CC.typeEvent}
+                layout="rail"
                 onSelect={() => onSelectItem(item.id)}
               />
             ))}
@@ -215,6 +242,8 @@ export function CalendarDayPreviewPanel({
                 item={item}
                 reelLabel={CC.typeReel}
                 postLabel={CC.typePost}
+                eventLabel={CC.typeEvent}
+                layout={isBanner ? "rail" : "stack"}
                 onSelect={() => onSelectItem(item.id)}
               />
             ))}
@@ -229,17 +258,41 @@ function PreviewCard({
   item,
   reelLabel,
   postLabel,
+  eventLabel,
+  layout = "stack",
   onSelect,
 }: {
-  item: ContentApiItem;
+  item: DayPreviewItem;
   reelLabel: string;
   postLabel: string;
+  eventLabel: string;
+  layout?: "stack" | "rail";
   onSelect: () => void;
 }) {
-  const isReel = String(item.type).toUpperCase() === "REEL";
+  if (isPlanEventItem(item)) {
+    const slot = scheduledAtToDateKeyAndTime(item.scheduledAt);
+    return (
+      <li className={["min-w-0", layout === "rail" ? "studio-cal-preview__item--event" : ""].filter(Boolean).join(" ")}>
+        <EventPreviewCard
+          compact={layout === "rail"}
+          title={item.title}
+          time={slot?.time}
+          description={item.description}
+          showDescription={item.showDescription}
+          color={item.color}
+          eventLabel={eventLabel}
+          onClick={onSelect}
+          className="h-full min-h-0"
+        />
+      </li>
+    );
+  }
+
+  const kind = contentKindFromApiType(item.type);
+  const isReel = kind === "reel";
   const slot = item.scheduledAt ? scheduledAtToDateKeyAndTime(item.scheduledAt) : null;
   const mediaUrl = isReel ? item.videoUrl : item.imageUrl;
-  const desc = excerpt(isReel ? item.description : item.text);
+  const desc = excerpt(isReel ? item.description : item.text, 56);
 
   return (
     <li className="min-w-0">
@@ -262,7 +315,12 @@ function PreviewCard({
             <div className="flex h-full w-full items-center justify-center text-[10px] text-[var(--st-muted)]">—</div>
           )}
           <div className="absolute left-1 top-1 origin-top-left scale-[0.82]">
-            <ContentKindBadge kind={isReel ? "reel" : "post"} reelLabel={reelLabel} postLabel={postLabel} />
+            <ContentKindBadge
+              kind={kind}
+              reelLabel={reelLabel}
+              postLabel={postLabel}
+              eventLabel={eventLabel}
+            />
           </div>
           {slot?.time ? <span className="studio-cal-preview__time">{slot.time}</span> : null}
         </div>

@@ -16,7 +16,7 @@
       "language": "Language"
     },
     "footer": {
-      "tagline": "The content workspace that keeps creators shipping: plan faster, publish safely, and turn performance into the next week's plan.",
+      "tagline": "Plan, publish, and grow — one workspace for creators.",
       "trustLine": "Official APIs · OAuth · No shared passwords",
       "productColumn": "Product",
       "resourcesColumn": "Explore",
@@ -652,6 +652,13 @@
       "library": "Library",
       "allContent": "All content",
       "noItems": "No items yet.",
+      "noPosts": "No posts yet.",
+      "noReels": "No reels yet.",
+      "filterAll": "All",
+      "filterAria": "Filter by type",
+      "viewList": "List",
+      "viewGrid": "Grid",
+      "viewAria": "Library layout",
       "tableTitle": "Title",
       "tableType": "Type",
       "tablePlatforms": "Platforms",
@@ -662,6 +669,11 @@
       "tableActions": "Actions",
       "typeReel": "Reel",
       "typePost": "Post",
+      "typeEvent": "Event",
+      "statusDraft": "Draft",
+      "statusScheduled": "Scheduled",
+      "statusPosted": "Posted",
+      "statusArchived": "Archived",
       "edit": "Edit",
       "duplicate": "Copy",
       "archive": "Archive",
@@ -673,7 +685,7 @@
         "close": "Close",
         "editContent": "Edit content",
         "createContent": "Create content",
-        "kindToggleAria": "Content type: post or reel",
+        "kindToggleAria": "Content type: post, reel, or event",
         "date": "Date",
         "time": "Time",
         "schedule": "Schedule",
@@ -686,6 +698,11 @@
         "hashtags": "Hashtags",
         "hashtagsPlaceholder": "e.g. creator reels tiktok",
         "hashtagsHint": "Press Enter or comma to add. # is optional.",
+        "eventColor": "Color",
+        "eventColorAria": "Event color",
+        "eventColorCustom": "Custom",
+        "showDescriptionInPreview": "Show description in preview",
+        "showDescriptionInPreviewHint": "When on, the first lines of the description appear on the event card.",
         "video": "Video",
         "image": "Image",
         "noImageSelected": "No image selected",
@@ -749,16 +766,24 @@
       }
     },
     "platforms": {
-      "connectedLabel": "Connected platforms",
-      "connectedSubtitle": "Tap a platform to open details",
-      "connectedCount": "Connected:",
+      "connectedLabel": "Accounts",
+      "connectedSubtitle": "Connect channels once — publish and sync from Studio.",
+      "connectedCount": "Connected",
       "connectedHintNone": "Connect at least one platform to start.",
-      "connectedHintSome": "Tap a platform to open details →",
-      "noConnected": "No connected platforms yet.",
-      "yourPlatforms": "Your platforms",
+      "connectedHintSome": "Select an account to manage sync and permissions.",
+      "noConnected": "No accounts connected yet.",
+      "emptyConnectedTitle": "Start with one connection",
+      "emptyConnectedBody": "Pick a platform below. You can add more anytime.",
+      "yourPlatforms": "Browse integrations",
+      "catalogSubtitle": "Social, messengers, storage, and alerts",
       "statusOverview": "Status overview",
-      "searchPlaceholder": "Search (name, hint, account)…",
+      "searchPlaceholder": "Search platforms…",
       "connectedOnly": "Connected only",
+      "allGroups": "All",
+      "manage": "Manage",
+      "available": "Available",
+      "live": "Connected",
+      "onlineLabel": "Online",
       "resetDemo": "Reset demo",
       "noMatch": "No platforms match your filters.",
       "account": "Account",
@@ -766,7 +791,12 @@
       "sync": "Sync",
       "disconnect": "Disconnect",
       "connect": "Connect",
-      "noSync": "no sync",
+      "noSync": "Never synced",
+      "groupSocial": "Social",
+      "groupMessengers": "Messengers",
+      "groupProductivity": "Productivity",
+      "groupStorage": "Storage",
+      "groupNotifications": "Alerts",
       "pinterestConnectFailed": "Pinterest: could not connect account",
       "pinterestNetworkError": "Pinterest: network error"
     },
@@ -958,9 +988,9 @@
         "label": "Inbox",
         "hint": "Every reply, one desk"
       },
-      "drafts": {
-        "label": "Drafts",
-        "hint": "Ideas waiting to ship"
+      "media": {
+        "label": "Media",
+        "hint": "Posts and reels in one place"
       },
       "accounts": {
         "label": "Accounts",
@@ -970,9 +1000,9 @@
         "label": "Queue",
         "hint": "Next up, always clear"
       },
-      "archive": {
-        "label": "Archive",
-        "hint": "Everything you shipped"
+      "events": {
+        "label": "Events",
+        "hint": "Lives, launches, reminders"
       },
       "analytics": {
         "label": "Analytics",
@@ -1002,21 +1032,29 @@
       "secondary": "Back to {section}"
     },
     "itemDetails": {
+      "bot": {
+        "body": "An assistant for ideas, replies, and quiet help while you create — still taking shape.",
+        "primary": "Join the waitlist"
+      },
+      "inbox": {
+        "body": "One desk for comments, DMs, and mentions across connected channels — still on the list.",
+        "primary": "Join the waitlist"
+      },
       "sub": {
         "body": "Auto-caption every clip with calm, on-brand subtitles — timing, style, and language in one quiet panel.",
         "primary": "Join the waitlist"
       },
-      "drafts": {
-        "body": "Your unfinished ideas live here — pick up where you left off, without digging through folders.",
-        "primary": "Join the waitlist"
+      "media": {
+        "body": "Browse posts and reels — filter by type, edit, and ship from one calm library.",
+        "primary": "Open media"
       },
       "queue": {
         "body": "See what ships next, in order. Drag, pause, or reschedule without breaking the flow.",
         "primary": "Join the waitlist"
       },
-      "archive": {
-        "body": "Everything you have already published — searchable, filterable, always within reach.",
-        "primary": "Join the waitlist"
+      "events": {
+        "body": "Plan lives, launches, and reminders on the same calendar as posts and reels — without publishing them as content.",
+        "primary": "Create event"
       },
       "analytics": {
         "body": "Reach, engagement, and growth in one calm read — no dashboards that shout.",

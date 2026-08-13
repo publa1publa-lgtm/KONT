@@ -1,25 +1,29 @@
-/** Fixed slot width for POST/REEL badge in the type column. */
-export const CONTENT_KIND_BADGE_SLOT_CLASS = "flex w-[3.35rem] shrink-0";
+/** Fixed slot width for POST/REEL/EVENT badge in the type column. */
+export const CONTENT_KIND_BADGE_SLOT_CLASS = "flex w-[3.75rem] shrink-0";
 
-type ContentKind = "post" | "reel";
+type ContentKind = "post" | "reel" | "event";
 type ContentKindBadgeAlign = "start" | "center";
 
 const kindClass: Record<ContentKind, string> = {
   reel: "border-[var(--ice)]/30 bg-[var(--ice)]/12 text-[var(--ice)]",
   post: "border-[var(--line)] bg-[var(--studio-surface-3)] text-[var(--fg)]/75",
+  event: "border-amber-400/35 bg-amber-400/12 text-amber-100",
 };
 
 export function ContentKindBadge({
   kind,
   reelLabel,
   postLabel,
+  eventLabel = "Event",
   align = "start",
 }: {
   kind: ContentKind;
   reelLabel: string;
   postLabel: string;
+  eventLabel?: string;
   align?: ContentKindBadgeAlign;
 }) {
+  const label = kind === "reel" ? reelLabel : kind === "event" ? eventLabel : postLabel;
   const pill = (
     <span
       className={[
@@ -27,7 +31,7 @@ export function ContentKindBadge({
         kindClass[kind],
       ].join(" ")}
     >
-      {kind === "reel" ? reelLabel : postLabel}
+      {label}
     </span>
   );
 
@@ -36,4 +40,11 @@ export function ContentKindBadge({
   }
 
   return <span className={[CONTENT_KIND_BADGE_SLOT_CLASS, "justify-start"].join(" ")}>{pill}</span>;
+}
+
+/** Maps Content API type strings (`POST` | `REEL`) to composer/badge kinds. Pass `"event"` explicitly for PlanEvents. */
+export function contentKindFromApiType(type: string): Exclude<ContentKind, "event"> {
+  const t = String(type).toUpperCase();
+  if (t === "REEL") return "reel";
+  return "post";
 }

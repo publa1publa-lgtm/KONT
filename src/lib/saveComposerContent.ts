@@ -119,3 +119,36 @@ export async function updateComposerReel(id: string, payload: ComposerReelPayloa
   });
   notifyContentListChanged();
 }
+
+export type ComposerEventPayload = {
+  title: string;
+  description: string;
+  showDescription: boolean;
+  color: string;
+  dateKey: string;
+  time: string;
+};
+
+export async function saveComposerEvent(payload: ComposerEventPayload): Promise<void> {
+  const { createEvent, notifyEventsListChanged } = await import("@/lib/eventsApi");
+  await createEvent({
+    title: payload.title,
+    description: payload.description,
+    showDescription: payload.showDescription,
+    color: payload.color,
+    scheduledAt: localScheduleToIso(payload.dateKey, payload.time),
+  });
+  notifyEventsListChanged();
+}
+
+export async function updateComposerEvent(id: string, payload: ComposerEventPayload): Promise<void> {
+  const { updateEvent, notifyEventsListChanged } = await import("@/lib/eventsApi");
+  await updateEvent(id, {
+    title: payload.title,
+    description: payload.description,
+    showDescription: payload.showDescription,
+    color: payload.color,
+    scheduledAt: localScheduleToIso(payload.dateKey, payload.time),
+  });
+  notifyEventsListChanged();
+}

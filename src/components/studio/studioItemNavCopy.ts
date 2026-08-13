@@ -11,8 +11,9 @@ export function getStudioItemNavCopy(itemId: string, messages: AppMessages): Stu
 
   const featureDescriptions: Record<string, string | undefined> = {
     content: messages.studio.content?.subtitle,
+    media: messages.studio.content?.subtitle,
     calendar: messages.calendar.subtitle,
-    inbox: messages.studio.inbox?.subtitle,
+    inbox: messages.studio.itemDetails?.inbox?.body,
     accounts: messages.studio.platforms?.connectedSubtitle,
     automations: messages.studio.placeholders?.pickAutomations,
     bot: messages.studio.placeholders?.pickBots,

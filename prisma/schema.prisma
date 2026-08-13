@@ -76,6 +76,10 @@ enum AuditAction {
   CONTENT_UPDATED
   CONTENT_DELETED
 
+  EVENT_CREATED
+  EVENT_UPDATED
+  EVENT_DELETED
+
   PUBLISH_REQUESTED
   PUBLISH_SUCCEEDED
   PUBLISH_FAILED
@@ -141,6 +145,7 @@ model User {
 
   platformAccounts PlatformAccount[]
   contents         Content[]
+  planEvents       PlanEvent[]
   mediaAssets      MediaAsset[]
   auditLogs        AuditLog[]
   sessions         Session[]
@@ -315,6 +320,31 @@ model Content {
   @@index([deletedAt])
   /// Composite index used by the publish worker: pull SCHEDULED items whose scheduledAt is due.
   @@index([status, scheduledAt])
+}
+
+/// Calendar plan item (live, launch, reminder) — not publishable content.
+model PlanEvent {
+  id          String    @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  /// When true, show a short description excerpt on calendar / library preview cards.
+  showDescription Boolean @default(false)
+  /// Accent color as `#rrggbb` (any hex) for calendar + library preview.
+  color       String    @default("#f59e0b")
+  scheduledAt DateTime
+  /// Soft-archive: hidden from calendar like ContentStatus.ARCHIVED.
+  archivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, scheduledAt])
+  @@index([userId, createdAt])
+  @@index([archivedAt])
+  @@index([deletedAt])
 }
 
 /// Uploaded user file (image / video / audio) tracked in DB.

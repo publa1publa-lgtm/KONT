@@ -10,7 +10,6 @@ import { useMessages } from "@/contexts/messages-context";
 import { withLocale, type AppLocale } from "@/i18n/config";
 
 type LandingFooterProps = {
-  brandWordmark?: boolean;
   variant?: "default" | "landing";
 };
 
@@ -24,7 +23,7 @@ function localizeHref(locale: AppLocale, href: string) {
   return href;
 }
 
-export function LandingFooter({ brandWordmark = false, variant = "default" }: LandingFooterProps) {
+export function LandingFooter({ variant = "default" }: LandingFooterProps) {
   const { story } = useMessages();
   const { locale } = useI18n();
   const F = story.footer;
@@ -60,19 +59,13 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
           transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
           className="nh-footer__inner"
         >
-          <div className="nh-footer__main">
-            <div className="nh-footer__intro">
-              <Link href={homeHref} className="nh-footer__brand" aria-label={story.brand}>
-                <KontBrandLogo decorative className="nh-footer__logo" />
-              </Link>
-              <p className="nh-footer__tagline">{F.tagline}</p>
-              <ul className="nh-footer__trust" aria-label="Trust indicators">
-                {trustItems.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
+          <ul className="nh-footer__trust" aria-label="Trust indicators">
+            {trustItems.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
 
+          <div className="nh-footer__main">
             <div className="nh-footer__columns">
               <div className="nh-footer__col">
                 <p className="nh-footer__label">{F.productColumn}</p>
@@ -110,6 +103,13 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
                 </nav>
               </div>
             </div>
+
+            <div className="nh-footer__intro">
+              <p className="nh-footer__tagline">{F.tagline}</p>
+              <Link href={homeHref} className="nh-footer__brand" aria-label={story.brand}>
+                <KontBrandLogo variant="mark" decorative className="nh-footer__logo" />
+              </Link>
+            </div>
           </div>
 
           <div className="nh-footer__bar">
@@ -134,22 +134,7 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="story-footer-shell__inner mx-auto max-w-6xl px-4 py-12 sm:px-8 sm:py-14"
       >
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.55fr_0.75fr_0.75fr_0.75fr] lg:items-start lg:gap-x-16">
-          <div className="min-w-0">
-            {brandWordmark ? (
-              <p className="font-display text-[clamp(1.9rem,3.6vw,2.4rem)] font-extrabold tracking-[-0.03em] text-[var(--fg)]">
-                {story.brand}
-              </p>
-            ) : (
-              <p className="font-display text-[clamp(1.9rem,3.6vw,2.4rem)] font-extrabold tracking-[-0.03em] text-[var(--fg)]">
-                {story.brand}
-              </p>
-            )}
-            <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-[var(--muted)] sm:text-[16px]">
-              {F.tagline}
-            </p>
-          </div>
-
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[0.75fr_0.75fr_0.75fr_1.55fr] lg:items-end lg:gap-x-16">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--muted)]">
               {F.productColumn}
@@ -195,9 +180,18 @@ export function LandingFooter({ brandWordmark = false, variant = "default" }: La
               ))}
             </nav>
           </div>
+
+          <div className="min-w-0 flex flex-col items-end text-end sm:col-span-2 lg:col-span-1">
+            <p className="max-w-xl text-[15px] leading-relaxed text-[var(--muted)] sm:text-[16px]">
+              {F.tagline}
+            </p>
+            <Link href={homeHref} className="mt-4 inline-flex items-center" aria-label={story.brand}>
+              <KontBrandLogo variant="mark" decorative className="h-12 w-12 rounded-[0.7rem]" />
+            </Link>
+          </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[rgba(15,23,42,0.1)] pt-6 sm:flex-row">
+        <div className="mt-12 flex items-center justify-end border-t border-[rgba(15,23,42,0.1)] pt-6">
           <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--muted)]">
             © {new Date().getFullYear()} {story.brand}
           </p>

@@ -1,5 +1,10 @@
 import { dateKeyLocal } from "@/components/calendar/dateUtils";
-import type { CalendarEvent, Platform, ScheduledPost } from "@/components/calendar/types";
+import type {
+  CalendarEvent,
+  Platform,
+  ScheduledPlanEvent,
+  ScheduledPost,
+} from "@/components/calendar/types";
 import { isReelPlatformId, type ReelPlatformId } from "@/lib/reelPlatformIds";
 import type { ComposerPublishSelection } from "./composerPublish";
 import type { ContentApiItem } from "./contentApi";
@@ -103,7 +108,7 @@ export function contentToCalendarEvent(c: ContentApiItem): CalendarEvent | null 
   };
 }
 
-/** Scheduled posts + reels for a calendar day (non-archived). */
+/** Scheduled posts + reels + plan events for a calendar day (non-archived). */
 export function apiItemsForDateKey(items: ContentApiItem[], dateKey: string): ContentApiItem[] {
   const out: ContentApiItem[] = [];
   for (const c of items) {
@@ -137,6 +142,32 @@ export function contentToScheduledPost(c: ContentApiItem): ScheduledPost | null 
   };
 }
 
+export function eventApiToScheduledPlanEvent(e: {
+  id: string;
+  title: string;
+  description: string | null;
+  showDescription?: boolean | null;
+  color?: string | null;
+  scheduledAt: string;
+  archivedAt: string | null;
+  createdAt: string;
+}): ScheduledPlanEvent | null {
+  if (e.archivedAt) return null;
+  const slot = scheduledAtToDateKeyAndTime(e.scheduledAt);
+  if (!slot) return null;
+  return {
+    id: e.id,
+    kind: "event",
+    title: e.title,
+    description: e.description ?? "",
+    showDescription: e.showDescription === true,
+    color: e.color ?? "amber",
+    dateKey: slot.dateKey,
+    time: slot.time,
+    createdAt: new Date(e.createdAt).getTime(),
+  };
+}
+
 export type PostListItem = {
   id: string;
   kind: "post";
@@ -164,6 +195,19 @@ export type ReelListItem = {
   tags: string[];
   platforms?: ReelPlatformId[];
   subtitles?: LegacySubtitle[];
+  createdAt: number;
+};
+
+export type EventListItem = {
+  id: string;
+  kind: "event";
+  status: string;
+  title: string;
+  description: string;
+  showDescription: boolean;
+  color: string;
+  dateKey?: string;
+  time?: string;
   createdAt: number;
 };
 
@@ -211,6 +255,31 @@ export function contentToListItem(c: ContentApiItem): ContentListItem | null {
   return null;
 }
 
+export function eventApiToListItem(e: {
+  id: string;
+  title: string;
+  description: string | null;
+  showDescription?: boolean | null;
+  color?: string | null;
+  scheduledAt: string;
+  archivedAt: string | null;
+  createdAt: string;
+}): EventListItem {
+  const slot = scheduledAtToDateKeyAndTime(e.scheduledAt);
+  return {
+    id: e.id,
+    kind: "event",
+    status: e.archivedAt ? "ARCHIVED" : "SCHEDULED",
+    title: e.title,
+    description: e.description ?? "",
+    showDescription: e.showDescription === true,
+    color: e.color ?? "amber",
+    dateKey: slot?.dateKey,
+    time: slot?.time,
+    createdAt: new Date(e.createdAt).getTime(),
+  };
+}
+
 export function mapApiItemsToListItems(items: ContentApiItem[]): ContentListItem[] {
   return items.map(contentToListItem).filter(isContentListItem);
 }
@@ -231,7 +300,32 @@ export function contentsToCalendarMaps(items: ContentApiItem[]) {
   for (const key of Object.keys(eventsByDate)) {
     eventsByDate[key].sort((a, b) => (a.time === b.time ? a.createdAt - b.createdAt : a.time.localeCompare(b.time)));
   }
-  scheduledPosts.sort((a, b) => (a.dateKey === b.dateKey ? a.time.localeCompare(b.time) : a.dateKey.localeCompare(b.dateKey)));
+  scheduledPosts.sort((a, b) =>
+    a.dateKey === b.dateKey ? a.time.localeCompare(b.time) : a.dateKey.localeCompare(b.dateKey),
+  );
 
   return { eventsByDate, scheduledPosts };
+}
+
+export function planEventsToCalendarMap(
+  items: Array<{
+    id: string;
+    title: string;
+    description: string | null;
+    showDescription?: boolean | null;
+    color?: string | null;
+    scheduledAt: string;
+    archivedAt: string | null;
+    createdAt: string;
+  }>,
+) {
+  const planEvents: ScheduledPlanEvent[] = [];
+  for (const e of items) {
+    const pe = eventApiToScheduledPlanEvent(e);
+    if (pe) planEvents.push(pe);
+  }
+  planEvents.sort((a, b) =>
+    a.dateKey === b.dateKey ? a.time.localeCompare(b.time) : a.dateKey.localeCompare(b.dateKey),
+  );
+  return planEvents;
 }

@@ -7,7 +7,7 @@ import { StudioDialog } from "./StudioDialog";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { formatTemplate } from "@/lib/formatTemplate";
 import { INBOX_UNIFIED_PERMISSION_ID } from "@/lib/studioInboxPermissions";
-import { PLATFORM_CARD_ACCENT, platformIconTileStyle } from "./platformCardStyles";
+import { platformBrandAccent, platformIconTileStyle } from "./platformCardStyles";
 import {
   DiscordLogo,
   DropboxLogo,
@@ -308,8 +308,11 @@ export function PlatformPermissionsModal({
       header={({ titleId }) => (
         <div className="studio-permissions-header">
           <div className="studio-permissions-header__main">
-            <div className="studio-permissions-header__icon" style={platformIconTileStyle(PLATFORM_CARD_ACCENT)}>
-              <PlatformConnectIcon id={platformId} className="h-[1.35rem] w-[1.35rem] text-[var(--fg)]/90" />
+            <div
+              className="studio-permissions-header__icon"
+              style={platformIconTileStyle(platformId ? platformBrandAccent(platformId) : "var(--ice)")}
+            >
+              <PlatformConnectIcon id={platformId} className="h-[1.35rem] w-[1.35rem]" />
             </div>
             <div className="min-w-0">
               <p className="studio-permissions-header__eyebrow">{PC.permissions}</p>

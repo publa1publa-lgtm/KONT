@@ -1,4 +1,5 @@
 import type { ContentStatus, Prisma } from "@prisma/client";
+import { ContentType } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
@@ -36,7 +37,14 @@ export async function createContentRecord(data: {
   scheduledAt: Date | null;
   metadata?: Prisma.InputJsonValue;
 }) {
-  return prisma.content.create({ data });
+  const type = data.type === "REEL" ? ContentType.REEL : ContentType.POST;
+
+  return prisma.content.create({
+    data: {
+      ...data,
+      type,
+    },
+  });
 }
 
 export async function hardDeleteContent(id: string) {

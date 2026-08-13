@@ -1,11 +1,10 @@
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType } from "react";
 
 import { AutomationsViewLite } from "./features/AutomationsViewLite";
-import { BotsViewLite } from "./features/BotsViewLite";
 import { CalendarView } from "./features/CalendarView";
 import { ContentView } from "./features/ContentView";
+import { EventsView } from "./features/EventsView";
 import { PlatformsView } from "./features/PlatformsView";
-import { StudioUnifiedInboxDemo } from "./features/StudioUnifiedInboxDemo";
 
 export type StudioItemViewProps = {
   onBack: () => void;
@@ -23,10 +22,6 @@ function AutomationsPanel(_props: StudioItemViewProps) {
   );
 }
 
-function BotsPanel(_props: StudioItemViewProps) {
-  return <BotsViewLite intent={null} onIntentConsumed={() => undefined} onViewChange={() => undefined} />;
-}
-
 function ContentPanel(_props: StudioItemViewProps) {
   return <ContentView />;
 }
@@ -39,22 +34,22 @@ function AccountsPanel(_props: StudioItemViewProps) {
   return <PlatformsView />;
 }
 
-function InboxPanel(_props: StudioItemViewProps) {
-  return <StudioUnifiedInboxDemo />;
+function EventsPanel(_props: StudioItemViewProps) {
+  return <EventsView />;
 }
 
 /** Maps onboarding tile ids to ported feature views from contentfabric. */
 export const ITEM_REGISTRY: Record<string, ItemViewEntry> = {
   content: { wired: true, View: ContentPanel },
   calendar: { wired: true, View: CalendarPanel },
-  inbox: { wired: true, View: InboxPanel },
+  inbox: { wired: false },
   accounts: { wired: true, View: AccountsPanel },
   automations: { wired: true, View: AutomationsPanel },
-  bot: { wired: true, View: BotsPanel },
+  bot: { wired: false },
+  events: { wired: true, View: EventsPanel },
   sub: { wired: false },
-  drafts: { wired: false },
+  media: { wired: true, View: ContentPanel },
   queue: { wired: false },
-  archive: { wired: false },
   analytics: { wired: false },
   insights: { wired: false },
   reports: { wired: false },

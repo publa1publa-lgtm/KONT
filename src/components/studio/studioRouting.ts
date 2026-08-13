@@ -16,8 +16,18 @@ export function getSectionForItem(itemId: string): SectionId | null {
   return null;
 }
 
+/** Legacy tile ids → current Manage tiles. */
+const STUDIO_ITEM_ALIASES: Record<string, string> = {
+  drafts: "media",
+  archive: "events",
+};
+
+export function resolveStudioItemId(itemId: string): string {
+  return STUDIO_ITEM_ALIASES[itemId] ?? itemId;
+}
+
 export function isStudioItemId(itemId: string): boolean {
-  return getSectionForItem(itemId) !== null;
+  return getSectionForItem(resolveStudioItemId(itemId)) !== null;
 }
 
 function studioSegments(pathname: string): string[] {
@@ -40,7 +50,7 @@ export function parseStudioItemFromPathname(pathname: string): string | null {
 
   const last = rest[rest.length - 1]!;
   if (isStudioItemId(last)) {
-    return last;
+    return resolveStudioItemId(last);
   }
 
   return null;
@@ -61,7 +71,7 @@ export function parseStudioSectionFromPathname(pathname: string): SectionId {
 
   const last = rest[rest.length - 1]!;
   if (isStudioItemId(last)) {
-    return getSectionForItem(last) ?? "create";
+    return getSectionForItem(resolveStudioItemId(last)) ?? "create";
   }
 
   if (isSectionId(last)) {
@@ -94,7 +104,7 @@ export function buildStudioHref(options?: string | null | StudioHrefOptions): st
   let path = "/studio";
 
   if (opts.item && isStudioItemId(opts.item)) {
-    path = `/studio/${opts.item}`;
+    path = `/studio/${resolveStudioItemId(opts.item)}`;
   } else {
     const section = opts.section ?? "create";
     if (section !== "create") {

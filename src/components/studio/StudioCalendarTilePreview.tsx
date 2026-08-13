@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Clapperboard, ImageIcon } from "lucide-react";
+import { CalendarDays, Clapperboard, ImageIcon } from "lucide-react";
 
 import { buildMonthGrid, CALENDAR_DISPLAY_WEEK_ROWS, dateKeyLocal, isSameMonth } from "@/components/calendar/dateUtils";
 import { CONTENT_LIST_CHANGED_EVENT, fetchContents } from "@/lib/contentApi";
-import { contentsToCalendarMaps } from "@/lib/contentMappers";
+import { EVENTS_LIST_CHANGED_EVENT, fetchEvents } from "@/lib/eventsApi";
+import { contentsToCalendarMaps, planEventsToCalendarMap } from "@/lib/contentMappers";
 
-type DayCounts = { posts: number; reels: number };
+type DayCounts = { posts: number; reels: number; events: number };
 
 export function StudioCalendarTilePreview() {
   const month = useMemo(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1), []);
@@ -19,19 +20,23 @@ export function StudioCalendarTilePreview() {
 
     const load = async () => {
       try {
-        const { items, unauthorized } = await fetchContents();
+        const [contentRes, eventsRes] = await Promise.all([fetchContents(), fetchEvents()]);
         if (cancelled) return;
-        if (unauthorized) {
+        if (contentRes.unauthorized || eventsRes.unauthorized) {
           setCounts({});
           return;
         }
-        const { eventsByDate, scheduledPosts } = contentsToCalendarMaps(items);
+        const { eventsByDate, scheduledPosts } = contentsToCalendarMaps(contentRes.items);
+        const planEvents = planEventsToCalendarMap(eventsRes.items);
         const next: Record<string, DayCounts> = {};
         for (const [key, events] of Object.entries(eventsByDate)) {
-          (next[key] ??= { posts: 0, reels: 0 }).reels += events.length;
+          (next[key] ??= { posts: 0, reels: 0, events: 0 }).reels += events.length;
         }
         for (const post of scheduledPosts) {
-          (next[post.dateKey] ??= { posts: 0, reels: 0 }).posts += 1;
+          (next[post.dateKey] ??= { posts: 0, reels: 0, events: 0 }).posts += 1;
+        }
+        for (const ev of planEvents) {
+          (next[ev.dateKey] ??= { posts: 0, reels: 0, events: 0 }).events += 1;
         }
         setCounts(next);
       } catch {
@@ -42,9 +47,11 @@ export function StudioCalendarTilePreview() {
     void load();
     const onChange = () => void load();
     window.addEventListener(CONTENT_LIST_CHANGED_EVENT, onChange);
+    window.addEventListener(EVENTS_LIST_CHANGED_EVENT, onChange);
     return () => {
       cancelled = true;
       window.removeEventListener(CONTENT_LIST_CHANGED_EVENT, onChange);
+      window.removeEventListener(EVENTS_LIST_CHANGED_EVENT, onChange);
     };
   }, []);
 
@@ -65,6 +72,7 @@ export function StudioCalendarTilePreview() {
           const day = counts[key];
           const postCount = day?.posts ?? 0;
           const reelCount = day?.reels ?? 0;
+          const eventCount = day?.events ?? 0;
           return (
             <span
               key={key}
@@ -82,7 +90,7 @@ export function StudioCalendarTilePreview() {
                 <span className={["cal-day-num", isToday ? "is-today" : ""].join(" ")}>
                   {date.getDate()}
                 </span>
-                {postCount > 0 || reelCount > 0 ? (
+                {postCount > 0 || reelCount > 0 || eventCount > 0 ? (
                   <span className="cal-cell-kinds">
                     {postCount > 0 ? (
                       <span className="cal-cell-kind cal-cell-kind--post">
@@ -94,6 +102,12 @@ export function StudioCalendarTilePreview() {
                       <span className="cal-cell-kind cal-cell-kind--reel">
                         {reelCount}
                         <Clapperboard aria-hidden />
+                      </span>
+                    ) : null}
+                    {eventCount > 0 ? (
+                      <span className="cal-cell-kind cal-cell-kind--event">
+                        {eventCount}
+                        <CalendarDays aria-hidden />
                       </span>
                     ) : null}
                   </span>

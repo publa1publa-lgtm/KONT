@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { addMonths, buildCalendarYearOptions, dateKeyLocal } from "@/components/calendar/dateUtils";
-import type { CalendarEventsByDate, ScheduledPostsByDate } from "@/components/calendar/types";
+import type { CalendarEventsByDate, ScheduledPlanEventsByDate, ScheduledPostsByDate } from "@/components/calendar/types";
 import { CalendarGrid, CALENDAR_DISPLAY_WEEK_ROWS } from "@/components/calendar/CalendarGrid";
 import { SelectMenu } from "@/components/ui/SelectMenu";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -13,8 +13,24 @@ import { useI18n } from "@/contexts/i18n-context";
 import { intlLocale } from "@/i18n/config";
 import type { ContentApiItem } from "@/lib/contentApi";
 import { CONTENT_LIST_CHANGED_EVENT, deleteContent, fetchContents, notifyContentListChanged, updateContent } from "@/lib/contentApi";
-import { contentsToCalendarMaps } from "@/lib/contentMappers";
-import { saveComposerPost, saveComposerReel, updateComposerPost, updateComposerReel } from "@/lib/saveComposerContent";
+import {
+  deleteEvent,
+  EVENTS_LIST_CHANGED_EVENT,
+  fetchEvents,
+  notifyEventsListChanged,
+  updateEvent,
+  type EventApiItem,
+} from "@/lib/eventsApi";
+import { contentsToCalendarMaps, planEventsToCalendarMap } from "@/lib/contentMappers";
+import {
+  saveComposerEvent,
+  saveComposerPost,
+  saveComposerReel,
+  updateComposerEvent,
+  updateComposerPost,
+  updateComposerReel,
+} from "@/lib/saveComposerContent";
+import { contentKindFromApiType } from "./ContentKindBadge";
 import { formatStudioCreateCta, StudioCreateButton } from "./StudioCreateButton";
 
 export function CalendarView() {
@@ -30,7 +46,9 @@ export function CalendarView() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [eventsByDate, setEventsByDate] = useState<CalendarEventsByDate>({});
   const [apiItems, setApiItems] = useState<ContentApiItem[]>([]);
+  const [planEventItems, setPlanEventItems] = useState<EventApiItem[]>([]);
   const [editingItem, setEditingItem] = useState<ContentApiItem | null>(null);
+  const [editingEvent, setEditingEvent] = useState<EventApiItem | null>(null);
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const [error, setError] = useState<string | null>(null);
   const [confirmArchiveId, setConfirmArchiveId] = useState<string | null>(null);
@@ -71,15 +89,17 @@ export function CalendarView() {
   const load = useCallback(async () => {
     setError(null);
     try {
-      const { items, unauthorized } = await fetchContents();
-      if (unauthorized) {
+      const [contentRes, eventsRes] = await Promise.all([fetchContents(), fetchEvents()]);
+      if (contentRes.unauthorized || eventsRes.unauthorized) {
         setError(CE.signInToLoad);
         setEventsByDate({});
         setApiItems([]);
+        setPlanEventItems([]);
         return;
       }
-      setApiItems(items);
-      applyItems(items);
+      setApiItems(contentRes.items);
+      applyItems(contentRes.items);
+      setPlanEventItems(eventsRes.items);
     } catch (e) {
       setError(e instanceof Error ? e.message : CE.loadFailed);
     }
@@ -92,7 +112,11 @@ export function CalendarView() {
   useEffect(() => {
     const handler = () => void load();
     window.addEventListener(CONTENT_LIST_CHANGED_EVENT, handler);
-    return () => window.removeEventListener(CONTENT_LIST_CHANGED_EVENT, handler);
+    window.addEventListener(EVENTS_LIST_CHANGED_EVENT, handler);
+    return () => {
+      window.removeEventListener(CONTENT_LIST_CHANGED_EVENT, handler);
+      window.removeEventListener(EVENTS_LIST_CHANGED_EVENT, handler);
+    };
   }, [load]);
 
   useEffect(() => {
@@ -123,54 +147,100 @@ export function CalendarView() {
     return out;
   }, [apiItems]);
 
+  const planEventsByDate = useMemo(() => {
+    const planEvents = planEventsToCalendarMap(planEventItems);
+    const out: ScheduledPlanEventsByDate = {};
+    for (const e of planEvents) {
+      (out[e.dateKey] ??= []).push(e);
+    }
+    for (const key of Object.keys(out)) {
+      out[key].sort((a, b) => (a.time === b.time ? a.createdAt - b.createdAt : a.time.localeCompare(b.time)));
+    }
+    return out;
+  }, [planEventItems]);
+
   const previewCanAdd = useMemo(() => {
     if (!previewDayKey) return false;
     const todayKey = dateKeyLocal(new Date(nowMs));
     return previewDayKey >= todayKey;
   }, [previewDayKey, nowMs]);
 
-  const composerOpen = selectedDate !== null || editingItem !== null;
+  const composerOpen = selectedDate !== null || editingItem !== null || editingEvent !== null;
 
   const closeComposer = useCallback(() => {
     setSelectedDate(null);
     setEditingItem(null);
+    setEditingEvent(null);
   }, []);
 
   const openEditFromApi = useCallback(
     async (id: string) => {
       setError(null);
+
+      const planEvent = planEventItems.find((x) => x.id === id) ?? null;
+      if (planEvent) {
+        setSelectedDate(null);
+        setEditingItem(null);
+        setEditingEvent(planEvent);
+        return;
+      }
+
       let item = apiItems.find((x) => x.id === id) ?? null;
       if (!item) {
         try {
-          const { items, unauthorized } = await fetchContents();
-          if (unauthorized) {
+          const [contentRes, eventsRes] = await Promise.all([fetchContents(), fetchEvents()]);
+          if (contentRes.unauthorized || eventsRes.unauthorized) {
             setError(CE.signInToEdit);
             return;
           }
-          item = items.find((x) => x.id === id) ?? null;
+          setApiItems(contentRes.items);
+          applyItems(contentRes.items);
+          setPlanEventItems(eventsRes.items);
+
+          const refreshedEvent = eventsRes.items.find((x) => x.id === id) ?? null;
+          if (refreshedEvent) {
+            setSelectedDate(null);
+            setEditingItem(null);
+            setEditingEvent(refreshedEvent);
+            return;
+          }
+
+          item = contentRes.items.find((x) => x.id === id) ?? null;
           if (!item) {
             setError(CE.couldNotOpenForEditing);
             return;
           }
-          setApiItems(items);
-          applyItems(items);
         } catch {
           setError(CE.couldNotLoadContent);
           return;
         }
       }
       setSelectedDate(null);
+      setEditingEvent(null);
       setEditingItem(item);
     },
-    [CE.couldNotLoadContent, CE.couldNotOpenForEditing, CE.signInToEdit, apiItems, applyItems],
+    [
+      CE.couldNotLoadContent,
+      CE.couldNotOpenForEditing,
+      CE.signInToEdit,
+      apiItems,
+      planEventItems,
+      applyItems,
+    ],
   );
 
   const openAddForPreviewDay = useCallback(() => {
     if (!previewDayKey || !previewCanAdd) return;
     setError(null);
     setEditingItem(null);
+    setEditingEvent(null);
     setSelectedDate(new Date(`${previewDayKey}T12:00:00`));
   }, [previewCanAdd, previewDayKey]);
+
+  const isPlanEventId = useCallback(
+    (id: string) => planEventItems.some((x) => x.id === id),
+    [planEventItems],
+  );
 
   return (
     <div className="studio-calendar">
@@ -248,6 +318,7 @@ export function CalendarView() {
                 showCreateButton={false}
                 dayKey={previewDayKey}
                 items={apiItems}
+                events={planEventItems}
                 canAdd={previewCanAdd}
                 createLabel={formatStudioCreateCta(messages.studio.createCta, messages.studio.items.content.label)}
                 onSelectItem={(id) => void openEditFromApi(id)}
@@ -267,6 +338,7 @@ export function CalendarView() {
                 month={month}
                 eventsByDate={eventsByDate}
                 postsByDate={postsByDate}
+                planEventsByDate={planEventsByDate}
                 nowMs={nowMs}
                 selectedDayKey={previewDayKey}
                 onSelectDate={(d) => setPreviewDayKey(dateKeyLocal(d))}
@@ -280,6 +352,7 @@ export function CalendarView() {
             showCreateButton={false}
             dayKey={previewDayKey}
             items={apiItems}
+            events={planEventItems}
             canAdd={previewCanAdd}
             createLabel={formatStudioCreateCta(messages.studio.createCta, messages.studio.items.content.label)}
             onSelectItem={(id) => void openEditFromApi(id)}
@@ -291,13 +364,20 @@ export function CalendarView() {
       <ContentComposerModal
         open={composerOpen}
         allowedKinds={
-          editingItem ? [String(editingItem.type).toUpperCase() === "REEL" ? "reel" : "post"] : ["post", "reel"]
+          editingEvent
+            ? ["event"]
+            : editingItem
+              ? [contentKindFromApiType(editingItem.type)]
+              : ["post", "reel", "event"]
         }
-        defaultKind={editingItem ? (String(editingItem.type).toUpperCase() === "REEL" ? "reel" : "post") : "post"}
+        defaultKind={
+          editingEvent ? "event" : editingItem ? contentKindFromApiType(editingItem.type) : "post"
+        }
         initialData={editingItem}
+        initialEvent={editingEvent}
         title={CC.composerTitle}
         subtitle={CC.composerSubtitle}
-        date={editingItem ? null : selectedDate}
+        date={editingItem || editingEvent ? null : selectedDate}
         requireTime
         onClose={closeComposer}
         onCreatePost={async (payload) => {
@@ -368,6 +448,38 @@ export function CalendarView() {
             throw e instanceof Error ? e : new Error(msg);
           }
         }}
+        onCreateEvent={async (payload) => {
+          if (!payload.dateKey || !payload.time) {
+            const msg = CE.pickDateTime;
+            setError(msg);
+            throw new Error(msg);
+          }
+          try {
+            if (payload.contentId) {
+              await updateComposerEvent(payload.contentId, {
+                title: payload.title,
+                description: payload.description,
+                showDescription: payload.showDescription,
+                color: payload.color,
+                dateKey: payload.dateKey,
+                time: payload.time,
+              });
+            } else {
+              await saveComposerEvent({
+                title: payload.title,
+                description: payload.description,
+                showDescription: payload.showDescription,
+                color: payload.color,
+                dateKey: payload.dateKey,
+                time: payload.time,
+              });
+            }
+          } catch (e) {
+            const msg = e instanceof Error ? e.message : CE.saveFailed;
+            setError(msg);
+            throw e instanceof Error ? e : new Error(msg);
+          }
+        }}
       />
 
       <ConfirmDialog
@@ -383,8 +495,13 @@ export function CalendarView() {
           setActionBusy(true);
           setError(null);
           try {
-            await updateContent(confirmArchiveId, { status: "ARCHIVED" });
-            notifyContentListChanged();
+            if (isPlanEventId(confirmArchiveId)) {
+              await updateEvent(confirmArchiveId, { archived: true });
+              notifyEventsListChanged();
+            } else {
+              await updateContent(confirmArchiveId, { status: "ARCHIVED" });
+              notifyContentListChanged();
+            }
             setConfirmArchiveId(null);
           } catch (e) {
             setError(e instanceof Error ? e.message : CE.archiveFailed);
@@ -407,8 +524,13 @@ export function CalendarView() {
           setActionBusy(true);
           setError(null);
           try {
-            await deleteContent(confirmDeleteId);
-            notifyContentListChanged();
+            if (isPlanEventId(confirmDeleteId)) {
+              await deleteEvent(confirmDeleteId);
+              notifyEventsListChanged();
+            } else {
+              await deleteContent(confirmDeleteId);
+              notifyContentListChanged();
+            }
             setConfirmDeleteId(null);
           } catch (e) {
             setError(e instanceof Error ? e.message : CE.deleteFailed);

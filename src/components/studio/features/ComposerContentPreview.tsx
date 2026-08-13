@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { Bookmark, Heart, ImageIcon, MessageCircle, MoreHorizontal, Send, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  EVENT_COLOR_PRESETS,
+  colorsMatch,
+  isHexColor,
+  normalizeEventColor,
+} from "@/lib/eventColors";
 
 export const composerFieldLabel =
   "text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]";
@@ -293,3 +299,129 @@ export function ComposerPostPreview({
     </div>
   );
 }
+
+export function EventColorPicker({
+  value,
+  onChange,
+  label,
+  ariaLabel,
+  customLabel,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+  label: string;
+  ariaLabel: string;
+  customLabel: string;
+}) {
+  const selected = normalizeEventColor(value);
+  const isCustom = !EVENT_COLOR_PRESETS.some((hex) => colorsMatch(hex, selected));
+  const inputId = useId();
+  const [hexDraft, setHexDraft] = useState(selected);
+
+  useEffect(() => {
+    setHexDraft(selected);
+  }, [selected]);
+
+  return (
+    <div className="grid gap-2">
+      <span className={composerFieldLabel}>{label}</span>
+      <div
+        className="rounded-2xl border border-[var(--line)]/80 bg-[var(--studio-surface-3)]/70 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+        role="radiogroup"
+        aria-label={ariaLabel}
+      >
+        <div className="flex flex-wrap gap-2">
+          {EVENT_COLOR_PRESETS.map((hex) => {
+            const active = colorsMatch(hex, selected);
+            return (
+              <button
+                key={hex}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                aria-label={hex}
+                title={hex}
+                onClick={() => onChange(hex)}
+                className={[
+                  "relative size-8 rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ice)]/45",
+                  active
+                    ? "scale-110 ring-2 ring-[var(--fg)] ring-offset-2 ring-offset-[var(--studio-surface-3)]"
+                    : "opacity-90 hover:scale-105 hover:opacity-100",
+                ].join(" ")}
+                style={{
+                  backgroundColor: hex,
+                  boxShadow: active
+                    ? `0 8px 18px -10px ${hex}`
+                    : "inset 0 0 0 1px rgba(255,255,255,0.35)",
+                }}
+              />
+            );
+          })}
+        </div>
+
+        <div className="mt-3 flex items-center gap-2.5 border-t border-[var(--line)]/70 pt-3">
+          <label
+            htmlFor={inputId}
+            className={[
+              "relative grid size-9 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full transition",
+              "focus-within:ring-2 focus-within:ring-[var(--ice)]/45",
+              isCustom
+                ? "scale-110 ring-2 ring-[var(--fg)] ring-offset-2 ring-offset-[var(--studio-surface-3)]"
+                : "ring-1 ring-[var(--line)]",
+            ].join(" ")}
+            style={{
+              background: isCustom
+                ? selected
+                : "conic-gradient(from 180deg, #f43f5e, #f59e0b, #eab308, #10b981, #0ea5e9, #6366f1, #f43f5e)",
+            }}
+            title={customLabel}
+          >
+            <span
+              className="pointer-events-none absolute inset-[3px] rounded-full bg-white/90"
+              aria-hidden
+            />
+            <span
+              className="pointer-events-none absolute inset-[7px] rounded-full"
+              style={{ backgroundColor: selected }}
+              aria-hidden
+            />
+            <input
+              id={inputId}
+              type="color"
+              value={selected}
+              onChange={(e) => onChange(normalizeEventColor(e.target.value))}
+              className="absolute inset-0 cursor-pointer opacity-0"
+              aria-label={customLabel}
+            />
+          </label>
+          <div className="min-w-0 flex-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">
+              {customLabel}
+            </div>
+            <input
+              type="text"
+              value={hexDraft}
+              spellCheck={false}
+              maxLength={7}
+              onChange={(e) => {
+                const next = e.target.value.trim();
+                if (!/^#?[0-9a-fA-F]{0,6}$/.test(next)) return;
+                const withHash = next.startsWith("#") || next.length === 0 ? next : `#${next}`;
+                setHexDraft(withHash);
+                if (isHexColor(withHash)) onChange(normalizeEventColor(withHash));
+              }}
+              onBlur={() => {
+                const normalized = normalizeEventColor(hexDraft);
+                setHexDraft(normalized);
+                onChange(normalized);
+              }}
+              className="mt-0.5 w-full rounded-lg border border-[var(--line)]/80 bg-white/90 px-2 py-1 font-mono text-[12px] tabular-nums text-[var(--fg)] outline-none focus:border-[var(--ice)]/40 focus:ring-2 focus:ring-[var(--ice)]/15"
+              aria-label={customLabel}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+

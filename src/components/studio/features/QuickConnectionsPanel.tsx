@@ -18,7 +18,14 @@ import {
 } from "./platformLogos";
 import { ConnectionToggle } from "./ConnectionToggle";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
-import { PLATFORM_CARD_ACCENT, PLATFORM_CARD_SURFACE_CLASS, PLATFORM_CARD_ACCENT_OVERLAY_OPACITY, PLATFORM_PANEL_SURFACE_CLASS, platformAccentOverlay, platformIconTileStyle } from "./platformCardStyles";
+import {
+  PLATFORM_CARD_ACCENT,
+  PLATFORM_CARD_ACCENT_OVERLAY_OPACITY,
+  PLATFORM_CARD_SURFACE_CLASS,
+  PLATFORM_PANEL_SURFACE_CLASS,
+  platformAccentOverlay,
+  platformIconTileStyle,
+} from "./platformCardStyles";
 import { StudioWrapperList, studioWrapperList } from "./StudioWrapperList";
 
 type PlatformId =
@@ -115,6 +122,7 @@ export function QuickConnectionsPanel({
   onSyncNow: (id: PlatformId) => void;
 }) {
   const [tab, setTab] = useState<TabId>("details");
+  const accent = active?.meta.accent ?? PLATFORM_CARD_ACCENT;
 
   const tabs = useMemo<Array<TabSpec<TabId>>>(
     () => [
@@ -131,19 +139,19 @@ export function QuickConnectionsPanel({
         "overflow-hidden rounded-2xl border",
         PLATFORM_PANEL_SURFACE_CLASS,
         "transition-[max-height,opacity,transform] duration-300 ease-out",
-        open ? "max-h-[1100px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1",
+        open ? "max-h-[1100px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1 pointer-events-none",
       ].join(" ")}
       aria-hidden={!open}
     >
       <div className="px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Quick panel</div>
-            <div className="mt-2 text-base font-semibold text-[var(--fg)]">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Manage</div>
+            <div className="mt-1.5 text-base font-semibold tracking-tight text-[var(--fg)]">
               {active ? active.meta.label : "Select a platform"}
             </div>
             <div className="mt-1 text-sm text-[var(--muted)]">
-              {active ? active.meta.subtitle : "Pick a connected platform above to view details."}
+              {active ? active.meta.subtitle : "Pick a connected account above to view details."}
             </div>
           </div>
 
@@ -176,21 +184,27 @@ export function QuickConnectionsPanel({
                 >
                   <div
                     className="pointer-events-none absolute inset-0"
-                    style={{ ...platformAccentOverlay(PLATFORM_CARD_ACCENT), opacity: PLATFORM_CARD_ACCENT_OVERLAY_OPACITY }}
+                    style={{ ...platformAccentOverlay(accent), opacity: PLATFORM_CARD_ACCENT_OVERLAY_OPACITY }}
                     aria-hidden
                   />
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--ice)]/13 to-transparent" aria-hidden />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-[0.16]"
+                    style={{ color: accent }}
+                    aria-hidden
+                  />
                   <div className="relative z-[1]">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div
                           className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
-                          style={platformIconTileStyle(PLATFORM_CARD_ACCENT)}
+                          style={platformIconTileStyle(accent)}
                         >
-                          <PlatformIcon id={active.meta.id} className="h-[1.35rem] w-[1.35rem] text-[var(--fg)]/92" />
+                          <PlatformIcon id={active.meta.id} className="h-[1.35rem] w-[1.35rem]" />
                         </div>
                         <div className="min-w-0">
-                          <div className="text-sm font-semibold leading-snug tracking-tight text-[var(--fg)]">{active.meta.label}</div>
+                          <div className="text-sm font-semibold leading-snug tracking-tight text-[var(--fg)]">
+                            {active.meta.label}
+                          </div>
                           <div className="mt-0.5 text-xs leading-snug text-[var(--muted)]">
                             {active.state.connected && active.state.account
                               ? active.state.account.displayName
@@ -202,29 +216,31 @@ export function QuickConnectionsPanel({
                       <ConnectionToggle connected={active.state.connected} />
                     </div>
 
-                    <div className="mt-4">
-                      {active.state.connected && active.state.account ? (
-                        <p className="text-[13px] leading-snug">
-                          <span className="font-semibold text-[var(--fg)]/92">{active.state.account.displayName}</span>
-                        </p>
-                      ) : (
-                        <p className="text-[13px] leading-relaxed text-[var(--muted)]">{active.meta.subtitle}</p>
-                      )}
-                    </div>
-
                     <div className="mt-4 flex flex-wrap items-center gap-2">
                       {active.state.connected ? (
                         <>
-                          <StudioGhostButton type="button" className="studio-btn-ghost--md" onClick={() => onSyncNow(active.meta.id)}>
+                          <StudioGhostButton
+                            type="button"
+                            className="studio-btn-ghost--md"
+                            onClick={() => onSyncNow(active.meta.id)}
+                          >
                             Sync now
                           </StudioGhostButton>
-                          <StudioGhostButton type="button" className="studio-btn-ghost--md" onClick={() => onDisconnect(active.meta.id)}>
+                          <StudioGhostButton
+                            type="button"
+                            className="studio-btn-ghost--md"
+                            onClick={() => onDisconnect(active.meta.id)}
+                          >
                             Disconnect
                           </StudioGhostButton>
                         </>
                       ) : (
-                        <StudioCreateButton type="button" className="studio-create-btn--sm" onClick={() => onConnect(active.meta.id)}>
-                          Connect (demo)
+                        <StudioCreateButton
+                          type="button"
+                          className="studio-create-btn--sm"
+                          onClick={() => onConnect(active.meta.id)}
+                        >
+                          Connect
                         </StudioCreateButton>
                       )}
                     </div>
@@ -232,12 +248,12 @@ export function QuickConnectionsPanel({
                 </div>
 
                 <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                  <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Notes</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Notes</div>
                   <div className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-                    This is currently a UI mock. When wired to API, you’ll see token health, scopes, and actual sync status here.
+                    Demo connection for now. Live OAuth will show token health, scopes, and sync status here.
                   </div>
-                  <div className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--studio-surface-3)] p-3 text-xs text-[var(--muted)]">
-                    Next step: OAuth redirect → callback → store refresh tokens → background sync.
+                  <div className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--studio-surface-3)] p-3 text-xs leading-relaxed text-[var(--muted)]">
+                    {active.meta.hint}
                   </div>
                 </div>
               </div>
@@ -246,7 +262,9 @@ export function QuickConnectionsPanel({
             <TabPanel hidden={tab !== "settings"}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                  <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Publishing</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                    Publishing
+                  </div>
                   <div className="mt-3 flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-[var(--fg)]">Auto-sync metadata</div>
@@ -254,33 +272,28 @@ export function QuickConnectionsPanel({
                         When enabled, studio will refresh connection status periodically.
                       </div>
                     </div>
-                    <div className="rounded-full border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
+                    <div className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
                       Soon
                     </div>
                   </div>
                 </div>
 
                 <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                  <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Permissions</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                    Permissions
+                  </div>
                   <div className="mt-2 grid gap-2 text-sm text-[var(--muted)]">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="truncate">Upload content</span>
-                      <span className="rounded-full border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
-                        Pending
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="truncate">Read analytics</span>
-                      <span className="rounded-full border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
-                        Pending
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="truncate">Manage schedules</span>
-                      <span className="rounded-full border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
-                        Pending
-                      </span>
-                    </div>
+                    {(active.state.grantedPermissionIds?.length
+                      ? active.state.grantedPermissionIds
+                      : ["Upload content", "Read analytics", "Manage schedules"]
+                    ).map((perm) => (
+                      <div key={perm} className="flex items-center justify-between gap-3">
+                        <span className="truncate">{perm}</span>
+                        <span className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
+                          {active.state.connected ? "Granted" : "Pending"}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -290,8 +303,8 @@ export function QuickConnectionsPanel({
               <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
-                    <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Logs</div>
-                    <div className="mt-2 text-sm font-semibold text-[var(--fg)]">Recent actions</div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Logs</div>
+                    <div className="mt-1.5 text-sm font-semibold text-[var(--fg)]">Recent actions</div>
                   </div>
                   <div className="text-xs text-[var(--muted)]">UI-only demo</div>
                 </div>
@@ -311,14 +324,18 @@ export function QuickConnectionsPanel({
                           {active.state.account?.lastSyncAt ? formatRelative(active.state.account.lastSyncAt) : "—"}
                         </td>
                         <td className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>Sync</td>
-                        <td className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>Last sync timestamp</td>
+                        <td className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                          Last sync timestamp
+                        </td>
                       </tr>
                       <tr className={studioWrapperList.tr}>
                         <td className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}>
                           {active.state.account?.connectedAt ? formatRelative(active.state.account.connectedAt) : "—"}
                         </td>
                         <td className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>Connect</td>
-                        <td className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>Connected demo account</td>
+                        <td className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                          Connected demo account
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -331,4 +348,3 @@ export function QuickConnectionsPanel({
     </div>
   );
 }
-

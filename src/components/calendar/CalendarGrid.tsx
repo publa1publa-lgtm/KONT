@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { buildMonthGrid, CALENDAR_DISPLAY_WEEK_ROWS, dateKeyLocal } from "./dateUtils";
-import type { CalendarEventsByDate, ScheduledPostsByDate } from "./types";
+import type { CalendarEventsByDate, ScheduledPlanEventsByDate, ScheduledPostsByDate } from "./types";
 import { CalendarCell } from "./CalendarCell";
 import { useI18n } from "@/contexts/i18n-context";
 import { intlLocale } from "@/i18n/config";
@@ -11,6 +11,7 @@ type Props = {
   month: Date;
   eventsByDate: CalendarEventsByDate;
   postsByDate?: ScheduledPostsByDate;
+  planEventsByDate?: ScheduledPlanEventsByDate;
   onSelectDate: (date: Date) => void;
   nowMs: number;
   selectedDayKey?: string | null;
@@ -39,6 +40,7 @@ export function CalendarGrid({
   month,
   eventsByDate,
   postsByDate,
+  planEventsByDate,
   onSelectDate,
   nowMs,
   selectedDayKey = null,
@@ -106,6 +108,7 @@ export function CalendarGrid({
                 const key = dateKeyLocal(date);
                 const events = eventsByDate[key] ?? [];
                 const posts = postsByDate?.[key] ?? [];
+                const planEvents = planEventsByDate?.[key] ?? [];
                 return (
                   <CalendarCell
                     key={key}
@@ -113,6 +116,7 @@ export function CalendarGrid({
                     month={month}
                     events={events}
                     posts={posts}
+                    planEvents={planEvents}
                     onSelectDate={onSelectDate}
                     nowMs={nowMs}
                     selected={selectedDayKey === key}

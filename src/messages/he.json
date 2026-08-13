@@ -16,7 +16,7 @@
       "language": "שפה"
     },
     "footer": {
-      "tagline": "סביבת העבודה לתוכן שעוזרת ליוצרים להמשיך לשחרר: תכנון מהיר יותר, פרסום בטוח, והפיכת ביצועים לתוכנית של השבוע הבא.",
+      "tagline": "תכננו, פרסמו וצמחו — סביבת עבודה אחת ליוצרים.",
       "trustLine": "APIs רשמיים · OAuth · בלי סיסמאות משותפות",
       "productColumn": "מוצר",
       "resourcesColumn": "גלה",
@@ -652,6 +652,13 @@
       "library": "ספרייה",
       "allContent": "כל התוכן",
       "noItems": "אין פריטים עדיין.",
+      "noPosts": "אין פוסטים עדיין.",
+      "noReels": "אין רילס עדיין.",
+      "filterAll": "הכול",
+      "filterAria": "סינון לפי סוג",
+      "viewList": "רשימה",
+      "viewGrid": "רשת",
+      "viewAria": "פריסת הספרייה",
       "tableTitle": "כותרת",
       "tableType": "סוג",
       "tablePlatforms": "פלטפורמות",
@@ -662,6 +669,11 @@
       "tableActions": "פעולות",
       "typeReel": "Reel",
       "typePost": "פוסט",
+      "typeEvent": "אירוע",
+      "statusDraft": "טיוטה",
+      "statusScheduled": "מתוזמן",
+      "statusPosted": "פורסם",
+      "statusArchived": "בארכיון",
       "edit": "עריכה",
       "duplicate": "העתקה",
       "archive": "ארכיון",
@@ -673,7 +685,7 @@
         "close": "סגירה",
         "editContent": "עריכת תוכן",
         "createContent": "יצירת תוכן",
-        "kindToggleAria": "סוג תוכן: פוסט או reel",
+        "kindToggleAria": "סוג תוכן: פוסט, ריל או אירוע",
         "date": "תאריך",
         "time": "שעה",
         "schedule": "תזמון",
@@ -686,6 +698,11 @@
         "hashtags": "האשטאגים",
         "hashtagsPlaceholder": "למשל creator reels tiktok",
         "hashtagsHint": "Enter או פסיק להוספה. # אופציונלי.",
+        "eventColor": "צבע",
+        "eventColorAria": "צבע האירוע",
+        "eventColorCustom": "צבע מותאם",
+        "showDescriptionInPreview": "הצגת תיאור בתצוגה מקדימה",
+        "showDescriptionInPreviewHint": "כשפעיל, השורות הראשונות של התיאור יופיעו בכרטיס.",
         "video": "וידאו",
         "image": "תמונה",
         "noImageSelected": "לא נבחרה תמונה",
@@ -749,16 +766,24 @@
       }
     },
     "platforms": {
-      "connectedLabel": "פלטפורמות מחוברות",
-      "connectedSubtitle": "הקישו על פלטפורמה לפרטים",
-      "connectedCount": "מחובר:",
+      "connectedLabel": "חשבונות",
+      "connectedSubtitle": "חברו ערוצים פעם אחת — פרסמו וסנכרנו מתוך Studio.",
+      "connectedCount": "מחובר",
       "connectedHintNone": "חברו לפחות פלטפורמה אחת כדי להתחיל.",
-      "connectedHintSome": "הקישו על פלטפורמה לפרטים ←",
-      "noConnected": "אין פלטפורמות מחוברות עדיין.",
-      "yourPlatforms": "הפלטפורמות שלכם",
+      "connectedHintSome": "בחרו חשבון לניהול סנכרון והרשאות.",
+      "noConnected": "אין חשבונות מחוברים עדיין.",
+      "emptyConnectedTitle": "התחילו עם חיבור אחד",
+      "emptyConnectedBody": "בחרו פלטפורמה למטה. אפשר להוסיף עוד בכל רגע.",
+      "yourPlatforms": "קטלוג אינטגרציות",
+      "catalogSubtitle": "רשתות, מסרים, אחסון והתראות",
       "statusOverview": "סקירת סטטוס",
-      "searchPlaceholder": "חיפוש (שם, רמז, חשבון)…",
+      "searchPlaceholder": "חיפוש פלטפורמות…",
       "connectedOnly": "מחוברות בלבד",
+      "allGroups": "הכול",
+      "manage": "ניהול",
+      "available": "זמין",
+      "live": "מחובר",
+      "onlineLabel": "אונליין",
       "resetDemo": "איפוס דמו",
       "noMatch": "אין פלטפורמות שתואמות לסינון.",
       "account": "חשבון",
@@ -766,7 +791,12 @@
       "sync": "סנכרון",
       "disconnect": "ניתוק",
       "connect": "חיבור",
-      "noSync": "ללא סנכרון",
+      "noSync": "עדיין לא סונכרן",
+      "groupSocial": "חברתי",
+      "groupMessengers": "מסרים",
+      "groupProductivity": "פרודוקטיביות",
+      "groupStorage": "אחסון",
+      "groupNotifications": "התראות",
       "pinterestConnectFailed": "Pinterest: לא ניתן לחבר חשבון",
       "pinterestNetworkError": "Pinterest: שגיאת רשת"
     },
@@ -958,9 +988,9 @@
         "label": "תיבת דואר נכנס",
         "hint": "כל תשובה, שולחן אחד"
       },
-      "drafts": {
-        "label": "טיוטות",
-        "hint": "רעיונות שממתינים לשחרור"
+      "media": {
+        "label": "מדיה",
+        "hint": "פוסטים ורילס במקום אחד"
       },
       "accounts": {
         "label": "חשבונות",
@@ -970,9 +1000,9 @@
         "label": "תור",
         "hint": "הבא בתור, תמיד ברור"
       },
-      "archive": {
-        "label": "ארכיון",
-        "hint": "כל מה ששחררתם"
+      "events": {
+        "label": "אירועים",
+        "hint": "שידורים, השקות, תזכורות"
       },
       "analytics": {
         "label": "אנליטיקה",
@@ -1002,21 +1032,29 @@
       "secondary": "חזרה ל{section}"
     },
     "itemDetails": {
+      "bot": {
+        "body": "עוזר לרעיונות, תשובות ועזרה שקטה בזמן יצירה — עדיין בתהליך פיתוח.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "inbox": {
+        "body": "מקום אחד לתגובות, הודעות פרטיות ואזכורים בערוצים מחוברים — עדיין ברשימה.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
       "sub": {
         "body": "כתוביות אוטומטיות לכל clip — תזמון, סגנון ושפה בפאנל שקט אחד.",
         "primary": "הצטרפות לרשימת המתנה"
       },
-      "drafts": {
-        "body": "הרעיונות הלא גמורים שלכם כאן — המשיכו מאיפה שעצרתם, בלי לחפש בתיקיות.",
-        "primary": "הצטרפות לרשימת המתנה"
+      "media": {
+        "body": "עיינו בפוסטים וברילס — סננו לפי סוג, ערכו ופרסמו מספרייה רגועה אחת.",
+        "primary": "פתיחת מדיה"
       },
       "queue": {
         "body": "ראו מה יוצא הבא, לפי סדר. גררו, השהו או תזמנו מחדש בלי לשבור את הזרימה.",
         "primary": "הצטרפות לרשימת המתנה"
       },
-      "archive": {
-        "body": "כל מה שכבר פרסמתם — ניתן לחיפוש, לסינון, תמיד בהישג יד.",
-        "primary": "הצטרפות לרשימת המתנה"
+      "events": {
+        "body": "תכננו שידורים, השקות ותזכורות באותו לוח שנה עם פוסטים ורילס — בלי לפרסם אותם כתוכן.",
+        "primary": "יצירת אירוע"
       },
       "analytics": {
         "body": "חשיפה, מעורבות וצמיחה בקריאה אחת שקטה — בלי דשבורדים שצועקים.",

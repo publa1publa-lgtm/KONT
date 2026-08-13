@@ -26,3 +26,18 @@ export type ScheduledPost = {
 
 export type ScheduledPostsByDate = Record<string, ScheduledPost[]>;
 
+/** Calendar plan item (launch, live, reminder) — not a publishable post/reel. */
+export type ScheduledPlanEvent = {
+  id: string;
+  kind: "event";
+  title: string;
+  description: string;
+  showDescription: boolean;
+  color: string;
+  dateKey: string; // YYYY-MM-DD (local)
+  time: string; // HH:mm
+  createdAt: number;
+};
+
+export type ScheduledPlanEventsByDate = Record<string, ScheduledPlanEvent[]>;
+
