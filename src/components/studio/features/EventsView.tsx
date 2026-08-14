@@ -114,7 +114,7 @@ export function EventsView() {
               </StudioWrapperListRow>
             ) : (
               sorted.map((item) => (
-                <StudioWrapperListRow as="li" key={item.id} className="overflow-hidden p-0">
+                <StudioWrapperListRow as="li" key={item.id} className="studio-event-list-row overflow-hidden p-0">
                   <EventPreviewCard
                     title={item.title}
                     time={item.time}

@@ -2,13 +2,13 @@
 
 import { AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { type SectionId } from "./sections";
-import { StudioAccountMenu } from "./StudioAccountMenu";
 import { StudioBlock } from "./StudioBlock";
 import { StudioItemView } from "./StudioItemView";
 import { StudioTopMenu } from "./StudioTopMenu";
+import { STUDIO_PHONE_MQ } from "./studioPhone";
 import {
   buildStudioHref,
   getSectionForItem,
@@ -57,13 +57,12 @@ export function StudioShell() {
 
   const handleSectionChange = useCallback(
     (section: SectionId) => {
-      if (activeItem) return;
       const href = buildStudioHref({ section, pathname });
       if (href !== pathname) {
         router.push(href);
       }
     },
-    [activeItem, pathname, router],
+    [pathname, router],
   );
 
   const handleTileSelect = useCallback(
@@ -81,8 +80,22 @@ export function StudioShell() {
     }
   }, [activeItem, activeSection, pathname, router]);
 
+  const [phone, setPhone] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia(STUDIO_PHONE_MQ);
+    const sync = () => setPhone(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   return (
-    <div className="studio-page">
+    <div
+      className={["studio-page", activeItem ? "studio-page--item" : "", phone ? "studio-page--phone" : ""]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <div className="studio-scene" aria-hidden>
         <span className="studio-scene__orb studio-scene__orb--blue" />
         <span className="studio-scene__orb studio-scene__orb--violet" />
@@ -90,8 +103,6 @@ export function StudioShell() {
         <span className="studio-scene__orb studio-scene__orb--pink" />
         <span className="studio-scene__grid" />
       </div>
-
-      <StudioAccountMenu />
 
       <main className="studio-stage">
         <StudioTopMenu

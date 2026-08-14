@@ -18,7 +18,7 @@ export function StudioBlock({ section, onTileSelect }: StudioBlockProps) {
   const { studio } = useMessages();
   const reduced = useReducedMotion();
   const data = SECTIONS[section];
-  const oddTileCount = data.items.length % 2 !== 0;
+  const heroLead = data.items.length === 5;
 
   return (
     <motion.section
@@ -30,14 +30,13 @@ export function StudioBlock({ section, onTileSelect }: StudioBlockProps) {
       exit={reduced ? undefined : { opacity: 0, y: -12, filter: "blur(14px)" }}
       transition={{ duration: 0.5, ease: EASE }}
     >
-      <div className={`studio-grid ${data.gridClass}${oddTileCount ? " studio-grid--odd" : ""}`}>
+      <div className={`studio-grid ${data.gridClass}${heroLead ? " studio-grid--hero" : ""}`}>
         {data.items.map((item, index) => (
           <StudioTile
             key={item.id}
             item={item}
             section={section}
             index={index}
-            mobileLead={oddTileCount && index === 0}
             onSelect={onTileSelect}
           />
         ))}

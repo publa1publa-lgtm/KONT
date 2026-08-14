@@ -492,6 +492,26 @@ html.product-route-active body {
   --platform-group: var(--ice);
 }
 
+@media (max-width: 1024px) {
+  .platform-catalog-card {
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    min-height: 16.25rem;
+    padding: 0.95rem 0.95rem 0.9rem;
+  }
+
+  .platform-catalog-card__icon {
+    width: 2.85rem;
+    height: 2.85rem;
+  }
+
+  .platform-group-tag {
+    min-height: 2.35rem;
+    padding-block: 0.42rem;
+  }
+}
+
 .theme-studio-dark .platform-group-tag.is-active {
   background: color-mix(in srgb, var(--platform-group) 22%, transparent);
 }

@@ -279,7 +279,7 @@ export function AutomationsViewLite({
                 workflows.map((w) => (
                   <StudioWrapperListRow
                     key={w.id}
-                    className="flex items-center justify-between gap-3"
+                    className="studio-list-row flex items-center justify-between gap-3"
                   >
                   <div className="min-w-0">
                     <div className="truncate text-sm font-semibold text-[var(--fg)]">{w.name}</div>
@@ -290,7 +290,7 @@ export function AutomationsViewLite({
                       })}
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="studio-list-row__actions flex shrink-0 items-center gap-2">
                     <button type="button" className={btn} onClick={() => openFlow(w.id)}>
                       {C.edit}
                     </button>

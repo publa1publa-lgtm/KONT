@@ -23,6 +23,32 @@ function isPlanEventItem(item: DayPreviewItem): item is EventApiItem {
   return !("type" in item);
 }
 
+export function getCalendarDayItems(
+  dayKey: string | null,
+  items: ContentApiItem[],
+  events: EventApiItem[] = [],
+): DayPreviewItem[] {
+  if (!dayKey) return [];
+  const contentForDay = items.filter((c) => {
+    if (c.status === "ARCHIVED" || !c.scheduledAt) return false;
+    const slot = scheduledAtToDateKeyAndTime(c.scheduledAt);
+    return slot?.dateKey === dayKey;
+  });
+  const eventsForDay = events.filter((e) => {
+    if (e.archivedAt) return false;
+    const slot = scheduledAtToDateKeyAndTime(e.scheduledAt);
+    return slot?.dateKey === dayKey;
+  });
+  const merged: DayPreviewItem[] = [...contentForDay, ...eventsForDay];
+  merged.sort((a, b) => {
+    const sa = scheduledAtToDateKeyAndTime(a.scheduledAt!)!;
+    const sb = scheduledAtToDateKeyAndTime(b.scheduledAt!)!;
+    if (sa.time !== sb.time) return sa.time.localeCompare(sb.time);
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+  return merged;
+}
+
 type CalendarDayPreviewPanelProps = {
   dayKey: string | null;
   items: ContentApiItem[];
@@ -60,27 +86,10 @@ export function CalendarDayPreviewPanel({
   const isStudioToolbar = variant === "studio-toolbar";
   const isStudioSidebar = variant === "studio-sidebar";
 
-  const dayItems = useMemo(() => {
-    if (!dayKey) return [] as DayPreviewItem[];
-    const contentForDay = items.filter((c) => {
-      if (c.status === "ARCHIVED" || !c.scheduledAt) return false;
-      const slot = scheduledAtToDateKeyAndTime(c.scheduledAt);
-      return slot?.dateKey === dayKey;
-    });
-    const eventsForDay = events.filter((e) => {
-      if (e.archivedAt) return false;
-      const slot = scheduledAtToDateKeyAndTime(e.scheduledAt);
-      return slot?.dateKey === dayKey;
-    });
-    const merged: DayPreviewItem[] = [...contentForDay, ...eventsForDay];
-    merged.sort((a, b) => {
-      const sa = scheduledAtToDateKeyAndTime(a.scheduledAt!)!;
-      const sb = scheduledAtToDateKeyAndTime(b.scheduledAt!)!;
-      if (sa.time !== sb.time) return sa.time.localeCompare(sb.time);
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    });
-    return merged;
-  }, [dayKey, items, events]);
+  const dayItems = useMemo(
+    () => getCalendarDayItems(dayKey, items, events),
+    [dayKey, items, events],
+  );
 
   const dayLabel = useMemo(() => {
     if (!dayKey) return null;

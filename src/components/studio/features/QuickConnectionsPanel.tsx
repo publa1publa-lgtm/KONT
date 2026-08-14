@@ -310,7 +310,7 @@ export function QuickConnectionsPanel({
                 </div>
 
                 <StudioWrapperList className="mt-4">
-                  <table className={studioWrapperList.table}>
+                  <table className={`${studioWrapperList.table} studio-stack-table`}>
                     <thead className={studioWrapperList.thead}>
                       <tr>
                         <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Time</th>
@@ -320,20 +320,42 @@ export function QuickConnectionsPanel({
                     </thead>
                     <tbody className={studioWrapperList.tbody}>
                       <tr className={studioWrapperList.tr}>
-                        <td className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}>
+                        <td
+                          data-label="Time"
+                          className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
+                        >
                           {active.state.account?.lastSyncAt ? formatRelative(active.state.account.lastSyncAt) : "—"}
                         </td>
-                        <td className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>Sync</td>
-                        <td className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                        <td
+                          data-label="Event"
+                          className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}
+                        >
+                          Sync
+                        </td>
+                        <td
+                          data-label="Info"
+                          className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}
+                        >
                           Last sync timestamp
                         </td>
                       </tr>
                       <tr className={studioWrapperList.tr}>
-                        <td className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}>
+                        <td
+                          data-label="Time"
+                          className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
+                        >
                           {active.state.account?.connectedAt ? formatRelative(active.state.account.connectedAt) : "—"}
                         </td>
-                        <td className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>Connect</td>
-                        <td className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                        <td
+                          data-label="Event"
+                          className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}
+                        >
+                          Connect
+                        </td>
+                        <td
+                          data-label="Info"
+                          className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}
+                        >
                           Connected demo account
                         </td>
                       </tr>

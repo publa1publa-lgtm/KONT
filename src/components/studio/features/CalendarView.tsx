@@ -9,6 +9,7 @@ import { SelectMenu } from "@/components/ui/SelectMenu";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ContentComposerModal } from "./ContentComposerModal";
 import { CalendarDayPreviewPanel } from "./CalendarDayPreviewPanel";
+import { CalendarMobileDeck } from "./CalendarMobileDeck";
 import { useI18n } from "@/contexts/i18n-context";
 import { intlLocale } from "@/i18n/config";
 import type { ContentApiItem } from "@/lib/contentApi";
@@ -32,6 +33,7 @@ import {
 } from "@/lib/saveComposerContent";
 import { contentKindFromApiType } from "./ContentKindBadge";
 import { formatStudioCreateCta, StudioCreateButton } from "./StudioCreateButton";
+import { STUDIO_PHONE_MQ } from "../studioPhone";
 
 export function CalendarView() {
   const { locale, messages } = useI18n();
@@ -54,11 +56,11 @@ export function CalendarView() {
   const [confirmArchiveId, setConfirmArchiveId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [actionBusy, setActionBusy] = useState(false);
-  const [narrowLayout, setNarrowLayout] = useState(false);
+  const [phone, setPhone] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 899px)");
-    const sync = () => setNarrowLayout(mq.matches);
+    const mq = window.matchMedia(STUDIO_PHONE_MQ);
+    const sync = () => setPhone(mq.matches);
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
@@ -123,6 +125,23 @@ export function CalendarView() {
     const id = window.setInterval(() => setNowMs(Date.now()), 30_000);
     return () => window.clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!phone) return;
+    const selected = previewDayKey ? new Date(`${previewDayKey}T12:00:00`) : null;
+    const inMonth =
+      selected &&
+      !Number.isNaN(selected.getTime()) &&
+      selected.getFullYear() === month.getFullYear() &&
+      selected.getMonth() === month.getMonth();
+    if (inMonth) return;
+    const today = new Date(nowMs);
+    if (today.getFullYear() === month.getFullYear() && today.getMonth() === month.getMonth()) {
+      setPreviewDayKey(dateKeyLocal(today));
+      return;
+    }
+    setPreviewDayKey(dateKeyLocal(new Date(month.getFullYear(), month.getMonth(), 1)));
+  }, [month, nowMs, phone, previewDayKey]);
 
   const monthOptions = useMemo(() => {
     const fmt = new Intl.DateTimeFormat(intlLocale(locale), { month: "long" });
@@ -254,7 +273,7 @@ export function CalendarView() {
                 {isSelectedToday ? <span className="studio-calendar__today-pill">{C.today}</span> : null}
               </div>
             </div>
-            {previewDayKey && previewCanAdd ? (
+            {previewDayKey && previewCanAdd && !phone ? (
               <StudioCreateButton
                 type="button"
                 onClick={openAddForPreviewDay}
@@ -267,6 +286,7 @@ export function CalendarView() {
 
           {error ? <p className="studio-calendar__error">{error}</p> : null}
 
+          {phone ? null : (
           <div className="studio-calendar__controls">
             <div className="studio-calendar__nav">
               <button
@@ -308,26 +328,26 @@ export function CalendarView() {
                 <CaretRightIcon className="h-5 w-5" weight="bold" aria-hidden />
               </button>
             </div>
-
-            {narrowLayout ? (
-              <CalendarDayPreviewPanel
-                className="studio-calendar__preview-strip"
-                variant="studio-toolbar"
-                showMeta={false}
-                showItemList
-                showCreateButton={false}
-                dayKey={previewDayKey}
-                items={apiItems}
-                events={planEventItems}
-                canAdd={previewCanAdd}
-                createLabel={formatStudioCreateCta(messages.studio.createCta, messages.studio.items.content.label)}
-                onSelectItem={(id) => void openEditFromApi(id)}
-                onAdd={openAddForPreviewDay}
-              />
-            ) : null}
           </div>
+          )}
         </header>
 
+        {phone ? (
+          <CalendarMobileDeck
+            month={month}
+            onMonthChange={setMonth}
+            previewDayKey={previewDayKey}
+            onSelectDay={setPreviewDayKey}
+            items={apiItems}
+            events={planEventItems}
+            postsByDate={postsByDate}
+            planEventsByDate={planEventsByDate}
+            nowMs={nowMs}
+            canAdd={previewCanAdd}
+            onAdd={openAddForPreviewDay}
+            onSelectItem={(id) => void openEditFromApi(id)}
+          />
+        ) : (
         <div className="studio-calendar__body">
           <div className="studio-calendar__grid-pane">
             <div className="studio-calendar__grid-card">
@@ -359,6 +379,7 @@ export function CalendarView() {
             onAdd={openAddForPreviewDay}
           />
         </div>
+        )}
       </div>
 
       <ContentComposerModal

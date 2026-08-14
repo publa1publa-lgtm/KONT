@@ -424,14 +424,14 @@ export function ContentComposerModal({
 
   return (
     <StudioModalPortal>
-      <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-6">
+      <div className="studio-composer-overlay fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-6">
         <div className="absolute inset-0 bg-[var(--studio-overlay)] backdrop-blur-sm" aria-hidden />
 
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="composer-modal-title"
-          className="relative z-10 mb-8 flex max-h-[min(92dvh,940px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border shadow-[0_40px_120px_-60px_rgba(15,23,42,0.22)]"
+          className="studio-composer-dialog relative z-10 mb-8 flex max-h-[min(92dvh,940px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border shadow-[0_40px_120px_-60px_rgba(15,23,42,0.22)]"
         >
         <div className="shrink-0 border-b border-[var(--line)] px-5 py-4">
           <div className="flex flex-col gap-3 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-center sm:gap-x-3">

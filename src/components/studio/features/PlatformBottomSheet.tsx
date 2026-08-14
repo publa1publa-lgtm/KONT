@@ -278,7 +278,7 @@ export function PlatformBottomSheet({
             </div>
 
             <div className="mt-4 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--studio-surface-3)]">
-              <table className="w-full text-left text-sm">
+              <table className="studio-stack-table w-full text-left text-sm">
                 <thead className="bg-[var(--studio-surface-3)] text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
                   <tr>
                     <th className="px-4 py-3">Time</th>
@@ -288,18 +288,18 @@ export function PlatformBottomSheet({
                 </thead>
                 <tbody className="divide-y divide-[var(--line)]">
                   <tr>
-                    <td className="px-4 py-3 font-mono text-xs text-[var(--muted)]">
+                    <td data-label="Time" className="px-4 py-3 font-mono text-xs text-[var(--muted)]">
                       {state.account?.lastSyncAt ? formatRelative(state.account.lastSyncAt) : "—"}
                     </td>
-                    <td className="px-4 py-3 font-medium text-[var(--fg)]">Sync</td>
-                    <td className="px-4 py-3 text-xs text-[var(--muted)]">Last sync timestamp</td>
+                    <td data-label="Event" className="px-4 py-3 font-medium text-[var(--fg)]">Sync</td>
+                    <td data-label="Info" className="px-4 py-3 text-xs text-[var(--muted)]">Last sync timestamp</td>
                   </tr>
                   <tr>
-                    <td className="px-4 py-3 font-mono text-xs text-[var(--muted)]">
+                    <td data-label="Time" className="px-4 py-3 font-mono text-xs text-[var(--muted)]">
                       {state.account?.connectedAt ? formatRelative(state.account.connectedAt) : "—"}
                     </td>
-                    <td className="px-4 py-3 font-medium text-[var(--fg)]">Connect</td>
-                    <td className="px-4 py-3 text-xs text-[var(--muted)]">Connected demo account</td>
+                    <td data-label="Event" className="px-4 py-3 font-medium text-[var(--fg)]">Connect</td>
+                    <td data-label="Info" className="px-4 py-3 text-xs text-[var(--muted)]">Connected demo account</td>
                   </tr>
                 </tbody>
               </table>

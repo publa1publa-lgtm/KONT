@@ -131,8 +131,8 @@ export function ContentTableActions({
   return (
     <div
       className={[
-        "relative z-[1] inline-flex w-fit shrink-0 items-stretch rounded-2xl border border-[var(--line)]/90 bg-[var(--studio-surface-3)]/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_10px_32px_-28px_rgba(0,0,0,0.35)] backdrop-blur-[2px]",
-        iconsOnly ? "gap-px p-px" : compact ? "gap-0.5 p-0.5" : "p-1",
+        "studio-table-actions relative z-[1] inline-flex w-fit shrink-0 items-stretch rounded-2xl border border-[var(--line)]/90 bg-[var(--studio-surface-3)]/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_10px_32px_-28px_rgba(0,0,0,0.35)] backdrop-blur-[2px]",
+        iconsOnly ? "studio-table-actions--icons gap-px p-px" : compact ? "gap-0.5 p-0.5" : "p-1",
       ].join(" ")}
       onClick={(e) => e.stopPropagation()}
       role="toolbar"

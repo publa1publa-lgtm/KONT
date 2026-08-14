@@ -156,7 +156,7 @@ export function BotsViewLite({
                 bots.map((b) => (
                   <StudioWrapperListRow
                     key={b.id}
-                    className="flex items-center justify-between gap-3"
+                    className="studio-list-row flex items-center justify-between gap-3"
                   >
                   <div className="min-w-0">
                     <div className="truncate text-sm font-semibold text-[var(--fg)]">{b.name}</div>
@@ -165,7 +165,7 @@ export function BotsViewLite({
                       {new Date(b.updatedAtIso).toLocaleString()}
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="studio-list-row__actions flex shrink-0 items-center gap-2">
                     <button
                       type="button"
                       className={btn}

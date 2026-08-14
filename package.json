@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma migrate deploy && next build",
     "build:locales": "node scripts/locale-data/translate-all.mjs && node scripts/build-locales.mjs",
     "postinstall": "prisma generate",
     "start": "next start",

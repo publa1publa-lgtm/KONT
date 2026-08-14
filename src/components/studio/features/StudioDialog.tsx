@@ -63,8 +63,8 @@ export function StudioDialog({
     <StudioModalPortal>
       <div
         className={[
-          "fixed inset-0 z-50 flex justify-center overflow-y-auto p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:pt-6 sm:pb-6",
-          fillViewport ? "items-center" : "items-start",
+          "studio-dialog-overlay fixed inset-0 z-50 flex justify-center overflow-y-auto p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:pt-6 sm:pb-6",
+          fillViewport ? "studio-dialog-overlay--sheet items-stretch sm:items-center" : "items-start",
         ].join(" ")}
       >
         <button
@@ -79,8 +79,8 @@ export function StudioDialog({
           aria-modal="true"
           aria-labelledby={title || header ? titleId : undefined}
           className={[
-            "relative z-10 flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_40px_120px_-60px_rgba(15,23,42,0.22)]",
-            fillViewport ? "mb-0 h-[min(92dvh,calc(100dvh-2rem))] max-h-[calc(100dvh-2rem)]" : "mb-8",
+            "studio-dialog-card relative z-10 flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_40px_120px_-60px_rgba(15,23,42,0.22)]",
+            fillViewport ? "studio-dialog-card--sheet mb-0 h-[min(92dvh,calc(100dvh-2rem))] max-h-[calc(100dvh-2rem)]" : "mb-8",
             widthClassName,
             heightClassName,
             !fillViewport ? maxHeightClassName : "",

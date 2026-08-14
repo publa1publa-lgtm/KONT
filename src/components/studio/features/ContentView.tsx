@@ -62,7 +62,7 @@ function ContentKindFilterBar({
 
   return (
     <div
-      className="inline-flex rounded-xl border border-[var(--line)]/80 bg-[var(--studio-surface-2)]/90 p-1"
+      className="studio-seg inline-flex rounded-xl border border-[var(--line)]/80 bg-[var(--studio-surface-2)]/90 p-1"
       role="tablist"
       aria-label={labels.aria}
     >
@@ -107,7 +107,7 @@ function ContentLayoutToggle({
 
   return (
     <div
-      className="inline-flex rounded-xl border border-[var(--line)]/80 bg-[var(--studio-surface-2)]/90 p-1"
+      className="studio-seg studio-seg--icons inline-flex rounded-xl border border-[var(--line)]/80 bg-[var(--studio-surface-2)]/90 p-1"
       role="tablist"
       aria-label={labels.aria}
     >
@@ -316,11 +316,11 @@ function ContentLibraryRow({
           : labels.statusDraft;
 
   return (
-    <StudioWrapperListRow as="li" className="p-3.5 sm:p-4">
-      <div className="flex gap-3.5 sm:gap-4">
+    <StudioWrapperListRow as="li" className="studio-library-row p-3.5 sm:p-4">
+      <div className="studio-library-row__layout">
         <div
           className={[
-            "relative h-[4.75rem] w-[4.75rem] shrink-0 overflow-hidden rounded-xl border border-[var(--line)]/70 sm:h-[5.25rem] sm:w-[5.25rem]",
+            "studio-library-row__thumb relative h-[4.75rem] w-[4.75rem] shrink-0 overflow-hidden rounded-xl border border-[var(--line)]/70 sm:h-[5.25rem] sm:w-[5.25rem]",
             isReel ? "bg-[var(--ice)]/8" : "bg-[var(--studio-surface-3)]",
           ].join(" ")}
         >
@@ -343,70 +343,67 @@ function ContentLibraryRow({
           <ContentKindThumbIcon kind={item.kind} />
         </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start gap-3">
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-[var(--fg)] sm:text-base">
-                  {item.title}
-                </h3>
-                <ContentKindBadge
-                  kind={item.kind}
-                  reelLabel={labels.typeReel}
-                  postLabel={labels.typePost}
-                  eventLabel={labels.typeEvent}
-                  align="center"
-                />
-                <span className={statusBadgeClass(displayStatus)} title={statusLabel}>
-                  {statusLabel}
-                </span>
-              </div>
-              {excerpt ? (
-                <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-[var(--muted)]">{excerpt}</p>
-              ) : null}
-            </div>
-            <div className="shrink-0">
-              <ContentTableActions
-                iconsOnly
-                labels={actionLabels}
-                duplicateBusy={duplicateBusy}
-                onEdit={onEdit}
-                onDuplicate={onDuplicate}
-                onArchive={onArchive}
-                onDelete={onDelete}
-              />
-            </div>
-          </div>
-
-          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] leading-none text-[var(--muted)]">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-                {labels.tablePlatforms}
-              </span>
-              <ContentPlatformIcons platforms={item.platforms} labels={platformLabels} />
-            </span>
-            <span className="hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
-            <span className="inline-flex items-center gap-1.5">
-              <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-                {labels.tableScheduled}
-              </span>
-              <MetaDate scheduled={item} tone="scheduled" />
-            </span>
-            <span className="hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
-            <span className="inline-flex items-center gap-1.5">
-              <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-                {labels.tableCreated}
-              </span>
-              <MetaDate createdAt={item.createdAt} />
+        <div className="studio-library-row__copy min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-[var(--fg)] sm:text-base">
+              {item.title}
+            </h3>
+            <ContentKindBadge
+              kind={item.kind}
+              reelLabel={labels.typeReel}
+              postLabel={labels.typePost}
+              eventLabel={labels.typeEvent}
+              align="center"
+            />
+            <span className={statusBadgeClass(displayStatus)} title={statusLabel}>
+              {statusLabel}
             </span>
           </div>
-
-          {item.hashtags && item.hashtags.length > 0 ? (
-            <div className="mt-2.5">
-              <ContentHashtagChips tags={item.hashtags} size="md" />
-            </div>
+          {excerpt ? (
+            <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-[var(--muted)]">{excerpt}</p>
           ) : null}
         </div>
+
+        <div className="studio-library-row__actions">
+          <ContentTableActions
+            iconsOnly
+            labels={actionLabels}
+            duplicateBusy={duplicateBusy}
+            onEdit={onEdit}
+            onDuplicate={onDuplicate}
+            onArchive={onArchive}
+            onDelete={onDelete}
+          />
+        </div>
+
+        <div className="studio-library-row__meta flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] leading-none text-[var(--muted)]">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
+              {labels.tablePlatforms}
+            </span>
+            <ContentPlatformIcons platforms={item.platforms} labels={platformLabels} />
+          </span>
+          <span className="studio-library-row__rule hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
+          <span className="inline-flex items-center gap-1.5">
+            <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
+              {labels.tableScheduled}
+            </span>
+            <MetaDate scheduled={item} tone="scheduled" />
+          </span>
+          <span className="studio-library-row__created-rule hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
+          <span className="studio-library-row__created inline-flex items-center gap-1.5">
+            <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
+              {labels.tableCreated}
+            </span>
+            <MetaDate createdAt={item.createdAt} />
+          </span>
+        </div>
+
+        {item.hashtags && item.hashtags.length > 0 ? (
+          <div className="studio-library-row__tags">
+            <ContentHashtagChips tags={item.hashtags} size="md" />
+          </div>
+        ) : null}
       </div>
     </StudioWrapperListRow>
   );
@@ -449,7 +446,7 @@ function ContentLibraryGridCell({
           : labels.statusDraft;
 
   return (
-    <li className="group relative aspect-square list-none overflow-hidden bg-[var(--studio-surface-3)]">
+    <li className="studio-library-grid__cell group relative aspect-square list-none overflow-hidden bg-[var(--studio-surface-3)]">
       <button
         type="button"
         onClick={onEdit}
@@ -504,9 +501,9 @@ function ContentLibraryGridCell({
         {statusLabel}
       </span>
 
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100" />
+      <div className="studio-library-grid__scrim pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100" />
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] flex flex-col gap-2 p-2 opacity-0 transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+      <div className="studio-library-grid__caption pointer-events-none absolute inset-x-0 bottom-0 z-[2] flex flex-col gap-2 p-2 opacity-0 transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
         <p className="line-clamp-2 text-[11px] font-semibold leading-snug text-white drop-shadow-sm sm:text-xs">
           {item.title}
         </p>
@@ -738,7 +735,7 @@ export function ContentView() {
           label={C.library}
           title={C.allContent}
           right={
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="studio-library-toolbar flex flex-wrap items-center gap-2">
               <ContentKindFilterBar value={kindFilter} onChange={setKindFilter} labels={filterLabels} />
               <ContentLayoutToggle value={layout} onChange={handleLayoutChange} labels={layoutLabels} />
             </div>
@@ -755,7 +752,7 @@ export function ContentView() {
                   </StudioWrapperListRow>
                 </StudioWrapperListBody>
               ) : (
-                <ul className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-xl sm:gap-1">
+                <ul className="studio-library-grid grid grid-cols-2 gap-0.5 overflow-hidden rounded-xl sm:grid-cols-3 sm:gap-1">
                   {sorted.map((p) => (
                     <ContentLibraryGridCell
                       key={p.id}

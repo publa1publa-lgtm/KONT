@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 
 import { useMessages } from "@/contexts/messages-context";
 
+import { StudioAccountMenu } from "./StudioAccountMenu";
 import { SECTION_ORDER, type SectionId } from "./sections";
 import { getStudioItemNavCopy } from "./studioItemNavCopy";
 
@@ -130,17 +131,18 @@ export function StudioTopMenu({
 
   return (
     <>
-      <nav className="studio-nav" aria-label={insideItem ? "Selection" : "Sections"}>
-        <AnimatePresence mode="wait" initial={false}>
-          {insideItem && itemCopy ? (
-            <motion.div
-              key="inside"
-              className="studio-nav__sections studio-nav__sections--item"
-              initial={reduced ? false : { opacity: 0, filter: "blur(8px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={reduced ? undefined : { opacity: 0, filter: "blur(8px)" }}
-              transition={{ duration: 0.3, ease: EASE }}
-            >
+      <AnimatePresence initial={false}>
+        {insideItem && itemCopy ? (
+          <motion.nav
+            key="item"
+            className="studio-nav studio-nav--item"
+            aria-label="Selection"
+            initial={reduced ? false : { opacity: 0, filter: "blur(8px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={reduced ? undefined : { opacity: 0, filter: "blur(8px)" }}
+            transition={{ duration: 0.3, ease: EASE }}
+          >
+            <div className="studio-nav__sections studio-nav__sections--item">
               <button
                 type="button"
                 onClick={onBack}
@@ -153,7 +155,7 @@ export function StudioTopMenu({
 
               <div className="studio-nav__tab studio-nav__tab--active studio-nav__item-title" aria-current="page">
                 <motion.span
-                  layoutId="studio-nav-active"
+                  layoutId="studio-nav-item-active"
                   className="studio-nav__indicator"
                   aria-hidden
                   transition={{ duration: 0.45, ease: EASE }}
@@ -173,46 +175,43 @@ export function StudioTopMenu({
                   </button>
                 ) : null}
               </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="sections"
-              className="studio-nav__sections"
-              role="tablist"
-              initial={reduced ? false : { opacity: 0, filter: "blur(8px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={reduced ? undefined : { opacity: 0, filter: "blur(8px)" }}
-              transition={{ duration: 0.3, ease: EASE }}
-            >
-              {SECTION_ORDER.map((id) => {
-                const selected = activeSection === id;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    aria-controls={`studio-panel-${id}`}
-                    id={`studio-tab-${id}`}
-                    onClick={() => onSectionChange(id)}
-                    className={selected ? "studio-nav__tab studio-nav__tab--active cursor-pointer" : "studio-nav__tab cursor-pointer"}
-                  >
-                    {selected && (
-                      <motion.span
-                        layoutId="studio-nav-active"
-                        className="studio-nav__indicator"
-                        aria-hidden
-                        transition={{ duration: 0.45, ease: EASE }}
-                      />
-                    )}
-                    <span className="studio-nav__tab-label">{studio.sections[id].label}</span>
-                  </button>
-                );
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+            </div>
+          </motion.nav>
+        ) : null}
+      </AnimatePresence>
+
+      <div className="studio-dock">
+        <nav className="studio-nav studio-nav--sections" aria-label="Sections">
+          <div className="studio-nav__sections" role="tablist">
+            {SECTION_ORDER.map((id) => {
+              const selected = activeSection === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={`studio-panel-${id}`}
+                  id={`studio-tab-${id}`}
+                  onClick={() => onSectionChange(id)}
+                  className={selected ? "studio-nav__tab studio-nav__tab--active cursor-pointer" : "studio-nav__tab cursor-pointer"}
+                >
+                  {selected && (
+                    <motion.span
+                      layoutId="studio-nav-section-active"
+                      className="studio-nav__indicator"
+                      aria-hidden
+                      transition={{ duration: 0.45, ease: EASE }}
+                    />
+                  )}
+                  <span className="studio-nav__tab-label">{studio.sections[id].label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+        <StudioAccountMenu />
+      </div>
 
       {hintOpen && itemCopy?.description ? (
         <StudioNavHintPopover
