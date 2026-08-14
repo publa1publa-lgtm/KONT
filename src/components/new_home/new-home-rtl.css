@@ -73,7 +73,10 @@
 [dir="rtl"] .new-home-nav__sign-in,
 [dir="rtl"] .new-home-nav__sign-up,
 [dir="rtl"] .new-home-nav__studio,
-[dir="rtl"] .new-home-nav__cta {
+[dir="rtl"] .new-home-nav__cta,
+[dir="rtl"] .new-home-nav__mobile-link,
+[dir="rtl"] .new-home-nav__mobile-sign-in,
+[dir="rtl"] .new-home-nav__mobile-cta {
   font-family: "Segoe UI", Tahoma, "Noto Sans Hebrew", Arial, sans-serif;
   letter-spacing: 0;
 }
@@ -84,10 +87,19 @@
 }
 
 [dir="rtl"] .new-home-nav__link {
-  padding: 0.42rem 0.72rem;
-  font-size: 0.6875rem;
+  padding: 0.42rem 0.78rem;
+  font-size: 0.8rem;
   font-weight: 650;
   text-transform: none;
+}
+
+[dir="rtl"] .new-home-nav__mobile-link {
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+
+[dir="rtl"] .new-home-nav__mobile-chevron {
+  transform: scaleX(-1);
 }
 
 [dir="rtl"] .new-home-nav__actions {
