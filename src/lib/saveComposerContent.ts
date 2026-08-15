@@ -17,6 +17,7 @@ export type ComposerReelPayload = {
   title: string;
   description: string;
   videoUrl: string;
+  videoMediaId?: string | null;
   hashtags: string[];
   dateKey: string;
   time: string;
@@ -76,6 +77,7 @@ export async function saveComposerReel(payload: ComposerReelPayload): Promise<vo
     scheduledAt: localScheduleToIso(payload.dateKey, payload.time),
     status: contentStatusForSave(payload.publish),
     metadata: metadataForSave(payload.publish),
+    ...(payload.videoMediaId ? { mediaIds: [payload.videoMediaId] } : {}),
   });
   notifyContentListChanged();
 }
@@ -116,6 +118,7 @@ export async function updateComposerReel(id: string, payload: ComposerReelPayloa
     scheduledAt: localScheduleToIso(payload.dateKey, payload.time),
     status: contentStatusForSave(payload.publish),
     metadata: metadataForSave(payload.publish),
+    ...(payload.videoMediaId ? { mediaIds: [payload.videoMediaId] } : {}),
   });
   notifyContentListChanged();
 }

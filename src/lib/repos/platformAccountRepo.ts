@@ -1,15 +1,7 @@
 import { PlatformAccountStatus, type PlatformKind } from "@prisma/client";
 
+import { wipePlatformTokens } from "@/lib/oauth/tokenVault";
 import { prisma } from "@/lib/prisma";
-
-const tokenSelect = {
-  id: true,
-  accessTokenEnc: true,
-  refreshTokenEnc: true,
-  tokenExpiresAt: true,
-  connectionExpiresAt: true,
-  tokenEncVersion: true,
-} as const;
 
 export async function listConnectedPlatformAccounts(userId: string) {
   return prisma.platformAccount.findMany({
@@ -21,19 +13,6 @@ export async function listConnectedPlatformAccounts(userId: string) {
     },
     select: { id: true, platform: true, handle: true },
     orderBy: { createdAt: "asc" },
-  });
-}
-
-export async function findConnectedPlatformAccountWithTokens(userId: string, platform: PlatformKind) {
-  return prisma.platformAccount.findFirst({
-    where: {
-      userId,
-      platform,
-      status: PlatformAccountStatus.CONNECTED,
-      revokedAt: null,
-      deletedAt: null,
-    },
-    select: tokenSelect,
   });
 }
 
@@ -72,13 +51,5 @@ export async function upsertDemoPlatformAccount(
 }
 
 export async function revokeDemoPlatformAccount(userId: string, platform: PlatformKind) {
-  const platformUserId = demoPlatformUserId(userId, platform);
-  await prisma.platformAccount.updateMany({
-    where: { userId, platform, platformUserId },
-    data: {
-      status: PlatformAccountStatus.REVOKED,
-      revokedAt: new Date(),
-      revokedReason: "demo_disconnect",
-    },
-  });
+  await wipePlatformTokens(userId, platform, "user_disconnect");
 }

@@ -48,11 +48,11 @@
       "companyLinks": [
         {
           "label": "Конфиденциальность",
-          "href": "#"
+          "href": "/privacy-policy"
         },
         {
           "label": "Условия",
-          "href": "#"
+          "href": "/terms"
         }
       ]
     }
@@ -689,6 +689,8 @@
         "date": "Дата",
         "time": "Время",
         "schedule": "Запланировать",
+        "postNow": "Опубликовать сейчас",
+        "postNowSummary": "Публикация сейчас",
         "title": "Название",
         "titlePlaceholder": "Название",
         "text": "Текст",
@@ -790,6 +792,14 @@
       "lastSync": "Последняя синхронизация",
       "sync": "Синхронизировать",
       "disconnect": "Отключить",
+      "revokeTitle": "Разорвать подключение",
+      "revokeHint": "Аккаунт пропадёт из Studio. Потом его можно подключить снова.",
+      "revokeConfirmTitle": "Отключить {platform}?",
+      "revokeConfirmMessage": "Аккаунт сразу пропадёт из Connected platforms. Потом его можно подключить снова.",
+      "revokeConfirm": "Отключить",
+      "manageDetails": "Обзор",
+      "manageSettings": "Настройки",
+      "manageLogs": "Журнал",
       "connect": "Подключить",
       "noSync": "Ещё не синхронизировали",
       "groupSocial": "Соцсети",
@@ -798,7 +808,14 @@
       "groupStorage": "Хранилище",
       "groupNotifications": "Уведомления",
       "pinterestConnectFailed": "Pinterest: не удалось подключить аккаунт",
-      "pinterestNetworkError": "Pinterest: сетевая ошибка"
+      "pinterestNetworkError": "Pinterest: сетевая ошибка",
+      "youtubeConnectFailed": "YouTube: не удалось подключить аккаунт",
+      "youtubeDenied": "YouTube: доступ отклонён. Можно попробовать подключить снова.",
+      "youtubeScopeMismatch": "Google выдал другие права, чем вы отметили в KONT.",
+      "youtubeScopeMissing": "Google не подтвердил: {list}",
+      "youtubeScopeExtra": "Google дополнительно выдал: {list}",
+      "driveConnectFailed": "Google Drive: не удалось подключить аккаунт",
+      "driveDenied": "Google Drive: доступ отклонён. Можно попробовать подключить снова."
     },
     "inbox": {
       "label": "Входящие",
@@ -1251,5 +1268,18 @@
     "back": "Назад",
     "draft": "Черновик",
     "updated": "Обновлено"
+  },
+  "legal": {
+    "kicker": "Правовая информация",
+    "metaTitle": "Условия использования — KONT",
+    "metaDescription": "Условия использования, политика конфиденциальности и правила интеграций KONT, включая TikTok, Instagram и YouTube.",
+    "documents": "Документы",
+    "services": "Сервисы",
+    "selectService": "Выберите сервис",
+    "lastUpdated": "Обновлено",
+    "onThisPage": "На этой странице",
+    "backHome": "На главную",
+    "privacyTitle": "Конфиденциальность",
+    "termsTitle": "Условия использования"
   }
 }

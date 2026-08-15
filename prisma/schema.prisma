@@ -21,6 +21,7 @@ enum PlatformKind {
   X
   LINKEDIN
   PINTEREST
+  GOOGLE_DRIVE
 }
 
 enum PlatformAccountStatus {

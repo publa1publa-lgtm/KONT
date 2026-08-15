@@ -1,9 +1,11 @@
+import { PlatformKind } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import { badRequest, json } from "@/lib/api/http";
 import { requireUser } from "@/lib/api/httpAuth";
 import * as platformAccountRepo from "@/lib/repos/platformAccountRepo";
 import { isReelPlatformId, reelPlatformIdToPlatformKind } from "@/lib/reelPlatformIds";
+import { deleteTokens as deleteYouTubeTokens } from "@/lib/youtube/storage";
 
 export async function syncDemoPlatformConnection(req: Request): Promise<NextResponse> {
   const userId = await requireUser();
@@ -31,10 +33,17 @@ export async function syncDemoPlatformConnection(req: Request): Promise<NextResp
   const handle = typeof handleRaw === "string" ? handleRaw : null;
 
   if (connected) {
+    if (platform === PlatformKind.YOUTUBE) {
+      return badRequest("YouTube must be connected through Google OAuth.");
+    }
     const row = await platformAccountRepo.upsertDemoPlatformAccount(userId, platform, handle);
     return json({ ok: true, account: { id: row.id, platformId, handle: row.handle } });
   }
 
-  await platformAccountRepo.revokeDemoPlatformAccount(userId, platform);
+  if (platform === PlatformKind.YOUTUBE) {
+    await deleteYouTubeTokens(userId);
+  } else {
+    await platformAccountRepo.revokeDemoPlatformAccount(userId, platform);
+  }
   return json({ ok: true });
 }

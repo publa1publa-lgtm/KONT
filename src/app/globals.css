@@ -523,6 +523,27 @@ html.product-route-active body {
   }
 }
 
+.platform-account-accordion {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms ease;
+}
+
+.platform-account-accordion.is-open {
+  grid-template-rows: 1fr;
+}
+
+.platform-account-accordion__inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-account-accordion {
+    transition: none;
+  }
+}
+
 .theme-studio-light .platform-panel-surface {
   background: var(--wrapper-color-bg);
   border-color: var(--wrapper-color-rim);

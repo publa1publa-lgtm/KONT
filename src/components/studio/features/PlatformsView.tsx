@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, Link2, Search } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { formatTemplate } from "@/lib/formatTemplate";
 import {
   STUDIO_PLATFORMS_STORAGE_KEY,
   readStudioPlatformStates,
@@ -28,7 +30,11 @@ import { QuickConnectionsPanel } from "./QuickConnectionsPanel";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { StudioHeader } from "./StudioHeader";
 import { ConnectionToggle } from "./ConnectionToggle";
-import { PlatformPermissionsModal } from "./PlatformPermissionsModal";
+import {
+  PlatformPermissionsModal,
+  driveScopesForPermissions,
+  youtubeScopesForPermissions,
+} from "./PlatformPermissionsModal";
 import { StudioWrapperList, StudioWrapperListBody, StudioWrapperListRow } from "./StudioWrapperList";
 import {
   PLATFORM_CARD_ACCENT,
@@ -276,13 +282,153 @@ export function PlatformsView() {
   const [qcOpen, setQcOpen] = useState(false);
   const [permOpen, setPermOpen] = useState(false);
   const [permPlatformId, setPermPlatformId] = useState<PlatformId | null>(null);
+  const [revokeId, setRevokeId] = useState<PlatformId | null>(null);
+  const [scopeNotice, setScopeNotice] = useState<{ missingIds: string[]; extraIds: string[] } | null>(null);
   const catalogRef = useRef<HTMLDivElement | null>(null);
+  const accountsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const parsed = readStoredPlatforms();
-    setPlatforms(parsed);
-    setActiveId((prev) => prev ?? parsed.find((p) => p.connected)?.id ?? parsed[0]?.id ?? null);
+    const params = new URLSearchParams(window.location.search);
+    const youtubeStatus = params.get("youtube");
+    const driveStatus = params.get("drive");
+
+    let next = parsed;
+    if (youtubeStatus === "connected") {
+      const channel = params.get("channel")?.trim() || "YouTube";
+      const googleGranted = (params.get("granted") ?? "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean);
+      const missingIds = (params.get("missing") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+      const extraIds = (params.get("extra") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+
+      const grantedPermissionIds = ["account.identity", ...googleGranted.filter((id) => id !== "account.identity")];
+      try {
+        const raw = sessionStorage.getItem("kont.youtube.grantedPermissionIds");
+        sessionStorage.removeItem("kont.youtube.grantedPermissionIds");
+        const picked = raw ? (JSON.parse(raw) as unknown) : [];
+        if (Array.isArray(picked) && picked.includes(INBOX_UNIFIED_PERMISSION_ID)) {
+          grantedPermissionIds.push(INBOX_UNIFIED_PERMISSION_ID);
+        }
+      } catch {
+        // inbox stays off
+      }
+
+      if (missingIds.length || extraIds.length) {
+        setScopeNotice({ missingIds, extraIds });
+      }
+
+      next = parsed.map((p) =>
+        p.id === "youtube"
+          ? {
+              ...p,
+              connected: true,
+              account: { displayName: channel, connectedAt: Date.now(), lastSyncAt: Date.now() },
+              grantedPermissionIds,
+            }
+          : p,
+      );
+      setActiveId("youtube");
+      setQcOpen(true);
+    } else if (youtubeStatus === "error") {
+      const reason = params.get("reason") || "unknown";
+      window.alert(reason === "access_denied" ? P.youtubeDenied : P.youtubeConnectFailed);
+    } else if (driveStatus === "connected") {
+      const account = params.get("account")?.trim() || "Google Drive";
+      const googleGranted = (params.get("granted") ?? "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean);
+      const missingIds = (params.get("missing") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+      const extraIds = (params.get("extra") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+
+      let grantedPermissionIds = [...googleGranted];
+      try {
+        const raw = sessionStorage.getItem("kont.drive.grantedPermissionIds");
+        sessionStorage.removeItem("kont.drive.grantedPermissionIds");
+        const picked = raw ? (JSON.parse(raw) as unknown) : [];
+        if (Array.isArray(picked)) {
+          grantedPermissionIds = picked.filter((id): id is string => typeof id === "string");
+          for (const id of googleGranted) {
+            if (!grantedPermissionIds.includes(id)) grantedPermissionIds.push(id);
+          }
+        }
+      } catch {
+        // keep Google-granted ids
+      }
+
+      if (missingIds.length || extraIds.length) {
+        setScopeNotice({ missingIds, extraIds });
+      }
+
+      next = parsed.map((p) =>
+        p.id === "googleDrive"
+          ? {
+              ...p,
+              connected: true,
+              account: { displayName: account, connectedAt: Date.now(), lastSyncAt: Date.now() },
+              grantedPermissionIds,
+            }
+          : p,
+      );
+      setActiveId("googleDrive");
+      setQcOpen(true);
+    } else if (driveStatus === "error") {
+      const reason = params.get("reason") || "unknown";
+      window.alert(reason === "access_denied" ? P.driveDenied : P.driveConnectFailed);
+    }
+
+    if (youtubeStatus === "connected" || youtubeStatus === "error" || driveStatus === "connected" || driveStatus === "error") {
+      params.delete("youtube");
+      params.delete("drive");
+      params.delete("channel");
+      params.delete("account");
+      params.delete("reason");
+      params.delete("granted");
+      params.delete("missing");
+      params.delete("extra");
+      const clean = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
+      window.history.replaceState({}, "", clean);
+    }
+
+    setPlatforms(next);
+    setActiveId((prev) => prev ?? next.find((p) => p.connected)?.id ?? next[0]?.id ?? null);
     storageReadyRef.current = true;
+  }, [P.driveConnectFailed, P.driveDenied, P.youtubeConnectFailed, P.youtubeDenied]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/google-drive")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { connected?: boolean; handle?: string; granted?: string[] } | null) => {
+        if (cancelled || !d?.connected) return;
+        setPlatforms((prev) =>
+          prev.map((p) => {
+            if (p.id !== "googleDrive") return p;
+            const granted =
+              p.grantedPermissionIds.length > 0
+                ? p.grantedPermissionIds
+                : Array.isArray(d.granted)
+                  ? d.granted
+                  : ["openid"];
+            return {
+              ...p,
+              connected: true,
+              account: p.account ?? {
+                displayName: d.handle || "Google Drive",
+                connectedAt: Date.now(),
+                lastSyncAt: Date.now(),
+              },
+              grantedPermissionIds: granted,
+            };
+          }),
+        );
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -340,11 +486,20 @@ export function PlatformsView() {
     return s && meta ? { ...s, meta } : null;
   }, [activeId, platforms]);
 
+  const accountRows = useMemo(() => {
+    const rows = [...connectedPlatforms];
+    if (qcOpen && activeId && !rows.some((p) => p.id === activeId)) {
+      const extra = platforms.find((p) => p.id === activeId);
+      if (extra) rows.push(extra);
+    }
+    return rows;
+  }, [activeId, connectedPlatforms, platforms, qcOpen]);
+
   useEffect(() => {
-    if (!activeId) return;
+    if (!activeId || qcOpen) return;
     const stillVisible = list.some((x) => x.meta.id === activeId) || connectedPlatforms.some((p) => p.id === activeId);
     if (!stillVisible && list[0]) setActiveId(list[0].meta.id);
-  }, [activeId, connectedPlatforms, list]);
+  }, [activeId, connectedPlatforms, list, qcOpen]);
 
   async function connect(platformId: PlatformId, grantedPermissionIds: string[]) {
     let displayName =
@@ -371,6 +526,16 @@ export function PlatformsView() {
                           : platformId === "pinterest"
                             ? "Pinterest"
                             : "Dropbox • Demo";
+
+    if (platformId === "youtube") {
+      startYouTubeOAuth(grantedPermissionIds);
+      return;
+    }
+
+    if (platformId === "googleDrive") {
+      startGoogleDriveOAuth(grantedPermissionIds);
+      return;
+    }
 
     if (platformId === "pinterest") {
       try {
@@ -411,6 +576,36 @@ export function PlatformsView() {
     }
   }
 
+  function startYouTubeOAuth(pickedPermissionIds: string[]) {
+    try {
+      sessionStorage.setItem("kont.youtube.grantedPermissionIds", JSON.stringify(pickedPermissionIds));
+    } catch {
+      // continue even if sessionStorage is blocked
+    }
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    const start = new URL("/api/youtube/oauth/start", window.location.origin);
+    start.searchParams.set("returnTo", returnTo);
+    const scopes = youtubeScopesForPermissions(pickedPermissionIds);
+    if (scopes.length) start.searchParams.set("scopes", scopes.join(" "));
+    start.searchParams.set("perms", pickedPermissionIds.join(","));
+    window.location.assign(`${start.pathname}${start.search}`);
+  }
+
+  function startGoogleDriveOAuth(pickedPermissionIds: string[]) {
+    try {
+      sessionStorage.setItem("kont.drive.grantedPermissionIds", JSON.stringify(pickedPermissionIds));
+    } catch {
+      // continue even if sessionStorage is blocked
+    }
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    const start = new URL("/api/google-drive/oauth/start", window.location.origin);
+    start.searchParams.set("returnTo", returnTo);
+    const scopes = driveScopesForPermissions(pickedPermissionIds);
+    if (scopes.length) start.searchParams.set("scopes", scopes.join(" "));
+    start.searchParams.set("perms", pickedPermissionIds.join(","));
+    window.location.assign(`${start.pathname}${start.search}`);
+  }
+
   function openPermissions(platformId: PlatformId) {
     setPermPlatformId(platformId);
     setPermOpen(true);
@@ -420,8 +615,14 @@ export function PlatformsView() {
     setPlatforms((prev) =>
       prev.map((p) => (p.id === platformId ? { ...p, connected: false, account: null, grantedPermissionIds: [] } : p)),
     );
+    setQcOpen(false);
+    setRevokeId(null);
+    if (platformId === "youtube" || platformId === "googleDrive") setScopeNotice(null);
     if (isReelPlatformId(platformId)) {
       void syncReelPlatformConnectionToServer(platformId, false, null);
+    }
+    if (platformId === "googleDrive") {
+      void fetch("/api/google-drive", { method: "DELETE" }).catch(() => undefined);
     }
   }
 
@@ -433,7 +634,11 @@ export function PlatformsView() {
     );
   }
 
-  function openManage(platformId: PlatformId) {
+  function toggleManage(platformId: PlatformId) {
+    if (qcOpen && activeId === platformId) {
+      setQcOpen(false);
+      return;
+    }
     setActiveId(platformId);
     setQcOpen(true);
   }
@@ -444,6 +649,21 @@ export function PlatformsView() {
 
   return (
     <div className="grid gap-5">
+      <ConfirmDialog
+        open={revokeId !== null}
+        title={formatTemplate(P.revokeConfirmTitle, {
+          platform: revokeId ? (PLATFORM_META.find((x) => x.id === revokeId)?.label ?? revokeId) : "",
+        })}
+        message={P.revokeConfirmMessage}
+        confirmLabel={P.revokeConfirm}
+        cancelLabel={messages.common.cancel}
+        variant="danger"
+        onClose={() => setRevokeId(null)}
+        onConfirm={() => {
+          if (revokeId) disconnect(revokeId);
+        }}
+      />
+
       <PlatformPermissionsModal
         open={permOpen}
         platformId={permPlatformId}
@@ -456,7 +676,7 @@ export function PlatformsView() {
         }}
       />
 
-      <div className="cal-surface relative overflow-hidden rounded-3xl p-5 sm:p-6">
+      <div ref={accountsRef} className="cal-surface relative overflow-hidden rounded-3xl p-5 sm:p-6">
         <div
           className="pointer-events-none absolute -end-16 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--ice)_22%,transparent),transparent_70%)] opacity-80"
           aria-hidden
@@ -491,7 +711,7 @@ export function PlatformsView() {
           </p>
 
           <div className="mt-5">
-            {connectedPlatforms.length === 0 ? (
+            {accountRows.length === 0 ? (
               <div
                 className={`relative overflow-hidden rounded-2xl border px-5 py-8 text-center sm:px-8 ${PLATFORM_PANEL_SURFACE_CLASS}`}
               >
@@ -519,18 +739,23 @@ export function PlatformsView() {
             ) : (
               <StudioWrapperList>
                 <StudioWrapperListBody as="ul" className="gap-2">
-                  {connectedPlatforms.map((p) => {
+                  {accountRows.map((p) => {
                     const meta = PLATFORM_META.find((m) => m.id === p.id)!;
                     const accent = platformBrandAccent(p.id);
-                    const selected = activeId === p.id && qcOpen;
+                    const expanded = activeId === p.id && qcOpen;
                     return (
-                      <StudioWrapperListRow as="li" key={p.id} className="p-0 overflow-hidden">
+                      <StudioWrapperListRow
+                        as="li"
+                        key={p.id}
+                        className={["p-0 overflow-hidden", expanded ? "is-expanded" : ""].filter(Boolean).join(" ")}
+                      >
                         <button
                           type="button"
-                          onClick={() => openManage(p.id)}
+                          aria-expanded={expanded}
+                          onClick={() => toggleManage(p.id)}
                           className={[
                             "group flex w-full cursor-pointer items-center gap-3 px-3.5 py-3 text-start transition-colors duration-200 sm:gap-4 sm:px-4",
-                            selected
+                            expanded
                               ? "bg-[color-mix(in_srgb,var(--ice)_8%,transparent)]"
                               : "hover:bg-[color-mix(in_srgb,var(--wrapper-color-soft)_55%,transparent)]",
                           ].join(" ")}
@@ -546,59 +771,73 @@ export function PlatformsView() {
                               <span className="truncate text-[15px] font-semibold tracking-tight text-[var(--fg)]">
                                 {meta.label}
                               </span>
-                              <ConnectionToggle connected className="!rounded-md" />
+                              <ConnectionToggle connected={p.connected} className="!rounded-md" />
                             </span>
                             <span className="mt-0.5 block truncate text-xs text-[var(--muted)]">
-                              {p.account?.displayName ?? meta.subtitle}
-                              {p.account?.lastSyncAt
+                              {p.connected
+                                ? (p.account?.displayName ?? meta.subtitle)
+                                : meta.subtitle}
+                              {p.connected && p.account?.lastSyncAt
                                 ? ` · ${P.lastSync} ${formatRelative(p.account.lastSyncAt)}`
-                                : ` · ${P.noSync}`}
+                                : p.connected
+                                  ? ` · ${P.noSync}`
+                                  : ""}
                             </span>
                           </span>
                           <span className="hidden items-center gap-1 text-xs font-semibold text-[var(--muted)] transition-colors group-hover:text-[var(--fg)] sm:inline-flex">
                             {P.manage}
-                            <ChevronRight className="size-3.5 opacity-70 rtl:rotate-180" aria-hidden />
+                            <ChevronRight
+                              className={[
+                                "size-3.5 opacity-70 transition-transform duration-200 rtl:rotate-180",
+                                expanded ? "rotate-90 rtl:rotate-90" : "",
+                              ].join(" ")}
+                              aria-hidden
+                            />
                           </span>
                           <ChevronRight
-                            className="size-4 shrink-0 text-[var(--muted)] opacity-70 sm:hidden rtl:rotate-180"
+                            className={[
+                              "size-4 shrink-0 text-[var(--muted)] opacity-70 transition-transform duration-200 sm:hidden rtl:rotate-180",
+                              expanded ? "rotate-90 rtl:rotate-90" : "",
+                            ].join(" ")}
                             aria-hidden
                           />
                         </button>
+                        <div className={["platform-account-accordion", expanded ? "is-open" : ""].join(" ")}>
+                          <div className="platform-account-accordion__inner">
+                            {expanded && activePlatform && activePlatform.id === p.id ? (
+                              <div className="border-t border-[var(--line)] px-3.5 py-3 sm:px-4">
+                                <QuickConnectionsPanel
+                                  active={{
+                                    meta: {
+                                      id: activePlatform.meta.id,
+                                      label: activePlatform.meta.label,
+                                      subtitle: activePlatform.meta.subtitle,
+                                      hint: activePlatform.meta.hint,
+                                      accent,
+                                    },
+                                    state: {
+                                      id: activePlatform.id,
+                                      connected: activePlatform.connected,
+                                      account: activePlatform.account,
+                                      grantedPermissionIds: activePlatform.grantedPermissionIds,
+                                    },
+                                  }}
+                                  onConnect={(id) => openPermissions(id)}
+                                  onDisconnect={(id) => setRevokeId(id)}
+                                  onSyncNow={(id) => syncNow(id)}
+                                  scopeNotice={p.id === "youtube" || p.id === "googleDrive" ? scopeNotice : null}
+                                  onDismissScopeNotice={() => setScopeNotice(null)}
+                                />
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
                       </StudioWrapperListRow>
                     );
                   })}
                 </StudioWrapperListBody>
               </StudioWrapperList>
             )}
-          </div>
-
-          <div className="mt-4">
-            <QuickConnectionsPanel
-              open={qcOpen}
-              active={
-                activePlatform
-                  ? {
-                      meta: {
-                        id: activePlatform.meta.id,
-                        label: activePlatform.meta.label,
-                        subtitle: activePlatform.meta.subtitle,
-                        hint: activePlatform.meta.hint,
-                        accent: platformBrandAccent(activePlatform.meta.id),
-                      },
-                      state: {
-                        id: activePlatform.id,
-                        connected: activePlatform.connected,
-                        account: activePlatform.account,
-                        grantedPermissionIds: activePlatform.grantedPermissionIds,
-                      },
-                    }
-                  : null
-              }
-              onClose={() => setQcOpen(false)}
-              onConnect={(id) => openPermissions(id)}
-              onDisconnect={(id) => disconnect(id)}
-              onSyncNow={(id) => syncNow(id)}
-            />
           </div>
         </div>
       </div>
@@ -752,7 +991,10 @@ export function PlatformsView() {
                       <StudioGhostButton
                         type="button"
                         className="studio-btn-ghost--md"
-                        onClick={() => openManage(meta.id)}
+                        onClick={() => {
+                          toggleManage(meta.id);
+                          accountsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }}
                       >
                         {P.manage}
                       </StudioGhostButton>

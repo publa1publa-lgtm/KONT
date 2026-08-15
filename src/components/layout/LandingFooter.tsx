@@ -1,21 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 import { KontBrandLogo } from "@/components/brand/KontBrandLogo";
 import { useDemoModal } from "@/contexts/demo-modal-context";
 import { useI18n } from "@/contexts/i18n-context";
 import { useMessages } from "@/contexts/messages-context";
-import { withLocale, type AppLocale } from "@/i18n/config";
+import { stripLocalePrefix, withLocale, type AppLocale } from "@/i18n/config";
 
 type LandingFooterProps = {
   variant?: "default" | "landing";
 };
 
 function localizeHref(locale: AppLocale, href: string) {
-  if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("mailto:")) {
+  if (!href || href.startsWith("http") || href.startsWith("mailto:")) {
     return href;
+  }
+  if (href.startsWith("#")) {
+    return `${withLocale(locale, "/")}${href}`;
   }
   if (href.startsWith("/")) {
     return withLocale(locale, href);
@@ -23,13 +27,40 @@ function localizeHref(locale: AppLocale, href: string) {
   return href;
 }
 
+function isLegalHrefActive(pathname: string, href: string) {
+  const bare = stripLocalePrefix(pathname || "/");
+  if (href === "/privacy-policy") {
+    return bare === "/privacy-policy" || /\/privacy$/.test(bare);
+  }
+  if (href === "/terms") {
+    return bare === "/terms" || (bare.startsWith("/terms/") && !bare.endsWith("/privacy"));
+  }
+  return false;
+}
+
 export function LandingFooter({ variant = "default" }: LandingFooterProps) {
   const { story } = useMessages();
   const { locale } = useI18n();
+  const pathname = usePathname();
   const F = story.footer;
   const { openModal } = useDemoModal();
   const isLanding = variant === "landing";
   const homeHref = withLocale(locale, "/");
+
+  const renderCompanyLink = (item: (typeof F.companyLinks)[number], className: string) => {
+    const href = localizeHref(locale, item.href);
+    const active = isLegalHrefActive(pathname || "/", item.href);
+    return (
+      <Link
+        key={item.href}
+        href={href}
+        className={active ? `${className} is-active` : className}
+        aria-current={active ? "page" : undefined}
+      >
+        {item.label}
+      </Link>
+    );
+  };
 
   const trustItems = F.trustLine.split("·").map((item) => item.trim()).filter(Boolean);
 
@@ -95,11 +126,7 @@ export function LandingFooter({ variant = "default" }: LandingFooterProps) {
               <div className="nh-footer__col">
                 <p className="nh-footer__label">{F.companyColumn}</p>
                 <nav className="nh-footer__nav" aria-label={F.companyColumn}>
-                  {F.companyLinks.map((item) => (
-                    <span key={item.label} className="nh-footer__link nh-footer__link--muted">
-                      {item.label}
-                    </span>
-                  ))}
+                  {F.companyLinks.map((item) => renderCompanyLink(item, "nh-footer__link"))}
                 </nav>
               </div>
             </div>
@@ -113,6 +140,9 @@ export function LandingFooter({ variant = "default" }: LandingFooterProps) {
           </div>
 
           <div className="nh-footer__bar">
+            <nav className="nh-footer__legal" aria-label={F.companyColumn}>
+              {F.companyLinks.map((item) => renderCompanyLink(item, "nh-footer__link"))}
+            </nav>
             <p className="nh-footer__copy">
               © {new Date().getFullYear()} {story.brand}
             </p>
@@ -173,11 +203,12 @@ export function LandingFooter({ variant = "default" }: LandingFooterProps) {
               {F.companyColumn}
             </p>
             <nav className="mt-4 grid gap-2 text-[13px] text-[var(--muted)]">
-              {F.companyLinks.map((item) => (
-                <span key={item.label} className="text-[var(--muted)] opacity-60">
-                  {item.label}
-                </span>
-              ))}
+              {F.companyLinks.map((item) =>
+                renderCompanyLink(
+                  item,
+                  "transition hover:text-[var(--fg)] hover:underline hover:underline-offset-4",
+                ),
+              )}
             </nav>
           </div>
 

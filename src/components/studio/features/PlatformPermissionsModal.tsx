@@ -7,6 +7,8 @@ import { StudioDialog } from "./StudioDialog";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { formatTemplate } from "@/lib/formatTemplate";
 import { INBOX_UNIFIED_PERMISSION_ID } from "@/lib/studioInboxPermissions";
+import { driveScopesForPermissionIds } from "@/lib/google-drive/permissions";
+import { youtubeScopesForPermissionIds } from "@/lib/youtube/permissions";
 import { platformBrandAccent, platformIconTileStyle } from "./platformCardStyles";
 import {
   DiscordLogo,
@@ -42,73 +44,101 @@ export type PermissionSpec = {
   title: string;
   description: string;
   required?: boolean;
+  /** Pre-checked when the modal opens (optional scopes only). */
+  defaultOn?: boolean;
+  /** Provider scope shown under the row (Google / Meta / etc.). */
+  scope?: string;
 };
 
+/** Same for every social network. Platform-specific scopes are appended below. */
+export const SOCIAL_SHARED_PERMISSIONS: PermissionSpec[] = [
+  {
+    id: "account.identity",
+    title: "Account access",
+    description: "Identify your account during OAuth and keep the connection active.",
+    required: true,
+  },
+  {
+    id: INBOX_UNIFIED_PERMISSION_ID,
+    title: "Unified Inbox",
+    description: "Show comments, mentions, and activity from this account in the studio Inbox.",
+  },
+];
+
+const YOUTUBE_SCOPE_PERMISSIONS: PermissionSpec[] = [
+  {
+    id: "youtube.upload",
+    title: "Upload videos",
+    description: "Upload new videos to your YouTube channel. Without this, publishing is unavailable.",
+    scope: "https://www.googleapis.com/auth/youtube.upload",
+  },
+  {
+    id: "youtube",
+    title: "Manage YouTube account",
+    description: "Edit metadata, change visibility, and delete videos on your channel.",
+    scope: "https://www.googleapis.com/auth/youtube",
+  },
+  {
+    id: "youtube.readonly",
+    title: "Read YouTube data",
+    description: "View your channel, videos, playlists, and public YouTube information.",
+    scope: "https://www.googleapis.com/auth/youtube.readonly",
+  },
+  {
+    id: "yt-analytics.readonly",
+    title: "Read analytics",
+    description: "View performance metrics such as views, watch time, and engagement.",
+    scope: "https://www.googleapis.com/auth/yt-analytics.readonly",
+  },
+];
+
+export const YOUTUBE_REQUIRED_PERMISSION_IDS: readonly string[] = [
+  ...SOCIAL_SHARED_PERMISSIONS.filter((p) => p.required).map((p) => p.id),
+  ...YOUTUBE_SCOPE_PERMISSIONS.filter((p) => p.required).map((p) => p.id),
+];
+
+export function youtubeScopesForPermissions(permissionIds: readonly string[]): string[] {
+  return youtubeScopesForPermissionIds(permissionIds);
+}
+
+export function driveScopesForPermissions(permissionIds: readonly string[]): string[] {
+  return driveScopesForPermissionIds(permissionIds);
+}
+
+export function permissionLabel(platformId: PlatformId, permissionId: string): string {
+  const spec = PLATFORM_PERMISSIONS[platformId].find((p) => p.id === permissionId);
+  return spec?.title ?? permissionId;
+}
+
 export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
-  youtube: [
-    { id: "openid", title: "Basic identity", description: "Identify your Google account during OAuth.", required: true },
-    {
-      id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Show comments and activity from this channel in the studio Inbox.",
-    },
-    { id: "youtube.upload", title: "Upload videos", description: "Upload new videos to your channel." },
-    { id: "youtube.manage", title: "Manage channel content", description: "Update metadata, thumbnails, and visibility." },
-    { id: "youtube.analytics.read", title: "Read analytics", description: "View performance metrics for published content." },
-    { id: "youtube.schedules.manage", title: "Manage schedules", description: "Create and manage scheduled publish times." },
-  ],
+  youtube: [...SOCIAL_SHARED_PERMISSIONS, ...YOUTUBE_SCOPE_PERMISSIONS],
   tiktok: [
-    { id: "tiktok.basic", title: "Basic account", description: "Read basic account information.", required: true },
-    {
-      id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Surface mentions and messages that belong to this account in the studio Inbox.",
-    },
-    { id: "tiktok.publish", title: "Publish videos", description: "Upload/publish videos to your TikTok account." },
-    { id: "tiktok.manage", title: "Manage posts", description: "Edit/delete posts created via this app." },
-    { id: "tiktok.analytics.read", title: "Read analytics", description: "View performance metrics for your posts." },
+    ...SOCIAL_SHARED_PERMISSIONS,
+    { id: "tiktok.publish", title: "Publish videos", description: "Upload and publish videos to your TikTok account." },
+    { id: "tiktok.manage", title: "Manage posts", description: "Edit or delete posts created through KONT." },
+    { id: "tiktok.analytics.read", title: "Read analytics", description: "View performance metrics for your TikTok posts." },
   ],
   instagram: [
-    { id: "meta.basic", title: "Basic identity", description: "Identify your Meta account during OAuth.", required: true },
-    {
-      id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Show comments, DMs, and mentions for this Instagram account in the studio Inbox.",
-    },
-    { id: "instagram.content_publish", title: "Publish to Instagram", description: "Publish Reels/posts to your Instagram account." },
-    { id: "instagram.manage_comments", title: "Manage comments", description: "Read/respond to comments for content posted via this app." },
-    { id: "instagram.insights.read", title: "Read insights", description: "View analytics/insights for your Instagram content." },
+    ...SOCIAL_SHARED_PERMISSIONS,
+    { id: "instagram.content_publish", title: "Publish to Instagram", description: "Publish Reels and posts to your Instagram account." },
+    { id: "instagram.manage_comments", title: "Manage comments", description: "Read and respond to comments on content posted through KONT." },
+    { id: "instagram.insights.read", title: "Read insights", description: "View analytics and insights for your Instagram content." },
   ],
   facebook: [
-    { id: "meta.basic", title: "Basic identity", description: "Identify your Meta account during OAuth.", required: true },
-    {
-      id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Show Page messages and engagement items in the studio Inbox.",
-    },
+    ...SOCIAL_SHARED_PERMISSIONS,
     { id: "pages_show_list", title: "Access pages", description: "List and select Facebook Pages you manage." },
     { id: "pages_manage_posts", title: "Publish posts", description: "Create and manage posts on selected Pages." },
-    { id: "pages_read_engagement", title: "Read engagement", description: "Read reactions/comments for moderation and reporting." },
+    { id: "pages_read_engagement", title: "Read engagement", description: "Read reactions and comments for moderation and reporting." },
     { id: "read_insights", title: "Read insights", description: "View Page insights and analytics." },
   ],
   pinterest: [
-    { id: "pinterest.oauth", title: "Pinterest account", description: "Authorize ContentFabric with your Pinterest profile.", required: true },
-    {
-      id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Surface comments and saves related to your Pins in the studio Inbox.",
-    },
+    ...SOCIAL_SHARED_PERMISSIONS,
     { id: "pinterest.read_boards", title: "Read boards", description: "List boards and sections you choose to share." },
     { id: "pinterest.create_pins", title: "Create Pins", description: "Publish new Pins to boards you manage." },
     { id: "pinterest.analytics.read", title: "Read analytics", description: "View Pin and board performance metrics." },
   ],
   linkedin: [
-    { id: "linkedin.oauth", title: "LinkedIn identity", description: "Identify your LinkedIn member or organization during OAuth.", required: true },
-    {
-      id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Show comments and engagement on your LinkedIn posts in the studio Inbox.",
-    },
+    ...SOCIAL_SHARED_PERMISSIONS,
     { id: "linkedin.w_member_social", title: "Post as member", description: "Create and manage posts on behalf of the authenticated member." },
     { id: "linkedin.w_organization_social", title: "Post as organization", description: "Publish to LinkedIn Pages you administer." },
     { id: "linkedin.r_organization_social", title: "Read organization content", description: "Read posts and analytics for managed Pages." },
@@ -129,9 +159,26 @@ export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
     { id: "notion.write", title: "Create & update pages", description: "Create pages, update properties, and append blocks." },
   ],
   googleDrive: [
-    { id: "openid", title: "Basic identity", description: "Identify your Google account during OAuth.", required: true },
-    { id: "drive.readonly", title: "Read files", description: "List/read files selected for ContentFabric." },
-    { id: "drive.file", title: "Create & manage app files", description: "Create/upload files that your app creates or opens." },
+    {
+      id: "openid",
+      title: "Basic identity",
+      description: "Identify your Google account during OAuth.",
+      required: true,
+      scope: "openid",
+    },
+    {
+      id: "drive.file",
+      title: "Create & manage app files",
+      description: "Create and upload files that KONT opens or creates in Drive.",
+      defaultOn: true,
+      scope: "https://www.googleapis.com/auth/drive.file",
+    },
+    {
+      id: "drive.readonly",
+      title: "Read files",
+      description: "List and read existing Drive files for import.",
+      scope: "https://www.googleapis.com/auth/drive.readonly",
+    },
   ],
   dropbox: [
     { id: "dropbox.oauth", title: "Dropbox OAuth", description: "Authorize ContentFabric to access your Dropbox.", required: true },
@@ -215,7 +262,7 @@ function PermissionRow({
           {spec.required ? <span className="studio-perm-row__badge">{requiredLabel}</span> : null}
         </span>
         <p className="studio-perm-row__desc">{spec.description}</p>
-        <code className="studio-perm-row__id">{spec.id}</code>
+        <code className="studio-perm-row__id">{spec.scope ?? spec.id}</code>
       </span>
     </label>
   );
@@ -253,7 +300,7 @@ export function PlatformPermissionsModal({
 
   const defaultPicked = useMemo(() => {
     const picked = new Set<string>();
-    for (const p of permissions) if (p.required) picked.add(p.id);
+    for (const p of permissions) if (p.required || p.defaultOn) picked.add(p.id);
     return picked;
   }, [permissions]);
 
@@ -272,7 +319,9 @@ export function PlatformPermissionsModal({
     if (resetSessionRef.current === sessionKey) return;
 
     const initial = new Set<string>();
-    for (const p of PLATFORM_PERMISSIONS[platformId]) if (p.required) initial.add(p.id);
+    for (const p of PLATFORM_PERMISSIONS[platformId]) {
+      if (p.required || p.defaultOn) initial.add(p.id);
+    }
     setPicked(initial);
     setAccepted(false);
     resetSessionRef.current = sessionKey;

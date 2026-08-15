@@ -1,32 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CircleAlert } from "lucide-react";
+import { useI18n } from "@/contexts/i18n-context";
+import { formatTemplate } from "@/lib/formatTemplate";
 import { TabPanel, Tabs, type TabSpec } from "./Tabs";
-import {
-  DiscordLogo,
-  DropboxLogo,
-  EmailLogo,
-  FacebookLogo,
-  GoogleDriveLogo,
-  InstagramLogo,
-  NotionLogo,
-  TelegramLogo,
-  TikTokLogo,
-  YouTubeLogo,
-  PinterestLogo,
-  LinkedInLogo,
-} from "./platformLogos";
 import { ConnectionToggle } from "./ConnectionToggle";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
-import {
-  PLATFORM_CARD_ACCENT,
-  PLATFORM_CARD_ACCENT_OVERLAY_OPACITY,
-  PLATFORM_CARD_SURFACE_CLASS,
-  PLATFORM_PANEL_SURFACE_CLASS,
-  platformAccentOverlay,
-  platformIconTileStyle,
-} from "./platformCardStyles";
+import { PLATFORM_PANEL_SURFACE_CLASS } from "./platformCardStyles";
 import { StudioWrapperList, studioWrapperList } from "./StudioWrapperList";
+import { permissionLabel, type PlatformId as PermissionPlatformId } from "./PlatformPermissionsModal";
 
 type PlatformId =
   | "youtube"
@@ -75,297 +58,233 @@ function formatRelative(ms: number): string {
   return `${days}d ago`;
 }
 
-function PlatformIcon({ id, className }: { id: PlatformId; className?: string }) {
-  switch (id) {
-    case "youtube":
-      return <YouTubeLogo className={className} />;
-    case "tiktok":
-      return <TikTokLogo className={className} />;
-    case "instagram":
-      return <InstagramLogo className={className} />;
-    case "facebook":
-      return <FacebookLogo className={className} />;
-    case "pinterest":
-      return <PinterestLogo className={className} />;
-    case "linkedin":
-      return <LinkedInLogo className={className} />;
-    case "telegram":
-      return <TelegramLogo className={className} />;
-    case "notion":
-      return <NotionLogo className={className} />;
-    case "googleDrive":
-      return <GoogleDriveLogo className={className} />;
-    case "dropbox":
-      return <DropboxLogo className={className} />;
-    case "email":
-      return <EmailLogo className={className} />;
-    case "discord":
-      return <DiscordLogo className={className} />;
-  }
-}
-
 type TabId = "details" | "settings" | "logs";
 
+export type ScopeNotice = {
+  missingIds: string[];
+  extraIds: string[];
+};
+
+/** Inline manage body — lives inside the same account row, not a second card. */
 export function QuickConnectionsPanel({
-  open,
   active,
-  onClose,
   onConnect,
   onDisconnect,
   onSyncNow,
+  scopeNotice,
+  onDismissScopeNotice,
 }: {
-  open: boolean;
-  active: QuickConnectionsActive | null;
-  onClose: () => void;
+  active: QuickConnectionsActive;
   onConnect: (id: PlatformId) => void;
   onDisconnect: (id: PlatformId) => void;
   onSyncNow: (id: PlatformId) => void;
+  scopeNotice?: ScopeNotice | null;
+  onDismissScopeNotice?: () => void;
 }) {
-  const [tab, setTab] = useState<TabId>("details");
-  const accent = active?.meta.accent ?? PLATFORM_CARD_ACCENT;
+  const { messages } = useI18n();
+  const P = messages.studio.platforms;
+  const C = messages.common;
+  const hasNotice = Boolean(scopeNotice && (scopeNotice.missingIds.length || scopeNotice.extraIds.length));
+  const [tab, setTab] = useState<TabId>(hasNotice ? "settings" : "details");
+  const connected = active.state.connected;
 
   const tabs = useMemo<Array<TabSpec<TabId>>>(
     () => [
-      { id: "details", label: "Details", hint: "status + account" },
-      { id: "settings", label: "Settings", hint: "permissions" },
-      { id: "logs", label: "Logs", hint: "sync history" },
+      { id: "details", label: P.manageDetails, hint: "status + account" },
+      { id: "settings", label: P.manageSettings, hint: "permissions" },
+      { id: "logs", label: P.manageLogs, hint: "sync history" },
     ],
-    [],
+    [P.manageDetails, P.manageLogs, P.manageSettings],
   );
 
   return (
-    <div
-      className={[
-        "overflow-hidden rounded-2xl border",
-        PLATFORM_PANEL_SURFACE_CLASS,
-        "transition-[max-height,opacity,transform] duration-300 ease-out",
-        open ? "max-h-[1100px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1 pointer-events-none",
-      ].join(" ")}
-      aria-hidden={!open}
-    >
-      <div className="px-4 py-4 sm:px-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Manage</div>
-            <div className="mt-1.5 text-base font-semibold tracking-tight text-[var(--fg)]">
-              {active ? active.meta.label : "Select a platform"}
-            </div>
-            <div className="mt-1 text-sm text-[var(--muted)]">
-              {active ? active.meta.subtitle : "Pick a connected account above to view details."}
+    <div className="platform-account-manage">
+      {hasNotice && scopeNotice ? (
+        <div
+          className="mb-4 rounded-xl border border-amber-400/55 bg-amber-400/16 p-3.5"
+          role="status"
+        >
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-amber-400/20 text-amber-600">
+              <CircleAlert className="size-4" strokeWidth={2.4} aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-semibold leading-snug text-[var(--fg)]">{P.youtubeScopeMismatch}</p>
+                {onDismissScopeNotice ? (
+                  <button
+                    type="button"
+                    onClick={onDismissScopeNotice}
+                    className="shrink-0 cursor-pointer rounded-lg px-2 py-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:bg-amber-400/20 hover:text-[var(--fg)]"
+                  >
+                    {C.close}
+                  </button>
+                ) : null}
+              </div>
+              {scopeNotice.missingIds.length ? (
+                <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
+                  {formatTemplate(P.youtubeScopeMissing, {
+                    list: scopeNotice.missingIds.map((id) => permissionLabel(active.meta.id as PermissionPlatformId, id)).join(", "),
+                  })}
+                </p>
+              ) : null}
+              {scopeNotice.extraIds.length ? (
+                <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
+                  {formatTemplate(P.youtubeScopeExtra, {
+                    list: scopeNotice.extraIds.map((id) => permissionLabel(active.meta.id as PermissionPlatformId, id)).join(", "),
+                  })}
+                </p>
+              ) : null}
             </div>
           </div>
-
-          <StudioGhostButton
-            type="button"
-            className="studio-btn-ghost--sm"
-            onClick={() => {
-              onClose();
-              setTab("details");
-            }}
-          >
-            Close
-          </StudioGhostButton>
         </div>
+      ) : null}
 
-        <div className="mt-4">
-          <Tabs tabs={tabs} activeId={tab} onChange={setTab} />
-        </div>
+      <Tabs tabs={tabs} activeId={tab} onChange={setTab} />
 
-        {!active ? (
-          <div className={`mt-4 rounded-2xl border p-4 text-sm text-[var(--muted)] ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-            Nothing selected.
+      <div className="mt-4">
+        <TabPanel hidden={tab !== "details"}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className={`rounded-xl border p-3.5 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                    {P.account}
+                  </div>
+                  <div className="mt-1.5 truncate text-sm font-semibold text-[var(--fg)]">
+                    {connected && active.state.account ? active.state.account.displayName : active.meta.subtitle}
+                  </div>
+                  <div className="mt-1 text-xs text-[var(--muted)]">{active.meta.hint}</div>
+                </div>
+                <ConnectionToggle connected={connected} />
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {connected ? (
+                  <StudioGhostButton
+                    type="button"
+                    className="studio-btn-ghost--md"
+                    onClick={() => onSyncNow(active.meta.id)}
+                  >
+                    {P.sync}
+                  </StudioGhostButton>
+                ) : (
+                  <StudioCreateButton
+                    type="button"
+                    className="studio-create-btn--sm"
+                    onClick={() => onConnect(active.meta.id)}
+                  >
+                    {P.connect}
+                  </StudioCreateButton>
+                )}
+              </div>
+            </div>
+
+            <div className={`rounded-xl border p-3.5 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                {P.lastSync}
+              </div>
+              <div className="mt-1.5 text-sm font-semibold text-[var(--fg)]">
+                {active.state.account?.lastSyncAt
+                  ? formatRelative(active.state.account.lastSyncAt)
+                  : P.noSync}
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{P.connectedHintSome}</p>
+            </div>
           </div>
-        ) : (
-          <div className="mt-4">
-            <TabPanel hidden={tab !== "details"}>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div
-                  className={`relative overflow-hidden rounded-[1.25rem] border p-4 shadow-[var(--studio-card-stack-shadow)] ${PLATFORM_CARD_SURFACE_CLASS}`}
+        </TabPanel>
+
+        <TabPanel hidden={tab !== "settings"}>
+          <div className="grid gap-3">
+            <div className={`rounded-xl border p-3.5 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                {messages.studio.platformConnect.permissions}
+              </div>
+              <div className="mt-2 grid gap-2 text-sm text-[var(--muted)]">
+                {(active.state.grantedPermissionIds?.length
+                  ? active.state.grantedPermissionIds
+                  : ["account.identity"]
+                ).map((perm) => (
+                  <div key={perm} className="flex items-center justify-between gap-3">
+                    <span className="truncate">{permissionLabel(active.meta.id as PermissionPlatformId, perm)}</span>
+                    <span className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
+                      {connected ? P.live : P.available}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {connected ? (
+              <div className="rounded-xl border border-[color-mix(in_srgb,var(--ember)_28%,var(--line))] bg-[color-mix(in_srgb,var(--ember)_7%,transparent)] p-3.5">
+                <div className="text-sm font-semibold text-[var(--fg)]">{P.revokeTitle}</div>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{P.revokeHint}</p>
+                <StudioGhostButton
+                  type="button"
+                  className="studio-btn-ghost--md mt-3"
+                  onClick={() => onDisconnect(active.meta.id)}
                 >
-                  <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{ ...platformAccentOverlay(accent), opacity: PLATFORM_CARD_ACCENT_OVERLAY_OPACITY }}
-                    aria-hidden
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-[0.16]"
-                    style={{ color: accent }}
-                    aria-hidden
-                  />
-                  <div className="relative z-[1]">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
-                          style={platformIconTileStyle(accent)}
-                        >
-                          <PlatformIcon id={active.meta.id} className="h-[1.35rem] w-[1.35rem]" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-sm font-semibold leading-snug tracking-tight text-[var(--fg)]">
-                            {active.meta.label}
-                          </div>
-                          <div className="mt-0.5 text-xs leading-snug text-[var(--muted)]">
-                            {active.state.connected && active.state.account
-                              ? active.state.account.displayName
-                              : active.meta.subtitle}
-                          </div>
-                        </div>
-                      </div>
-
-                      <ConnectionToggle connected={active.state.connected} />
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                      {active.state.connected ? (
-                        <>
-                          <StudioGhostButton
-                            type="button"
-                            className="studio-btn-ghost--md"
-                            onClick={() => onSyncNow(active.meta.id)}
-                          >
-                            Sync now
-                          </StudioGhostButton>
-                          <StudioGhostButton
-                            type="button"
-                            className="studio-btn-ghost--md"
-                            onClick={() => onDisconnect(active.meta.id)}
-                          >
-                            Disconnect
-                          </StudioGhostButton>
-                        </>
-                      ) : (
-                        <StudioCreateButton
-                          type="button"
-                          className="studio-create-btn--sm"
-                          onClick={() => onConnect(active.meta.id)}
-                        >
-                          Connect
-                        </StudioCreateButton>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Notes</div>
-                  <div className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-                    Demo connection for now. Live OAuth will show token health, scopes, and sync status here.
-                  </div>
-                  <div className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--studio-surface-3)] p-3 text-xs leading-relaxed text-[var(--muted)]">
-                    {active.meta.hint}
-                  </div>
-                </div>
+                  {P.disconnect}
+                </StudioGhostButton>
               </div>
-            </TabPanel>
-
-            <TabPanel hidden={tab !== "settings"}>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Publishing
-                  </div>
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold text-[var(--fg)]">Auto-sync metadata</div>
-                      <div className="mt-1 text-xs text-[var(--muted)]">
-                        When enabled, studio will refresh connection status periodically.
-                      </div>
-                    </div>
-                    <div className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
-                      Soon
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Permissions
-                  </div>
-                  <div className="mt-2 grid gap-2 text-sm text-[var(--muted)]">
-                    {(active.state.grantedPermissionIds?.length
-                      ? active.state.grantedPermissionIds
-                      : ["Upload content", "Read analytics", "Manage schedules"]
-                    ).map((perm) => (
-                      <div key={perm} className="flex items-center justify-between gap-3">
-                        <span className="truncate">{perm}</span>
-                        <span className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
-                          {active.state.connected ? "Granted" : "Pending"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            ) : (
+              <div className={`rounded-xl border p-3.5 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
+                <div className="text-sm font-semibold text-[var(--fg)]">{P.revokeTitle}</div>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{P.emptyConnectedBody}</p>
+                <StudioCreateButton
+                  type="button"
+                  className="studio-create-btn--sm mt-3"
+                  onClick={() => onConnect(active.meta.id)}
+                >
+                  {P.connect}
+                </StudioCreateButton>
               </div>
-            </TabPanel>
-
-            <TabPanel hidden={tab !== "logs"}>
-              <div className={`rounded-2xl border p-4 ${PLATFORM_PANEL_SURFACE_CLASS}`}>
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Logs</div>
-                    <div className="mt-1.5 text-sm font-semibold text-[var(--fg)]">Recent actions</div>
-                  </div>
-                  <div className="text-xs text-[var(--muted)]">UI-only demo</div>
-                </div>
-
-                <StudioWrapperList className="mt-4">
-                  <table className={`${studioWrapperList.table} studio-stack-table`}>
-                    <thead className={studioWrapperList.thead}>
-                      <tr>
-                        <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Time</th>
-                        <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Event</th>
-                        <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Info</th>
-                      </tr>
-                    </thead>
-                    <tbody className={studioWrapperList.tbody}>
-                      <tr className={studioWrapperList.tr}>
-                        <td
-                          data-label="Time"
-                          className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
-                        >
-                          {active.state.account?.lastSyncAt ? formatRelative(active.state.account.lastSyncAt) : "—"}
-                        </td>
-                        <td
-                          data-label="Event"
-                          className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}
-                        >
-                          Sync
-                        </td>
-                        <td
-                          data-label="Info"
-                          className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}
-                        >
-                          Last sync timestamp
-                        </td>
-                      </tr>
-                      <tr className={studioWrapperList.tr}>
-                        <td
-                          data-label="Time"
-                          className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
-                        >
-                          {active.state.account?.connectedAt ? formatRelative(active.state.account.connectedAt) : "—"}
-                        </td>
-                        <td
-                          data-label="Event"
-                          className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}
-                        >
-                          Connect
-                        </td>
-                        <td
-                          data-label="Info"
-                          className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}
-                        >
-                          Connected demo account
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </StudioWrapperList>
-              </div>
-            </TabPanel>
+            )}
           </div>
-        )}
+        </TabPanel>
+
+        <TabPanel hidden={tab !== "logs"}>
+          <StudioWrapperList>
+            <table className={`${studioWrapperList.table} studio-stack-table`}>
+              <thead className={studioWrapperList.thead}>
+                <tr>
+                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Time</th>
+                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Event</th>
+                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Info</th>
+                </tr>
+              </thead>
+              <tbody className={studioWrapperList.tbody}>
+                <tr className={studioWrapperList.tr}>
+                  <td
+                    data-label="Time"
+                    className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
+                  >
+                    {active.state.account?.lastSyncAt ? formatRelative(active.state.account.lastSyncAt) : "—"}
+                  </td>
+                  <td data-label="Event" className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>
+                    Sync
+                  </td>
+                  <td data-label="Info" className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                    {P.lastSync}
+                  </td>
+                </tr>
+                <tr className={studioWrapperList.tr}>
+                  <td
+                    data-label="Time"
+                    className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
+                  >
+                    {active.state.account?.connectedAt ? formatRelative(active.state.account.connectedAt) : "—"}
+                  </td>
+                  <td data-label="Event" className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>
+                    {connected ? "Connect" : P.disconnect}
+                  </td>
+                  <td data-label="Info" className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                    {active.meta.label}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </StudioWrapperList>
+        </TabPanel>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { AuditAction, ContentStatus, Prisma } from "@prisma/client";
 
 import { internalError } from "@/lib/api/errors";
 import { asMediaIds, setContentMainMedia } from "@/lib/media/link";
+import { publishContentTargets, youtubeWasRequested } from "@/lib/publish/run";
 import { toMediaAssetDto } from "@/lib/media/dto";
 import { auditContextFromRequest, writeAudit } from "@/lib/audit";
 import { asRecord, asString, asStringArray } from "@/lib/api/parse";
@@ -108,16 +109,23 @@ export async function createContent(req: Request): Promise<NextResponse> {
       }
     }
 
+    const publish = await publishContentTargets(userId, created.id);
+    if (type === "REEL" && youtubeWasRequested(metadata) && publish.youtube && !publish.youtube.ok) {
+      await contentRepo.hardDeleteContent(created.id).catch(() => {});
+      return json({ error: publish.youtube.error, code: publish.youtube.code }, 502);
+    }
+
     void writeAudit({
       userId,
       ...auditContextFromRequest(req),
       action: AuditAction.CONTENT_CREATED,
       entityType: "Content",
       entityId: created.id,
-      metadata: { type: created.type, status: created.status },
+      metadata: { type: created.type, status: created.status, youtubeVideoId: publish.youtube && publish.youtube.ok ? publish.youtube.videoId : null },
     });
 
-    return json(created, 201);
+    const fresh = await contentRepo.findContentById(created.id);
+    return json({ ...(fresh ?? created), publish }, 201);
   } catch (e) {
     return internalError("[POST /api/content]", e, "Could not create content");
   }
@@ -204,6 +212,10 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
     }
 
     const fresh = await contentRepo.findContentById(id);
+    const publish = await publishContentTargets(userId, id);
+    if (existing.type === "REEL" && youtubeWasRequested(fresh?.metadata) && publish.youtube && !publish.youtube.ok) {
+      return json({ error: publish.youtube.error, code: publish.youtube.code }, 502);
+    }
 
     void writeAudit({
       userId,
@@ -214,7 +226,7 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
       metadata: { fields: Object.keys(data) },
     });
 
-    return json(fresh);
+    return json({ ...fresh, publish });
   } catch (e) {
     return internalError("[PATCH /api/content/:id]", e, "Could not update content");
   }

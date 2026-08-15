@@ -48,11 +48,11 @@
       "companyLinks": [
         {
           "label": "פרטיות",
-          "href": "#"
+          "href": "/privacy-policy"
         },
         {
           "label": "תנאים",
-          "href": "#"
+          "href": "/terms"
         }
       ]
     }
@@ -689,6 +689,8 @@
         "date": "תאריך",
         "time": "שעה",
         "schedule": "תזמון",
+        "postNow": "פרסם עכשיו",
+        "postNowSummary": "מפרסמים עכשיו",
         "title": "כותרת",
         "titlePlaceholder": "כותרת",
         "text": "טקסט",
@@ -790,6 +792,14 @@
       "lastSync": "סנכרון אחרון",
       "sync": "סנכרון",
       "disconnect": "ניתוק",
+      "revokeTitle": "ביטול החיבור",
+      "revokeHint": "החשבון יוסר מ-Studio. אפשר לחבר אותו שוב אחר כך.",
+      "revokeConfirmTitle": "לנתק את {platform}?",
+      "revokeConfirmMessage": "החשבון יוסר מיד מהפלטפורמות המחוברות. אפשר לחבר אותו שוב אחר כך.",
+      "revokeConfirm": "ניתוק",
+      "manageDetails": "פרטים",
+      "manageSettings": "הגדרות",
+      "manageLogs": "יומן",
       "connect": "חיבור",
       "noSync": "עדיין לא סונכרן",
       "groupSocial": "חברתי",
@@ -798,7 +808,14 @@
       "groupStorage": "אחסון",
       "groupNotifications": "התראות",
       "pinterestConnectFailed": "Pinterest: לא ניתן לחבר חשבון",
-      "pinterestNetworkError": "Pinterest: שגיאת רשת"
+      "pinterestNetworkError": "Pinterest: שגיאת רשת",
+      "youtubeConnectFailed": "YouTube: לא ניתן לחבר חשבון",
+      "youtubeDenied": "YouTube: הגישה נדחתה. אפשר לנסות לחבר שוב.",
+      "youtubeScopeMismatch": "Google אישר הרשאות שונות מאלה שסימנת ב-KONT.",
+      "youtubeScopeMissing": "לא אושר ב-Google: {list}",
+      "youtubeScopeExtra": "אושר בנוסף ב-Google: {list}",
+      "driveConnectFailed": "Google Drive: לא ניתן לחבר חשבון",
+      "driveDenied": "Google Drive: הגישה נדחתה. אפשר לנסות לחבר שוב."
     },
     "inbox": {
       "label": "תיבת דואר נכנס",
@@ -1251,5 +1268,18 @@
     "back": "חזרה",
     "draft": "טיוטה",
     "updated": "עודכן"
+  },
+  "legal": {
+    "kicker": "משפטי",
+    "metaTitle": "תנאי שימוש — KONT",
+    "metaDescription": "תנאי שימוש, מדיניות פרטיות ותנאי פלטפורמות עבור חיבורי KONT כולל TikTok, Instagram ו-YouTube.",
+    "documents": "מסמכים",
+    "services": "שירותים",
+    "selectService": "בחרו שירות",
+    "lastUpdated": "עודכן לאחרונה",
+    "onThisPage": "בעמוד זה",
+    "backHome": "דף הבית",
+    "privacyTitle": "מדיניות פרטיות",
+    "termsTitle": "תנאי שימוש"
   }
 }

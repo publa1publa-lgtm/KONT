@@ -33,6 +33,7 @@ import { DEFAULT_EVENT_COLOR, normalizeEventColor } from "@/lib/eventColors";
 type ReelDraft = {
   kind: "reel";
   videoUrl: string | null;
+  videoMediaId: string | null;
   title: string;
   description: string;
   time: string;
@@ -74,6 +75,22 @@ type Props = {
   onCreatePost: (payload: PostDraft & { dateKey?: string; publish: ComposerPublishSelection; contentId?: string }) => void | Promise<void>;
   onCreateEvent: (payload: EventDraft & { dateKey?: string; contentId?: string }) => void | Promise<void>;
 };
+
+function defaultPostNow(isEditing: boolean, selectedDate: Date | null | undefined): boolean {
+  if (isEditing) return false;
+  if (!selectedDate) return true;
+  const now = new Date();
+  return (
+    selectedDate.getFullYear() === now.getFullYear() &&
+    selectedDate.getMonth() === now.getMonth() &&
+    selectedDate.getDate() === now.getDate()
+  );
+}
+
+function mainVideoMediaId(item?: ContentApiItem | null): string | null {
+  const row = item?.media?.find((entry) => entry.media.kind === "VIDEO") ?? item?.media?.[0];
+  return row?.media.id ?? null;
+}
 
 function defaultTime(): string {
   const d = new Date();
@@ -153,6 +170,7 @@ export function ContentComposerModal({
   const [reel, setReel] = useState<ReelDraft>({
     kind: "reel",
     videoUrl: null,
+    videoMediaId: null,
     title: "",
     description: "",
     time: defaultTime(),
@@ -179,6 +197,7 @@ export function ContentComposerModal({
 
   const [saving, setSaving] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [postNow, setPostNow] = useState(true);
 
   /** Avoid re-hydrating from props while the same item is open (e.g. list refresh changes `updatedAt` / object reference). */
   const hydratedEditIdRef = useRef<string | null>(null);
@@ -197,6 +216,7 @@ export function ContentComposerModal({
       hydratedEditIdRef.current = initialEvent.id;
 
       setKind("event");
+      setPostNow(false);
       setPostPublish(defaultPublishSelection());
       setReelPublish(defaultPublishSelection());
       const slot = scheduledAtToDateKeyAndTime(initialEvent.scheduledAt);
@@ -222,6 +242,7 @@ export function ContentComposerModal({
       setReel({
         kind: "reel",
         videoUrl: null,
+        videoMediaId: null,
         title: "",
         description: "",
         time: t,
@@ -237,6 +258,7 @@ export function ContentComposerModal({
       const typeUpper = String(initialData.type).toUpperCase();
       const k: ComposerKind = typeUpper === "REEL" ? "reel" : "post";
       setKind(k);
+      setPostNow(false);
       const pub = apiItemToPublishSelection(initialData);
       setPostPublish(pub);
       setReelPublish(pub);
@@ -257,6 +279,7 @@ export function ContentComposerModal({
         setReel({
           kind: "reel",
           videoUrl: null,
+          videoMediaId: null,
           title: "",
           description: "",
           time: t,
@@ -274,6 +297,7 @@ export function ContentComposerModal({
         setReel({
           kind: "reel",
           videoUrl: initialData.videoUrl,
+          videoMediaId: mainVideoMediaId(initialData),
           title: initialData.title,
           description: initialData.description ?? "",
           time: t,
@@ -301,6 +325,7 @@ export function ContentComposerModal({
 
     hydratedEditIdRef.current = null;
     setKind(defaultKind);
+    setPostNow(defaultPostNow(false, date));
     setPostPublish(defaultPublishSelection());
     setReelPublish(defaultPublishSelection());
     setPickedDateKey(date ? dateKeyLocal(date) : dateKeyLocal(new Date()));
@@ -308,6 +333,7 @@ export function ContentComposerModal({
     setReel({
       kind: "reel",
       videoUrl: null,
+      videoMediaId: null,
       title: "",
       description: "",
       time: resetTime,
@@ -395,17 +421,19 @@ export function ContentComposerModal({
     };
   }, [open]);
 
+  const postingNow = kind !== "event" && postNow;
+
   const dateError = useMemo(() => {
-    if (!effectiveDate || isEditing) return null;
+    if (postingNow || !effectiveDate || isEditing) return null;
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const selectedStart = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate()).getTime();
     if (selectedStart < todayStart) return C.errors.pastDay;
     return null;
-  }, [C.errors.pastDay, effectiveDate, isEditing]);
+  }, [C.errors.pastDay, effectiveDate, isEditing, postingNow]);
 
   const timeError = useMemo(() => {
-    if (!effectiveDate || isEditing || dateError) return null;
+    if (postingNow || !effectiveDate || isEditing || dateError) return null;
     const t = kind === "reel" ? reel.time : kind === "event" ? event.time : post.time;
     if (!requireTimeNow || !/^\d{2}:\d{2}$/.test(t)) return null;
     const now = new Date();
@@ -416,9 +444,9 @@ export function ContentComposerModal({
     const scheduledAt = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate(), hh, mm, 0, 0).getTime();
     if (selectedStart === todayStart && scheduledAt <= now.getTime()) return C.errors.pastTime;
     return null;
-  }, [C.errors.pastTime, dateError, effectiveDate, event.time, isEditing, kind, post.time, reel.time, requireTimeNow]);
+  }, [C.errors.pastTime, dateError, effectiveDate, event.time, isEditing, kind, post.time, postingNow, reel.time, requireTimeNow]);
 
-  const scheduleError = dateError || timeError;
+  const scheduleError = postingNow ? null : dateError || timeError;
 
   if (!open) return null;
 
@@ -484,6 +512,14 @@ export function ContentComposerModal({
                 stepMinutes={5}
                 dateError={dateError ?? undefined}
                 timeError={timeError ?? undefined}
+                showPostNow={kind !== "event"}
+                postNow={postNow}
+                onPostNowChange={(next) => {
+                  setPostNow(next);
+                  setFieldErrors((prev) => ({ ...prev, form: undefined }));
+                }}
+                postNowLabel={C.postNow}
+                postNowSummary={C.postNowSummary}
               />
               {kind === "reel" ? (
                 <ComposerReelPreview
@@ -556,7 +592,7 @@ export function ContentComposerModal({
                         setUploadingMedia(true);
                         const probe = await probeVideo(file);
                         const { media } = await uploadMedia(file, probe ?? undefined);
-                        setReel((d) => ({ ...d, videoUrl: media.url }));
+                        setReel((d) => ({ ...d, videoUrl: media.url, videoMediaId: media.id }));
                       } catch (err) {
                         setFieldErrors((prev) => ({
                           ...prev,
@@ -777,11 +813,13 @@ export function ContentComposerModal({
                   return;
                 }
                 const title = reel.title.trim();
-                const dateKey = effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
+                const now = postingNow ? new Date() : null;
+                const dateKey = now ? dateKeyLocal(now) : effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
+                const time = now ? defaultTime() : reel.time;
                 try {
                   setSaving(true);
                   setFieldErrors({});
-                  await Promise.resolve(onCreateReel({ ...reel, title, dateKey, publish: reelPublish, contentId }));
+                  await Promise.resolve(onCreateReel({ ...reel, title, time, dateKey, publish: reelPublish, contentId }));
                   onClose();
                 } catch (e) {
                   setFieldErrors({
@@ -835,7 +873,9 @@ export function ContentComposerModal({
                 setFieldErrors(nextErrors);
                 return;
               }
-              const dk = effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
+              const now = postingNow ? new Date() : null;
+              const dk = now ? dateKeyLocal(now) : effectiveDate ? dateKeyLocal(effectiveDate) : undefined;
+              const time = now ? defaultTime() : post.time;
               try {
                 setSaving(true);
                 setFieldErrors({});
@@ -844,7 +884,7 @@ export function ContentComposerModal({
                     ...post,
                     title: post.title.trim(),
                     text: post.text.trim(),
-                    time: post.time,
+                    time,
                     dateKey: dk,
                     publish: postPublish,
                     contentId,

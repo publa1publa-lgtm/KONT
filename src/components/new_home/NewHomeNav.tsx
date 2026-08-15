@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronRight, Menu, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
@@ -8,7 +9,7 @@ import { KontBrandLogo } from "@/components/brand/KontBrandLogo";
 import { NavLocaleSwitch } from "@/components/new_home/NavLocaleSwitch";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { useI18n } from "@/contexts/i18n-context";
-import { withLocale } from "@/i18n/config";
+import { stripLocalePrefix, withLocale } from "@/i18n/config";
 
 const NAV_HREFS = ["#pillars", "#product", "#benefits"] as const;
 
@@ -63,7 +64,10 @@ export function NewHomeNav() {
   }, []);
 
   const closeMenu = () => setMenuOpen(false);
+  const pathname = usePathname();
   const homeHref = withLocale(locale, "/");
+  const isHome = stripLocalePrefix(pathname || "/") === "/";
+  const resolveHref = (href: string) => (href.startsWith("#") && !isHome ? `${homeHref}${href}` : href);
 
   const navLinks = [
     { href: "#pillars", label: story.nav.howItWorks },
@@ -82,7 +86,7 @@ export function NewHomeNav() {
           {navLinks.map((link) => (
             <a
               key={link.href}
-              href={link.href}
+              href={resolveHref(link.href)}
               className={link.href === activeHref ? "new-home-nav__link is-active" : "new-home-nav__link"}
             >
               {link.label}
@@ -130,7 +134,7 @@ export function NewHomeNav() {
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={resolveHref(link.href)}
                 className={
                   link.href === activeHref
                     ? "new-home-nav__mobile-link is-active"
