@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { LegalServiceIcon } from "@/components/legal/LegalServiceIcon";
 import { LandingFooter } from "@/components/layout/LandingFooter";
@@ -11,6 +11,7 @@ import { withLocale } from "@/i18n/config";
 import {
   LEGAL_SERVICES,
   legalPath,
+  parseLegalPathname,
   type LegalDocKind,
   type LegalServiceId,
 } from "@/lib/legal/catalog";
@@ -48,18 +49,29 @@ function linkify(text: string) {
 }
 
 export function LegalHub({ service, doc }: LegalHubProps) {
-  const router = useRouter();
+  const pathname = usePathname();
   const { locale, messages } = useI18n();
   const copy = messages.legal;
-  const legalDoc = getLegalDocument(service, doc);
-  const active = LEGAL_SERVICES.find((item) => item.id === service) ?? LEGAL_SERVICES[0];
+  const fromPath = parseLegalPathname(pathname || "") ?? { service, doc };
+  const [override, setOverride] = useState<{ service: LegalServiceId; doc: LegalDocKind } | null>(null);
+  const selected = override ?? fromPath;
+
+  useEffect(() => {
+    setOverride(null);
+  }, [pathname]);
+  const legalDoc = useMemo(
+    () => getLegalDocument(selected.service, selected.doc),
+    [selected.service, selected.doc],
+  );
+  const active = LEGAL_SERVICES.find((item) => item.id === selected.service) ?? LEGAL_SERVICES[0];
 
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const trackRef = useRef<HTMLDivElement | null>(null);
-  const [indicator, setIndicator] = useState({ y: 0, height: 56 });
 
-  const go = (nextService: LegalServiceId, nextDoc: LegalDocKind = doc) => {
-    router.push(withLocale(locale, legalPath(nextService, nextDoc)));
+  const go = (nextService: LegalServiceId, nextDoc: LegalDocKind = selected.doc) => {
+    if (nextService === selected.service && nextDoc === selected.doc) return;
+    setOverride({ service: nextService, doc: nextDoc });
+    window.history.pushState(null, "", withLocale(locale, legalPath(nextService, nextDoc)));
   };
 
   useEffect(() => {
@@ -70,26 +82,19 @@ export function LegalHub({ service, doc }: LegalHubProps) {
   }, []);
 
   useLayoutEffect(() => {
-    const index = LEGAL_SERVICES.findIndex((item) => item.id === service);
+    const index = LEGAL_SERVICES.findIndex((item) => item.id === selected.service);
     const node = itemRefs.current[index];
     const track = trackRef.current;
-    if (!node || !track) return;
+    if (!node || !track || track.scrollWidth <= track.clientWidth) return;
 
-    const update = () => {
-      setIndicator({ y: node.offsetTop, height: node.offsetHeight });
-    };
-    update();
+    const trackRect = track.getBoundingClientRect();
+    const nodeRect = node.getBoundingClientRect();
+    const overflow = nodeRect.left < trackRect.left + 8 || nodeRect.right > trackRect.right - 8;
+    if (!overflow) return;
 
-    const observer = new ResizeObserver(update);
-    observer.observe(track);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [service]);
-
-  useEffect(() => {
-    const index = LEGAL_SERVICES.findIndex((item) => item.id === service);
-    itemRefs.current[index]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [service]);
+    const left = node.offsetLeft - (track.clientWidth - node.offsetWidth) / 2;
+    track.scrollTo({ left: Math.max(0, left), behavior: "auto" });
+  }, [selected.service]);
 
   return (
     <div className="home-page nh-hybrid legal-page">
@@ -109,26 +114,19 @@ export function LegalHub({ service, doc }: LegalHubProps) {
               role="tablist"
               aria-orientation="vertical"
               onKeyDown={(event) => {
-                const index = LEGAL_SERVICES.findIndex((item) => item.id === service);
+                const index = LEGAL_SERVICES.findIndex((item) => item.id === selected.service);
                 if (event.key === "ArrowDown" || event.key === "ArrowRight") {
                   event.preventDefault();
-                  const next = LEGAL_SERVICES[(index + 1) % LEGAL_SERVICES.length];
-                  go(next.id);
+                  go(LEGAL_SERVICES[(index + 1) % LEGAL_SERVICES.length].id);
                 }
                 if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
                   event.preventDefault();
-                  const next = LEGAL_SERVICES[(index - 1 + LEGAL_SERVICES.length) % LEGAL_SERVICES.length];
-                  go(next.id);
+                  go(LEGAL_SERVICES[(index - 1 + LEGAL_SERVICES.length) % LEGAL_SERVICES.length].id);
                 }
               }}
             >
-              <div
-                className="legal-hub__indicator"
-                style={{ transform: `translateY(${indicator.y}px)`, height: indicator.height }}
-                aria-hidden="true"
-              />
               {LEGAL_SERVICES.map((item, index) => {
-                const selected = item.id === service;
+                const isSelected = item.id === selected.service;
                 return (
                   <button
                     key={item.id}
@@ -137,8 +135,8 @@ export function LegalHub({ service, doc }: LegalHubProps) {
                     }}
                     type="button"
                     role="tab"
-                    aria-selected={selected}
-                    className={selected ? "legal-hub__service is-active" : "legal-hub__service"}
+                    aria-selected={isSelected}
+                    className={isSelected ? "legal-hub__service is-active" : "legal-hub__service"}
                     onClick={() => go(item.id)}
                   >
                     <span className="legal-hub__service-icon">
@@ -155,23 +153,23 @@ export function LegalHub({ service, doc }: LegalHubProps) {
           </aside>
 
           <div className="legal-hub__stage">
-            <article className="legal-hub__panel" key={`${service}-${doc}`}>
+            <article className="legal-hub__panel">
               <div className="legal-hub__tabs" role="tablist" aria-label={copy.documents}>
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={doc === "terms"}
-                  className={doc === "terms" ? "legal-hub__tab is-active" : "legal-hub__tab"}
-                  onClick={() => go(service, "terms")}
+                  aria-selected={selected.doc === "terms"}
+                  className={selected.doc === "terms" ? "legal-hub__tab is-active" : "legal-hub__tab"}
+                  onClick={() => go(selected.service, "terms")}
                 >
                   {copy.termsTitle}
                 </button>
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={doc === "privacy"}
-                  className={doc === "privacy" ? "legal-hub__tab is-active" : "legal-hub__tab"}
-                  onClick={() => go(service, "privacy")}
+                  aria-selected={selected.doc === "privacy"}
+                  className={selected.doc === "privacy" ? "legal-hub__tab is-active" : "legal-hub__tab"}
+                  onClick={() => go(selected.service, "privacy")}
                 >
                   {copy.privacyTitle}
                 </button>
@@ -184,9 +182,9 @@ export function LegalHub({ service, doc }: LegalHubProps) {
               </p>
               <p className="legal-hub__summary">{legalDoc.summary}</p>
 
-              <div className="legal-hub__article" data-animate="in">
+              <div className="legal-hub__article">
                 {legalDoc.sections.map((section) => (
-                  <section key={section.id} id={section.id} className="legal-hub__section">
+                  <section key={`${selected.service}-${selected.doc}-${section.id}`} id={section.id} className="legal-hub__section">
                     <h2 className="legal-hub__section-title">{section.title}</h2>
                     {section.blocks.map((block, index) => {
                       if (block.type === "ul") {

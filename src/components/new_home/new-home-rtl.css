@@ -155,11 +155,13 @@
 /* ── Hero split background: light with copy, blue with visual ────────────── */
 
 [dir="rtl"] .hero2-bleed__left {
-  inset: 0 0 0 50%;
+  inset: 0 0 0 38%;
 }
 
 [dir="rtl"] .hero2-bleed__right {
-  inset: 0 50% 0 0;
+  inset: 0 42% 0 0;
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, #000 22%);
+  mask-image: linear-gradient(to left, transparent 0%, #000 22%);
 }
 
 [dir="rtl"] .hero2-bleed__bg::after {

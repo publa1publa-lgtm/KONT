@@ -9,6 +9,7 @@ import { KontBrandLogo } from "@/components/brand/KontBrandLogo";
 import { NavLocaleSwitch } from "@/components/new_home/NavLocaleSwitch";
 import { useAuthModal } from "@/contexts/auth-modal-context";
 import { useI18n } from "@/contexts/i18n-context";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { stripLocalePrefix, withLocale } from "@/i18n/config";
 
 const NAV_HREFS = ["#pillars", "#product", "#benefits"] as const;
@@ -17,6 +18,8 @@ export function NewHomeNav() {
   const { locale, messages } = useI18n();
   const { story } = messages;
   const { openLogin, openRegister } = useAuthModal();
+  const { isAuthenticated, loading: authLoading } = useCurrentUser();
+  const studioHref = withLocale(locale, "/studio");
   const menuId = useId();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -96,12 +99,22 @@ export function NewHomeNav() {
 
         <div className="new-home-nav__actions">
           <NavLocaleSwitch />
-          <button type="button" onClick={openLogin} className="new-home-nav__sign-in cursor-pointer">
-            {story.nav.signIn}
-          </button>
-          <button type="button" onClick={openRegister} className="new-home-nav__cta cursor-pointer">
-            {story.nav.signUp}
-          </button>
+          {authLoading ? (
+            <span className="new-home-nav__auth-slot" aria-hidden />
+          ) : isAuthenticated ? (
+            <Link href={studioHref} className="new-home-nav__cta cursor-pointer">
+              {story.nav.studio}
+            </Link>
+          ) : (
+            <>
+              <button type="button" onClick={openLogin} className="new-home-nav__sign-in cursor-pointer">
+                {story.nav.signIn}
+              </button>
+              <button type="button" onClick={openRegister} className="new-home-nav__cta cursor-pointer">
+                {story.nav.signUp}
+              </button>
+            </>
+          )}
 
           <button
             type="button"
@@ -150,26 +163,38 @@ export function NewHomeNav() {
 
           <div className="new-home-nav__mobile-actions">
             <div className="new-home-nav__mobile-btns">
-              <button
-                type="button"
-                className="new-home-nav__mobile-cta cursor-pointer"
-                onClick={() => {
-                  closeMenu();
-                  openRegister();
-                }}
-              >
-                {story.nav.signUp}
-              </button>
-              <button
-                type="button"
-                className="new-home-nav__mobile-sign-in cursor-pointer"
-                onClick={() => {
-                  closeMenu();
-                  openLogin();
-                }}
-              >
-                {story.nav.signIn}
-              </button>
+              {isAuthenticated ? (
+                <Link
+                  href={studioHref}
+                  className="new-home-nav__mobile-cta cursor-pointer"
+                  onClick={closeMenu}
+                >
+                  {story.nav.studio}
+                </Link>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="new-home-nav__mobile-cta cursor-pointer"
+                    onClick={() => {
+                      closeMenu();
+                      openRegister();
+                    }}
+                  >
+                    {story.nav.signUp}
+                  </button>
+                  <button
+                    type="button"
+                    className="new-home-nav__mobile-sign-in cursor-pointer"
+                    onClick={() => {
+                      closeMenu();
+                      openLogin();
+                    }}
+                  >
+                    {story.nav.signIn}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

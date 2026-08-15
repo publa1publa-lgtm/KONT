@@ -78,6 +78,9 @@ async function revokeSiblingAccounts(userId: string, platform: PlatformKind, kee
 }
 
 export async function savePlatformTokens(input: VaultTokenInput) {
+  if (!input.platform) {
+    throw new Error("Cannot store tokens without a platform.");
+  }
   if (!input.accessToken.trim()) {
     throw new Error("Cannot store an empty access token.");
   }

@@ -12,7 +12,13 @@ export async function GET(): Promise<NextResponse> {
   const userId = await requireUser();
   if (userId instanceof NextResponse) return userId;
 
-  const stored = await getTokens(userId);
+  let stored;
+  try {
+    stored = await getTokens(userId);
+  } catch (err) {
+    console.error("[google-drive.status]", err);
+    return json({ connected: false });
+  }
   if (!stored) return json({ connected: false });
 
   const handle = stored.profile?.email || stored.profile?.name || "Google Drive";

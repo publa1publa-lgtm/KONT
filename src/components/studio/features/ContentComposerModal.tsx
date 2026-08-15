@@ -8,6 +8,7 @@ import { useI18n } from "@/contexts/i18n-context";
 import { subscribeStudioPlatforms } from "@/lib/studioInboxPermissions";
 import { readConnectedReelPlatformAccounts } from "@/lib/studioPlatformsStorage";
 import { uploadMedia, type ContentApiItem } from "@/lib/contentApi";
+import type { CloudMediaOrigin } from "@/lib/cloud/types";
 import type { EventApiItem } from "@/lib/eventsApi";
 import { apiItemToPublishSelection, scheduledAtToDateKeyAndTime } from "@/lib/contentMappers";
 import type { ConnectedPlatformAccount, ComposerPublishSelection } from "@/lib/composerPublish";
@@ -23,7 +24,8 @@ import {
   composerFieldLabel,
 } from "./ComposerContentPreview";
 import { EventPreviewCard } from "./EventPreviewCard";
-import { ComposerMediaUpload } from "./ComposerMediaUpload";
+import { ComposerMediaUpload, ComposerCloudActionButton } from "./ComposerMediaUpload";
+import { ComposerCloudPicker } from "./ComposerCloudPicker";
 import { ComposerPublishTargets } from "./ComposerPublishTargets";
 import { ComposerKindMetaChip } from "./ComposerKindMetaChip";
 import { ComposerSchedulePanel } from "./ComposerSchedulePanel";
@@ -34,6 +36,7 @@ type ReelDraft = {
   kind: "reel";
   videoUrl: string | null;
   videoMediaId: string | null;
+  origin: CloudMediaOrigin | null;
   title: string;
   description: string;
   time: string;
@@ -45,6 +48,8 @@ type PostDraft = {
   title: string;
   text: string;
   imageUrl: string | null;
+  imageMediaId: string | null;
+  origin: CloudMediaOrigin | null;
   time: string;
   hashtags: string[];
 };
@@ -90,6 +95,16 @@ function defaultPostNow(isEditing: boolean, selectedDate: Date | null | undefine
 function mainVideoMediaId(item?: ContentApiItem | null): string | null {
   const row = item?.media?.find((entry) => entry.media.kind === "VIDEO") ?? item?.media?.[0];
   return row?.media.id ?? null;
+}
+
+function mainImageMediaId(item?: ContentApiItem | null): string | null {
+  const row = item?.media?.find((entry) => entry.media.kind === "IMAGE") ?? item?.media?.[0];
+  return row?.media.id ?? null;
+}
+
+function mediaOriginFromContent(item?: ContentApiItem | null): CloudMediaOrigin | null {
+  const row = item?.media?.find((entry) => entry.role === "MAIN") ?? item?.media?.[0];
+  return row?.media.origin ?? null;
 }
 
 function defaultTime(): string {
@@ -171,6 +186,7 @@ export function ContentComposerModal({
     kind: "reel",
     videoUrl: null,
     videoMediaId: null,
+    origin: null,
     title: "",
     description: "",
     time: defaultTime(),
@@ -182,6 +198,8 @@ export function ContentComposerModal({
     title: "",
     text: "",
     imageUrl: null,
+    imageMediaId: null,
+    origin: null,
     time: defaultTime(),
     hashtags: [],
   });
@@ -197,6 +215,8 @@ export function ContentComposerModal({
 
   const [saving, setSaving] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [cloudPickerKind, setCloudPickerKind] = useState<"video" | "image" | null>(null);
+  const [driveConnected, setDriveConnected] = useState(false);
   const [postNow, setPostNow] = useState(true);
 
   /** Avoid re-hydrating from props while the same item is open (e.g. list refresh changes `updatedAt` / object reference). */
@@ -236,6 +256,8 @@ export function ContentComposerModal({
         title: "",
         text: "",
         imageUrl: null,
+        imageMediaId: null,
+        origin: null,
         time: t,
         hashtags: [],
       });
@@ -243,6 +265,7 @@ export function ContentComposerModal({
         kind: "reel",
         videoUrl: null,
         videoMediaId: null,
+        origin: null,
         title: "",
         description: "",
         time: t,
@@ -273,6 +296,8 @@ export function ContentComposerModal({
           title: initialData.title,
           text: initialData.text ?? "",
           imageUrl: initialData.imageUrl,
+          imageMediaId: mainImageMediaId(initialData),
+          origin: mediaOriginFromContent(initialData),
           time: t,
           hashtags: initialData.hashtags,
         });
@@ -280,6 +305,7 @@ export function ContentComposerModal({
           kind: "reel",
           videoUrl: null,
           videoMediaId: null,
+          origin: null,
           title: "",
           description: "",
           time: t,
@@ -298,6 +324,7 @@ export function ContentComposerModal({
           kind: "reel",
           videoUrl: initialData.videoUrl,
           videoMediaId: mainVideoMediaId(initialData),
+          origin: mediaOriginFromContent(initialData),
           title: initialData.title,
           description: initialData.description ?? "",
           time: t,
@@ -308,6 +335,8 @@ export function ContentComposerModal({
           title: "",
           text: "",
           imageUrl: null,
+          imageMediaId: null,
+          origin: null,
           time: t,
           hashtags: [],
         });
@@ -334,6 +363,7 @@ export function ContentComposerModal({
       kind: "reel",
       videoUrl: null,
       videoMediaId: null,
+      origin: null,
       title: "",
       description: "",
       time: resetTime,
@@ -344,6 +374,8 @@ export function ContentComposerModal({
       title: "",
       text: "",
       imageUrl: null,
+      imageMediaId: null,
+      origin: null,
       time: resetTime,
       hashtags: [],
     });
@@ -388,6 +420,14 @@ export function ContentComposerModal({
     };
 
     loadAccounts();
+    fetch("/api/google-drive")
+      .then((r) => (r.ok ? r.json() : { connected: false }))
+      .then((d: { connected?: boolean }) => {
+        if (!cancelled) setDriveConnected(Boolean(d.connected));
+      })
+      .catch(() => {
+        if (!cancelled) setDriveConnected(false);
+      });
     const unsub = subscribeStudioPlatforms(() => {
       if (!cancelled) loadAccounts();
     });
@@ -524,6 +564,7 @@ export function ContentComposerModal({
               {kind === "reel" ? (
                 <ComposerReelPreview
                   videoUrl={reel.videoUrl}
+                  origin={reel.origin}
                   title={reel.title}
                   description={reel.description}
                   hashtags={reel.hashtags}
@@ -549,6 +590,7 @@ export function ContentComposerModal({
               ) : (
                 <ComposerPostPreview
                   imageUrl={post.imageUrl}
+                  origin={post.origin}
                   title={post.title}
                   text={post.text}
                   hashtags={post.hashtags}
@@ -568,9 +610,19 @@ export function ContentComposerModal({
                     accept="video/*"
                     hint="MP4, MOV · up to 200 MB"
                     hasMedia={Boolean(reel.videoUrl)}
+                    origin={reel.origin}
                     busy={uploadingMedia}
                     disabled={saving}
                     error={fieldErrors.media}
+                    cloudAction={
+                      driveConnected ? (
+                        <ComposerCloudActionButton
+                          label={C.cloud.fromDrive}
+                          disabled={saving || uploadingMedia}
+                          onClick={() => setCloudPickerKind("video")}
+                        />
+                      ) : null
+                    }
                     onChange={async (e) => {
                       setFieldErrors((prev) => ({ ...prev, media: undefined }));
                       const input = e.target;
@@ -592,7 +644,7 @@ export function ContentComposerModal({
                         setUploadingMedia(true);
                         const probe = await probeVideo(file);
                         const { media } = await uploadMedia(file, probe ?? undefined);
-                        setReel((d) => ({ ...d, videoUrl: media.url, videoMediaId: media.id }));
+                        setReel((d) => ({ ...d, videoUrl: media.url, videoMediaId: media.id, origin: media.origin ?? null }));
                       } catch (err) {
                         setFieldErrors((prev) => ({
                           ...prev,
@@ -689,9 +741,19 @@ export function ContentComposerModal({
                     accept="image/*"
                     hint="PNG, JPG · up to 4 MB"
                     hasMedia={Boolean(post.imageUrl)}
+                    origin={post.origin}
                     busy={uploadingMedia}
                     disabled={saving}
                     error={fieldErrors.media}
+                    cloudAction={
+                      driveConnected ? (
+                        <ComposerCloudActionButton
+                          label={C.cloud.fromDrive}
+                          disabled={saving || uploadingMedia}
+                          onClick={() => setCloudPickerKind("image")}
+                        />
+                      ) : null
+                    }
                     onChange={async (e) => {
                       setFieldErrors((prev) => ({ ...prev, media: undefined }));
                       const input = e.target;
@@ -713,7 +775,12 @@ export function ContentComposerModal({
                         setUploadingMedia(true);
                         const probe = await probeImage(file);
                         const { media } = await uploadMedia(file, probe ?? undefined);
-                        setPost((d) => ({ ...d, imageUrl: media.url }));
+                        setPost((d) => ({
+                          ...d,
+                          imageUrl: media.url,
+                          imageMediaId: media.id,
+                          origin: media.origin ?? null,
+                        }));
                       } catch (err) {
                         setFieldErrors((prev) => ({
                           ...prev,
@@ -906,6 +973,20 @@ export function ContentComposerModal({
         </div>
       </div>
       </div>
+      <ComposerCloudPicker
+        open={cloudPickerKind !== null}
+        kind={cloudPickerKind === "image" ? "image" : "video"}
+        busy={uploadingMedia}
+        onClose={() => setCloudPickerKind(null)}
+        onPicked={(origin, mediaUrl, mediaId) => {
+          if (cloudPickerKind === "image") {
+            setPost((d) => ({ ...d, imageUrl: mediaUrl, imageMediaId: mediaId, origin }));
+          } else {
+            setReel((d) => ({ ...d, videoUrl: mediaUrl, videoMediaId: mediaId, origin }));
+          }
+          setFieldErrors((prev) => ({ ...prev, media: undefined }));
+        }}
+      />
     </StudioModalPortal>
   );
 }

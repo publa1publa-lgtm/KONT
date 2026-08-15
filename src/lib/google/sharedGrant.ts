@@ -4,7 +4,7 @@ import { PlatformKind } from "@prisma/client";
 
 import { readPlatformTokens } from "@/lib/oauth/tokenVault";
 
-const GOOGLE_PLATFORMS = [PlatformKind.YOUTUBE, PlatformKind.GOOGLE_DRIVE] as const;
+const GOOGLE_PLATFORMS: PlatformKind[] = ["YOUTUBE", "GOOGLE_DRIVE"];
 
 /**
  * YouTube and Drive share one Google OAuth client. Revoking the grant at Google

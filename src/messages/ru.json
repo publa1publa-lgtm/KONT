@@ -742,6 +742,22 @@
           "feedPreview": "Превью ленты",
           "brand": "Content Fabric",
           "captionEmpty": "Здесь появится название или описание"
+        },
+        "cloud": {
+          "fromDrive": "Из Google Drive",
+          "title": "Выбрать из Google Drive",
+          "intro": "Возьмите файл, который уже лежит в Drive. KONT скопирует его для превью и публикации — оригинал останется в облаке.",
+          "searchPlaceholder": "Поиск файлов…",
+          "search": "Найти",
+          "linkPlaceholder": "Или вставьте ссылку Drive",
+          "useLink": "По ссылке",
+          "loading": "Загрузка файлов…",
+          "empty": "Нет подходящих фото или видео.",
+          "loadFailed": "Не удалось загрузить файлы Drive.",
+          "importFailed": "Не удалось импортировать файл.",
+          "hintNotConnected": "Сначала подключите Google Drive в разделе Платформы.",
+          "hintReadonly": "Если список пустой, переподключите Drive с правом «Читать файлы» или вставьте ссылку.",
+          "hintSoon": "Это облако пока не подключено."
         }
       },
       "errors": {

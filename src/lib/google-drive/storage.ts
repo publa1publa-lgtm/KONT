@@ -12,6 +12,8 @@ import {
 } from "@/lib/oauth/tokenVault";
 import type { DriveStoredTokens, DriveTokenPatch, DriveUserProfile } from "./types";
 
+const DRIVE_PLATFORM: PlatformKind = "GOOGLE_DRIVE";
+
 export interface DriveTokenStore {
   saveTokens(userId: string, tokens: DriveStoredTokens): Promise<DriveStoredTokens>;
   getTokens(userId: string): Promise<DriveStoredTokens | null>;
@@ -39,7 +41,7 @@ export class PostgresDriveTokenStore implements DriveTokenStore {
     const platformUserId = tokens.profile?.googleUserId || `google-drive:${userId}`;
     await savePlatformTokens({
       userId,
-      platform: PlatformKind.GOOGLE_DRIVE,
+      platform: DRIVE_PLATFORM,
       platformUserId,
       handle: driveHandle(tokens.profile),
       scopes: scopesFrom(tokens.scope),
@@ -55,7 +57,7 @@ export class PostgresDriveTokenStore implements DriveTokenStore {
   }
 
   async getTokens(userId: string): Promise<DriveStoredTokens | null> {
-    const row = await readPlatformTokens(userId, PlatformKind.GOOGLE_DRIVE);
+    const row = await readPlatformTokens(userId, DRIVE_PLATFORM);
     if (!row) return null;
     const meta = row.providerMetadata && typeof row.providerMetadata === "object" ? row.providerMetadata : {};
     const tokenType =
@@ -76,7 +78,7 @@ export class PostgresDriveTokenStore implements DriveTokenStore {
   }
 
   async updateTokens(userId: string, tokens: DriveTokenPatch): Promise<DriveStoredTokens | null> {
-    const updated = await updatePlatformTokens(userId, PlatformKind.GOOGLE_DRIVE, {
+    const updated = await updatePlatformTokens(userId, DRIVE_PLATFORM, {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       tokenExpiresAt: tokens.expiresAt,
@@ -91,9 +93,9 @@ export class PostgresDriveTokenStore implements DriveTokenStore {
   }
 
   async deleteTokens(userId: string): Promise<void> {
-    const stored = await readPlatformTokens(userId, PlatformKind.GOOGLE_DRIVE);
-    const revokeAtGoogle = await shouldRevokeGoogleGrant(userId, PlatformKind.GOOGLE_DRIVE);
-    await wipePlatformTokens(userId, PlatformKind.GOOGLE_DRIVE, "user_disconnect");
+    const stored = await readPlatformTokens(userId, DRIVE_PLATFORM);
+    const revokeAtGoogle = await shouldRevokeGoogleGrant(userId, DRIVE_PLATFORM);
+    await wipePlatformTokens(userId, DRIVE_PLATFORM, "user_disconnect");
     const googleToken = stored?.refreshToken || stored?.accessToken;
     if (revokeAtGoogle && googleToken) {
       await revokeGoogleGrant(googleToken).catch(() => undefined);

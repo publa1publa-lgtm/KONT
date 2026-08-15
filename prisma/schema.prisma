@@ -376,6 +376,15 @@ model MediaAsset {
   /// SHA-256 hex digest. Used for per-user dedup.
   checksumSha256  String?     @db.VarChar(64)
 
+  /// How the file entered KONT: local disk upload vs a connected cloud.
+  originProvider  String      @default("local")
+  /// Provider file id (Drive file id, Dropbox id, …).
+  originFileId    String?
+  /// Human label shown in Studio (e.g. "vacation.mp4").
+  originLabel     String?
+  /// Link back to the original cloud file when the provider exposes one.
+  originUrl       String?
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   deletedAt       DateTime?
@@ -385,6 +394,7 @@ model MediaAsset {
 
   @@unique([userId, checksumSha256], name: "userId_checksumSha256")
   @@index([userId, createdAt])
+  @@index([userId, originProvider])
   @@index([status])
   @@index([kind])
 }

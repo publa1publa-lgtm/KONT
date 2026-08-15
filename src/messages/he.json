@@ -742,6 +742,22 @@
           "feedPreview": "תצוגה מקדימה של פיד",
           "brand": "Content Fabric",
           "captionEmpty": "כותרת או תיאור יופיעו כאן"
+        },
+        "cloud": {
+          "fromDrive": "מ-Google Drive",
+          "title": "בחירה מ-Google Drive",
+          "intro": "בחרו קובץ שכבר נמצא ב-Drive. KONT מעתיק אותו לתצוגה מקדימה ולפרסום — המקור נשאר בענן.",
+          "searchPlaceholder": "חיפוש קבצים…",
+          "search": "חיפוש",
+          "linkPlaceholder": "או הדביקו קישור Drive",
+          "useLink": "לפי קישור",
+          "loading": "טוען קבצים…",
+          "empty": "אין תמונות או סרטונים מתאימים.",
+          "loadFailed": "לא ניתן לטעון קבצי Drive.",
+          "importFailed": "לא ניתן לייבא את הקובץ.",
+          "hintNotConnected": "חברו קודם Google Drive במסך הפלטפורמות.",
+          "hintReadonly": "אם הרשימה ריקה, חברו מחדש עם הרשאת «קריאת קבצים» או הדביקו קישור.",
+          "hintSoon": "הענן הזה עדיין לא מחובר."
         }
       },
       "errors": {

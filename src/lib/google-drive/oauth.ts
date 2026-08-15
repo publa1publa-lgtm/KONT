@@ -164,7 +164,7 @@ export function generateAuthUrl(options: GenerateAuthUrlOptions): string {
     response_type: "code",
     scope: scopes.join(" "),
     access_type: "offline",
-    include_granted_scopes: "true",
+    // YouTube + Drive scopes cannot be requested together. Keep this grant isolated.
     prompt: "consent",
     state: options.state,
   });

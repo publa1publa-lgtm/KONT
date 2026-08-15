@@ -1,3 +1,5 @@
+import type { CloudMediaOrigin } from "@/lib/cloud/types";
+
 export const CONTENT_LIST_CHANGED_EVENT = "contentfabric-content-changed";
 
 export type MediaKindApi = "IMAGE" | "VIDEO" | "AUDIO";
@@ -16,6 +18,7 @@ export type MediaAssetApi = {
   height: number | null;
   durationMs: number | null;
   posterUrl: string | null;
+  origin?: CloudMediaOrigin | null;
   createdAt: string;
 };
 
@@ -254,6 +257,25 @@ export async function uploadMedia(
     throw new Error(err?.error ?? `Upload failed (${r.status})`);
   }
 
+  const data = (await r.json()) as { media: MediaAssetApi; deduped?: boolean };
+  return { media: data.media, deduped: Boolean(data.deduped) };
+}
+
+export async function importCloudMedia(input: {
+  provider: "googleDrive" | "dropbox";
+  fileId?: string;
+  url?: string;
+}): Promise<UploadMediaResult> {
+  const r = await fetch("/api/cloud/import", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (r.status === 401) throw new Error("Unauthorized");
+  if (!r.ok) {
+    const err = (await r.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(err?.error ?? `Cloud import failed (${r.status})`);
+  }
   const data = (await r.json()) as { media: MediaAssetApi; deduped?: boolean };
   return { media: data.media, deduped: Boolean(data.deduped) };
 }

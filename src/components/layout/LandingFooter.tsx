@@ -33,7 +33,7 @@ function isLegalHrefActive(pathname: string, href: string) {
     return bare === "/privacy-policy" || /\/privacy$/.test(bare);
   }
   if (href === "/terms") {
-    return bare === "/terms" || (bare.startsWith("/terms/") && !bare.endsWith("/privacy"));
+    return bare === "/terms" || /\/terms$/.test(bare) || (bare.startsWith("/terms/") && !bare.endsWith("/privacy"));
   }
   return false;
 }

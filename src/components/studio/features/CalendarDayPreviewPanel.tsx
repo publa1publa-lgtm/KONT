@@ -5,6 +5,7 @@ import { scheduledAtToDateKeyAndTime } from "@/lib/contentMappers";
 import type { ContentApiItem } from "@/lib/contentApi";
 import type { EventApiItem } from "@/lib/eventsApi";
 import { ContentKindBadge, contentKindFromApiType } from "./ContentKindBadge";
+import { CloudOriginBadge } from "./CloudOriginBadge";
 import { EventPreviewCard } from "./EventPreviewCard";
 import { StudioCreateButton } from "./StudioCreateButton";
 import { useI18n } from "@/contexts/i18n-context";
@@ -331,6 +332,11 @@ function PreviewCard({
               eventLabel={eventLabel}
             />
           </div>
+          {item.media?.[0]?.media.origin ? (
+            <div className="absolute right-1 top-1 origin-top-right scale-[0.82]">
+              <CloudOriginBadge origin={item.media[0].media.origin} />
+            </div>
+          ) : null}
           {slot?.time ? <span className="studio-cal-preview__time">{slot.time}</span> : null}
         </div>
         <div className="space-y-px px-1.5 py-1.5">

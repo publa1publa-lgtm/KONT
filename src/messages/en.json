@@ -742,6 +742,22 @@
           "feedPreview": "Feed preview",
           "brand": "Content Fabric",
           "captionEmpty": "Title or description will appear here"
+        },
+        "cloud": {
+          "fromDrive": "From Google Drive",
+          "title": "Choose from Google Drive",
+          "intro": "Pick a file already in Drive. KONT copies it in so you can preview and publish — the original stays in your cloud.",
+          "searchPlaceholder": "Search files…",
+          "search": "Search",
+          "linkPlaceholder": "Or paste a Drive link",
+          "useLink": "Use link",
+          "loading": "Loading files…",
+          "empty": "No matching image or video files.",
+          "loadFailed": "Could not load Drive files.",
+          "importFailed": "Could not import that file.",
+          "hintNotConnected": "Connect Google Drive under Platforms first.",
+          "hintReadonly": "If the list is empty, reconnect Drive with “Read files”, or paste a file link.",
+          "hintSoon": "This cloud is not connected yet."
         }
       },
       "errors": {

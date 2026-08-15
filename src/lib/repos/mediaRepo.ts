@@ -23,8 +23,27 @@ export async function createMediaAsset(data: {
   durationMs: number | null;
   posterUrl: string | null;
   checksumSha256: string;
+  originProvider?: string;
+  originFileId?: string | null;
+  originLabel?: string | null;
+  originUrl?: string | null;
 }) {
   return prisma.mediaAsset.create({ data });
+}
+
+export async function updateMediaOrigin(
+  id: string,
+  origin: {
+    originProvider: string;
+    originFileId: string | null;
+    originLabel: string | null;
+    originUrl: string | null;
+  },
+) {
+  return prisma.mediaAsset.update({
+    where: { id },
+    data: origin,
+  });
 }
 
 export async function findMediaAssetForProxy(storageKey: string) {

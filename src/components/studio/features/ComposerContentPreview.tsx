@@ -3,6 +3,8 @@
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { Bookmark, Heart, ImageIcon, MessageCircle, MoreHorizontal, Send, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CloudMediaOrigin } from "@/lib/cloud/types";
+import { CloudOriginBadge } from "./CloudOriginBadge";
 import {
   EVENT_COLOR_PRESETS,
   colorsMatch,
@@ -113,6 +115,7 @@ function PreviewLabel({ children }: { children: ReactNode }) {
 
 export function ComposerReelPreview({
   videoUrl,
+  origin,
   title,
   description,
   hashtags = [],
@@ -120,6 +123,7 @@ export function ComposerReelPreview({
   footerSlot,
 }: {
   videoUrl: string | null;
+  origin?: CloudMediaOrigin | null;
   title: string;
   description: string;
   hashtags?: string[];
@@ -140,6 +144,11 @@ export function ComposerReelPreview({
         className={`relative ${IG_PHONE_WIDTH_CLASS} overflow-hidden rounded-[1.15rem] bg-black shadow-[0_18px_40px_-24px_rgba(15,23,42,0.55)] ring-1 ring-black/20`}
       >
         <div className="relative aspect-[9/16] w-full">
+          {origin ? (
+            <div className="absolute left-2 top-2 z-10">
+              <CloudOriginBadge origin={origin} />
+            </div>
+          ) : null}
           {videoUrl ? (
             <ReelMedia src={videoUrl} />
           ) : (
@@ -215,6 +224,7 @@ function IgHashtagLine({ tags }: { tags: string[] }) {
 
 export function ComposerPostPreview({
   imageUrl,
+  origin,
   title,
   text,
   hashtags = [],
@@ -222,6 +232,7 @@ export function ComposerPostPreview({
   footerSlot,
 }: {
   imageUrl: string | null;
+  origin?: CloudMediaOrigin | null;
   title: string;
   text: string;
   hashtags?: string[];
@@ -253,6 +264,11 @@ export function ComposerPostPreview({
         </div>
 
         <div className="relative w-full bg-black" style={{ aspectRatio: String(feedRatio) }}>
+          {origin ? (
+            <div className="absolute left-2 top-2 z-10">
+              <CloudOriginBadge origin={origin} />
+            </div>
+          ) : null}
           {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />

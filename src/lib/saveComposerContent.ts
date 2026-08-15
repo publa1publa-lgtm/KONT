@@ -7,6 +7,7 @@ export type ComposerPostPayload = {
   title: string;
   text: string;
   imageUrl: string | null;
+  imageMediaId?: string | null;
   hashtags: string[];
   dateKey: string;
   time: string;
@@ -56,6 +57,7 @@ export async function saveComposerPost(payload: ComposerPostPayload): Promise<vo
     scheduledAt: localScheduleToIso(payload.dateKey, payload.time),
     status: contentStatusForSave(payload.publish),
     metadata: metadataForSave(payload.publish),
+    ...(payload.imageMediaId ? { mediaIds: [payload.imageMediaId] } : {}),
   });
   notifyContentListChanged();
 }
@@ -98,6 +100,7 @@ export async function updateComposerPost(id: string, payload: ComposerPostPayloa
     scheduledAt: localScheduleToIso(payload.dateKey, payload.time),
     status: contentStatusForSave(payload.publish),
     metadata: metadataForSave(payload.publish),
+    ...(payload.imageMediaId ? { mediaIds: [payload.imageMediaId] } : {}),
   });
   notifyContentListChanged();
 }

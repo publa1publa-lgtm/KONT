@@ -49,8 +49,7 @@ export function legalServiceById(id: LegalServiceId): LegalService {
 export function legalPath(service: LegalServiceId, doc: LegalDocKind = "terms"): string {
   if (service === "kont" && doc === "privacy") return "/privacy-policy";
   if (service === "kont" && doc === "terms") return "/terms";
-  if (doc === "privacy") return `/terms/${service}/privacy`;
-  return `/terms/${service}`;
+  return `/${service}/${doc}`;
 }
 
 export function parseLegalSlug(
@@ -61,6 +60,20 @@ export function parseLegalSlug(
   if (first === "privacy" && !second) return { service: "kont", doc: "privacy" };
   if (!isLegalServiceId(first)) return null;
   if (!second) return { service: first, doc: "terms" };
-  if (second === "privacy") return { service: first, doc: "privacy" };
+  if (isLegalDocKind(second)) return { service: first, doc: second };
+  return null;
+}
+
+export function parseLegalPathname(
+  pathname: string,
+): { service: LegalServiceId; doc: LegalDocKind } | null {
+  const parts = pathname.split("/").filter(Boolean);
+  const segs = parts[0] === "en" || parts[0] === "he" || parts[0] === "ru" ? parts.slice(1) : parts;
+  if (segs[0] === "privacy-policy") return { service: "kont", doc: "privacy" };
+  if (segs[0] === "terms") return parseLegalSlug(segs.slice(1));
+  if (isLegalServiceId(segs[0]) && isLegalDocKind(segs[1])) {
+    return { service: segs[0], doc: segs[1] };
+  }
+  if (isLegalServiceId(segs[0]) && !segs[1]) return { service: segs[0], doc: "terms" };
   return null;
 }
