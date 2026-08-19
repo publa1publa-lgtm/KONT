@@ -5,6 +5,7 @@ import { badRequest, json } from "@/lib/api/http";
 import { requireUser } from "@/lib/api/httpAuth";
 import * as platformAccountRepo from "@/lib/repos/platformAccountRepo";
 import { isReelPlatformId, reelPlatformIdToPlatformKind } from "@/lib/reelPlatformIds";
+import { deleteMetaAccount } from "@/lib/meta/storage";
 import { deleteTokens as deleteYouTubeTokens } from "@/lib/youtube/storage";
 
 export async function syncDemoPlatformConnection(req: Request): Promise<NextResponse> {
@@ -36,12 +37,19 @@ export async function syncDemoPlatformConnection(req: Request): Promise<NextResp
     if (platform === PlatformKind.YOUTUBE) {
       return badRequest("YouTube must be connected through Google OAuth.");
     }
+    if (platform === PlatformKind.FACEBOOK || platform === PlatformKind.INSTAGRAM) {
+      return badRequest("Facebook and Instagram must be connected through Meta OAuth.");
+    }
     const row = await platformAccountRepo.upsertDemoPlatformAccount(userId, platform, handle);
     return json({ ok: true, account: { id: row.id, platformId, handle: row.handle } });
   }
 
   if (platform === PlatformKind.YOUTUBE) {
     await deleteYouTubeTokens(userId);
+  } else if (platform === PlatformKind.FACEBOOK) {
+    await deleteMetaAccount(userId, "facebook");
+  } else if (platform === PlatformKind.INSTAGRAM) {
+    await deleteMetaAccount(userId, "instagram");
   } else {
     await platformAccountRepo.revokeDemoPlatformAccount(userId, platform);
   }

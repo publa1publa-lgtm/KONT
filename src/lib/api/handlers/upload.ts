@@ -19,9 +19,16 @@ function strField(form: FormData, name: string): string | null {
   return typeof v === "string" && v.length > 0 ? v : null;
 }
 
+const MAX_UPLOAD_BYTES = 100 * 1024 * 1024; // 100 MB
+
 export async function uploadMedia(req: Request): Promise<NextResponse> {
   const userId = await requireUser();
   if (userId instanceof NextResponse) return userId;
+
+  const contentLength = Number(req.headers.get("content-length") || 0);
+  if (contentLength > MAX_UPLOAD_BYTES) {
+    return badRequest(`File too large. Maximum size is ${MAX_UPLOAD_BYTES / 1024 / 1024} MB.`);
+  }
 
   let form: FormData;
   try {
@@ -36,6 +43,9 @@ export async function uploadMedia(req: Request): Promise<NextResponse> {
   }
 
   const mime = (file.type || "").toLowerCase();
+  if (file.size > MAX_UPLOAD_BYTES) {
+    return badRequest(`File too large. Maximum size is ${MAX_UPLOAD_BYTES / 1024 / 1024} MB.`);
+  }
   const buf = Buffer.from(await file.arrayBuffer());
   const filename = (file.name || "upload").slice(0, 255);
 

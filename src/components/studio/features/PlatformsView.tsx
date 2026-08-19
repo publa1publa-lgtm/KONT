@@ -12,20 +12,7 @@ import {
 } from "@/lib/studioPlatformsStorage";
 import { isReelPlatformId } from "@/lib/reelPlatformIds";
 import { INBOX_UNIFIED_PERMISSION_ID } from "@/lib/studioInboxPermissions";
-import {
-  DiscordLogo,
-  DropboxLogo,
-  EmailLogo,
-  FacebookLogo,
-  GoogleDriveLogo,
-  InstagramLogo,
-  NotionLogo,
-  TelegramLogo,
-  TikTokLogo,
-  YouTubeLogo,
-  PinterestLogo,
-  LinkedInLogo,
-} from "./platformLogos";
+import { PlatformIcon, formatRelative, type PlatformId, type ConnectedAccount } from "./platformShared";
 import { QuickConnectionsPanel } from "./QuickConnectionsPanel";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { StudioHeader } from "./StudioHeader";
@@ -33,6 +20,7 @@ import { ConnectionToggle } from "./ConnectionToggle";
 import {
   PlatformPermissionsModal,
   driveScopesForPermissions,
+  metaScopesForPermissions,
   youtubeScopesForPermissions,
 } from "./PlatformPermissionsModal";
 import { StudioWrapperList, StudioWrapperListBody, StudioWrapperListRow } from "./StudioWrapperList";
@@ -47,27 +35,7 @@ import {
   platformIconTileStyle,
 } from "./platformCardStyles";
 
-type PlatformId =
-  | "youtube"
-  | "tiktok"
-  | "instagram"
-  | "facebook"
-  | "pinterest"
-  | "linkedin"
-  | "telegram"
-  | "notion"
-  | "googleDrive"
-  | "dropbox"
-  | "email"
-  | "discord";
-
 type PlatformGroupId = "social" | "messengers" | "storage" | "productivity" | "notifications";
-
-type ConnectedAccount = {
-  displayName: string;
-  connectedAt: number;
-  lastSyncAt: number | null;
-};
 
 type PlatformState = {
   id: PlatformId;
@@ -83,20 +51,22 @@ const PLATFORM_META: Array<{
   label: string;
   subtitle: string;
   hint: string;
+  comingSoon?: boolean;
 }> = [
+  {
+    id: "tiktok",
+    group: "social",
+    label: "TikTok",
+    subtitle: "Short-form distribution",
+    hint: "Coming soon — full TikTok integration",
+    comingSoon: true,
+  },
   {
     id: "youtube",
     group: "social",
     label: "YouTube",
     subtitle: "Upload & schedule videos",
     hint: "OAuth (Google) — scopes, channel access",
-  },
-  {
-    id: "tiktok",
-    group: "social",
-    label: "TikTok",
-    subtitle: "Short-form distribution",
-    hint: "OAuth — account + posting permissions",
   },
   {
     id: "instagram",
@@ -110,7 +80,7 @@ const PLATFORM_META: Array<{
     group: "social",
     label: "Facebook",
     subtitle: "Pages & video publishing",
-    hint: "Meta — pages_manage_posts, publish_video",
+    hint: "Meta — pages_manage_posts",
   },
   {
     id: "pinterest",
@@ -162,6 +132,20 @@ const PLATFORM_META: Array<{
     hint: "OAuth — Drive scopes",
   },
   {
+    id: "googleSheets",
+    group: "productivity",
+    label: "Google Sheets",
+    subtitle: "Content plans & data",
+    hint: "OAuth — Spreadsheets scopes",
+  },
+  {
+    id: "googleCalendar",
+    group: "productivity",
+    label: "Google Calendar",
+    subtitle: "Schedule sync",
+    hint: "OAuth — Calendar scopes",
+  },
+  {
     id: "dropbox",
     group: "storage",
     label: "Dropbox",
@@ -171,46 +155,6 @@ const PLATFORM_META: Array<{
 ];
 
 const GROUP_ORDER: PlatformGroupId[] = ["social", "messengers", "productivity", "storage", "notifications"];
-
-function PlatformIcon({ id, className }: { id: PlatformId; className?: string }) {
-  switch (id) {
-    case "youtube":
-      return <YouTubeLogo className={className} />;
-    case "tiktok":
-      return <TikTokLogo className={className} />;
-    case "instagram":
-      return <InstagramLogo className={className} />;
-    case "facebook":
-      return <FacebookLogo className={className} />;
-    case "pinterest":
-      return <PinterestLogo className={className} />;
-    case "linkedin":
-      return <LinkedInLogo className={className} />;
-    case "telegram":
-      return <TelegramLogo className={className} />;
-    case "notion":
-      return <NotionLogo className={className} />;
-    case "googleDrive":
-      return <GoogleDriveLogo className={className} />;
-    case "dropbox":
-      return <DropboxLogo className={className} />;
-    case "email":
-      return <EmailLogo className={className} />;
-    case "discord":
-      return <DiscordLogo className={className} />;
-  }
-}
-
-function formatRelative(ms: number): string {
-  const d = Math.max(0, Date.now() - ms);
-  const min = Math.round(d / 60_000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min}m ago`;
-  const h = Math.round(min / 60);
-  if (h < 48) return `${h}h ago`;
-  const days = Math.round(h / 24);
-  return `${days}d ago`;
-}
 
 function defaultState(): PlatformState[] {
   return PLATFORM_META.map((p) => ({ id: p.id, connected: false, account: null, grantedPermissionIds: [] }));
@@ -292,6 +236,8 @@ export function PlatformsView() {
     const params = new URLSearchParams(window.location.search);
     const youtubeStatus = params.get("youtube");
     const driveStatus = params.get("drive");
+    const facebookStatus = params.get("facebook");
+    const instagramStatus = params.get("instagram");
 
     let next = parsed;
     if (youtubeStatus === "connected") {
@@ -362,8 +308,88 @@ export function PlatformsView() {
         setScopeNotice({ missingIds, extraIds });
       }
 
+      const requestedOrGranted = new Set([...grantedPermissionIds, ...missingIds]);
+
+      // Only mark a platform connected if we actually got its platform-specific scopes.
+      // Otherwise OAuth always includes `openid` which would falsely connect everything.
+      const driveConnected = requestedOrGranted.has("drive.file") || requestedOrGranted.has("drive.readonly");
+      const sheetsConnected = requestedOrGranted.has("spreadsheets") || requestedOrGranted.has("spreadsheets.readonly");
+      const calendarConnected =
+        requestedOrGranted.has("calendar.events") || requestedOrGranted.has("calendar.readonly");
+
+      function grantedForPlatform(platformId: "googleDrive" | "googleSheets" | "googleCalendar"): string[] {
+        const allowed =
+          platformId === "googleDrive"
+            ? new Set(["openid", "drive.file", "drive.readonly"])
+            : platformId === "googleSheets"
+              ? new Set(["openid", "spreadsheets", "spreadsheets.readonly"])
+              : new Set(["openid", "calendar.events", "calendar.readonly"]);
+        return grantedPermissionIds.filter((id) => allowed.has(id));
+      }
+
+      next = parsed.map((p) => {
+        if (p.id === "googleDrive" && driveConnected) {
+          return {
+            ...p,
+            connected: true,
+            account: { displayName: account, connectedAt: Date.now(), lastSyncAt: Date.now() },
+            grantedPermissionIds: grantedForPlatform("googleDrive"),
+          };
+        }
+        if (p.id === "googleSheets" && sheetsConnected) {
+          return {
+            ...p,
+            connected: true,
+            account: { displayName: account, connectedAt: Date.now(), lastSyncAt: Date.now() },
+            grantedPermissionIds: grantedForPlatform("googleSheets"),
+          };
+        }
+        if (p.id === "googleCalendar" && calendarConnected) {
+          return {
+            ...p,
+            connected: true,
+            account: { displayName: account, connectedAt: Date.now(), lastSyncAt: Date.now() },
+            grantedPermissionIds: grantedForPlatform("googleCalendar"),
+          };
+        }
+        return p;
+      });
+
+      const active =
+        sheetsConnected ? "googleSheets" : calendarConnected ? "googleCalendar" : driveConnected ? "googleDrive" : null;
+      if (active) setActiveId(active);
+      setQcOpen(false);
+    } else if (driveStatus === "error") {
+      const reason = params.get("reason") || "unknown";
+      window.alert(reason === "access_denied" ? P.driveDenied : P.driveConnectFailed);
+    } else if (facebookStatus === "connected" || instagramStatus === "connected") {
+      const platformId = facebookStatus === "connected" ? "facebook" : "instagram";
+      const account = params.get("account")?.trim() || (platformId === "facebook" ? "Facebook Page" : "Instagram");
+      const granted = (params.get("granted") ?? "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean);
+      const missingIds = (params.get("missing") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+      const extraIds = (params.get("extra") ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+
+      const grantedPermissionIds = ["account.identity", ...granted.filter((id) => id !== "account.identity")];
+      try {
+        const raw = sessionStorage.getItem(`kont.${platformId}.grantedPermissionIds`);
+        sessionStorage.removeItem(`kont.${platformId}.grantedPermissionIds`);
+        const picked = raw ? (JSON.parse(raw) as unknown) : [];
+        if (Array.isArray(picked) && picked.includes(INBOX_UNIFIED_PERMISSION_ID)) {
+          grantedPermissionIds.push(INBOX_UNIFIED_PERMISSION_ID);
+        }
+      } catch {
+        // inbox stays off
+      }
+
+      if (missingIds.length || extraIds.length) {
+        setScopeNotice({ missingIds, extraIds });
+      }
+
       next = parsed.map((p) =>
-        p.id === "googleDrive"
+        p.id === platformId
           ? {
               ...p,
               connected: true,
@@ -372,16 +398,35 @@ export function PlatformsView() {
             }
           : p,
       );
-      setActiveId("googleDrive");
-      setQcOpen(true);
-    } else if (driveStatus === "error") {
+      setActiveId(platformId);
+      setQcOpen(false);
+    } else if (facebookStatus === "error" || instagramStatus === "error") {
+      const platformId = facebookStatus === "error" ? "facebook" : "instagram";
       const reason = params.get("reason") || "unknown";
-      window.alert(reason === "access_denied" ? P.driveDenied : P.driveConnectFailed);
+      const denied = platformId === "facebook" ? P.facebookDenied : P.instagramDenied;
+      const failed = platformId === "facebook" ? P.facebookConnectFailed : P.instagramConnectFailed;
+      const noPages = platformId === "facebook" ? P.facebookNoPages : P.instagramNoAccount;
+      const longLived = P.metaLongLivedFailed;
+      if (reason === "access_denied") window.alert(denied);
+      else if (reason === "no_facebook_pages" || reason === "no_instagram_account") window.alert(noPages);
+      else if (reason === "meta_long_lived") window.alert(longLived);
+      else window.alert(failed);
     }
 
-    if (youtubeStatus === "connected" || youtubeStatus === "error" || driveStatus === "connected" || driveStatus === "error") {
+    if (
+      youtubeStatus === "connected" ||
+      youtubeStatus === "error" ||
+      driveStatus === "connected" ||
+      driveStatus === "error" ||
+      facebookStatus === "connected" ||
+      facebookStatus === "error" ||
+      instagramStatus === "connected" ||
+      instagramStatus === "error"
+    ) {
       params.delete("youtube");
       params.delete("drive");
+      params.delete("facebook");
+      params.delete("instagram");
       params.delete("channel");
       params.delete("account");
       params.delete("reason");
@@ -395,7 +440,19 @@ export function PlatformsView() {
     setPlatforms(next);
     setActiveId((prev) => prev ?? next.find((p) => p.connected)?.id ?? next[0]?.id ?? null);
     storageReadyRef.current = true;
-  }, [P.driveConnectFailed, P.driveDenied, P.youtubeConnectFailed, P.youtubeDenied]);
+  }, [
+    P.driveConnectFailed,
+    P.driveDenied,
+    P.facebookConnectFailed,
+    P.facebookDenied,
+    P.facebookNoPages,
+    P.instagramConnectFailed,
+    P.instagramDenied,
+    P.instagramNoAccount,
+    P.metaLongLivedFailed,
+    P.youtubeConnectFailed,
+    P.youtubeDenied,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -403,28 +460,143 @@ export function PlatformsView() {
       .then((r) => (r.ok ? r.json() : null))
       .then((d: { connected?: boolean; handle?: string; granted?: string[] } | null) => {
         if (cancelled || !d?.connected) return;
+        const granted = Array.isArray(d.granted) ? d.granted : ["openid"];
+        const grantedSet = new Set(granted);
+
+        const driveConnected = grantedSet.has("drive.file") || grantedSet.has("drive.readonly");
+        const sheetsConnected = grantedSet.has("spreadsheets") || grantedSet.has("spreadsheets.readonly");
+        const calendarConnected = grantedSet.has("calendar.events") || grantedSet.has("calendar.readonly");
+
+        function grantedForPlatform(platformId: "googleDrive" | "googleSheets" | "googleCalendar"): string[] {
+          const allowed =
+            platformId === "googleDrive"
+              ? new Set(["openid", "drive.file", "drive.readonly"])
+              : platformId === "googleSheets"
+                ? new Set(["openid", "spreadsheets", "spreadsheets.readonly"])
+                : new Set(["openid", "calendar.events", "calendar.readonly"]);
+          return granted.filter((id) => allowed.has(id));
+        }
+
         setPlatforms((prev) =>
           prev.map((p) => {
-            if (p.id !== "googleDrive") return p;
-            const granted =
-              p.grantedPermissionIds.length > 0
-                ? p.grantedPermissionIds
-                : Array.isArray(d.granted)
-                  ? d.granted
-                  : ["openid"];
-            return {
-              ...p,
-              connected: true,
-              account: p.account ?? {
-                displayName: d.handle || "Google Drive",
-                connectedAt: Date.now(),
-                lastSyncAt: Date.now(),
-              },
-              grantedPermissionIds: granted,
-            };
+            if (p.id === "googleDrive") {
+              return {
+                ...p,
+                connected: driveConnected,
+                account: driveConnected
+                  ? p.account ?? {
+                      displayName: d.handle || "Google Drive",
+                      connectedAt: Date.now(),
+                      lastSyncAt: Date.now(),
+                    }
+                  : null,
+                grantedPermissionIds: driveConnected ? grantedForPlatform("googleDrive") : [],
+              };
+            }
+            if (p.id === "googleSheets") {
+              return {
+                ...p,
+                connected: sheetsConnected,
+                account: sheetsConnected
+                  ? p.account ?? {
+                      displayName: d.handle || "Google Sheets",
+                      connectedAt: Date.now(),
+                      lastSyncAt: Date.now(),
+                    }
+                  : null,
+                grantedPermissionIds: sheetsConnected ? grantedForPlatform("googleSheets") : [],
+              };
+            }
+            if (p.id === "googleCalendar") {
+              return {
+                ...p,
+                connected: calendarConnected,
+                account: calendarConnected
+                  ? p.account ?? {
+                      displayName: d.handle || "Google Calendar",
+                      connectedAt: Date.now(),
+                      lastSyncAt: Date.now(),
+                    }
+                  : null,
+                grantedPermissionIds: calendarConnected ? grantedForPlatform("googleCalendar") : [],
+              };
+            }
+            return p;
           }),
         );
       })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/platforms/telegram")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { connected?: boolean; handle?: string; granted?: string[] } | null) => {
+        if (cancelled || !d) return;
+        const granted = Array.isArray(d.granted) ? d.granted : [];
+        setPlatforms((prev) =>
+          prev.map((p) =>
+            p.id === "telegram"
+              ? {
+                  ...p,
+                  connected: Boolean(d.connected),
+                  account: d.connected
+                    ? p.account ?? {
+                        displayName: d.handle || "@telegram_bot",
+                        connectedAt: Date.now(),
+                        lastSyncAt: Date.now(),
+                      }
+                    : null,
+                  grantedPermissionIds: d.connected ? granted : [],
+                }
+              : p,
+          ),
+        );
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/platforms/meta")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(
+        (
+          d: {
+            facebook?: { connected?: boolean; handle?: string; granted?: string[] };
+            instagram?: { connected?: boolean; handle?: string; granted?: string[] };
+          } | null,
+        ) => {
+          if (cancelled || !d) return;
+          setPlatforms((prev) =>
+            prev.map((p) => {
+              if (p.id !== "facebook" && p.id !== "instagram") return p;
+              const row = p.id === "facebook" ? d.facebook : d.instagram;
+              const connected = Boolean(row?.connected);
+              const granted = Array.isArray(row?.granted) ? row.granted : [];
+              return {
+                ...p,
+                connected,
+                account: connected
+                  ? p.account ?? {
+                      displayName: row?.handle || (p.id === "facebook" ? "Facebook Page" : "Instagram"),
+                      connectedAt: Date.now(),
+                      lastSyncAt: Date.now(),
+                    }
+                  : null,
+                grantedPermissionIds: connected ? granted : [],
+              };
+            }),
+          );
+        },
+      )
       .catch(() => undefined);
     return () => {
       cancelled = true;
@@ -523,18 +695,52 @@ export function PlatformsView() {
                         ? "Workspace • Demo"
                         : platformId === "googleDrive"
                           ? "Drive • Demo"
-                          : platformId === "pinterest"
-                            ? "Pinterest"
-                            : "Dropbox • Demo";
+                          : platformId === "googleSheets"
+                            ? "Sheets • Demo"
+                            : platformId === "googleCalendar"
+                              ? "Calendar • Demo"
+                              : platformId === "pinterest"
+                                ? "Pinterest"
+                                : "Dropbox • Demo";
 
     if (platformId === "youtube") {
       startYouTubeOAuth(grantedPermissionIds);
       return;
     }
 
-    if (platformId === "googleDrive") {
+    if (platformId === "googleDrive" || platformId === "googleSheets" || platformId === "googleCalendar") {
       startGoogleDriveOAuth(grantedPermissionIds);
       return;
+    }
+
+    if (platformId === "facebook" || platformId === "instagram") {
+      startMetaOAuth(platformId, grantedPermissionIds);
+      return;
+    }
+
+    if (platformId === "telegram") {
+      const botToken = window.prompt("Telegram Bot Token");
+      if (!botToken?.trim()) return;
+      const chatId = window.prompt("Telegram Chat ID (optional)")?.trim() ?? "";
+      try {
+        const r = await fetch("/api/platforms/telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ botToken, chatId, grantedPermissionIds }),
+        });
+        const data = (await r.json().catch(() => ({}))) as {
+          error?: string;
+          account?: { handle?: string | null };
+        };
+        if (!r.ok) {
+          window.alert(data.error || "Telegram connection failed.");
+          return;
+        }
+        displayName = data.account?.handle?.trim() || displayName;
+      } catch {
+        window.alert("Telegram connection failed.");
+        return;
+      }
     }
 
     if (platformId === "pinterest") {
@@ -570,7 +776,7 @@ export function PlatformsView() {
       ),
     );
     setActiveId(platformId);
-    setQcOpen(true);
+      setQcOpen(false);
     if (isReelPlatformId(platformId)) {
       void syncReelPlatformConnectionToServer(platformId, true, account.displayName);
     }
@@ -606,6 +812,22 @@ export function PlatformsView() {
     window.location.assign(`${start.pathname}${start.search}`);
   }
 
+  function startMetaOAuth(platformId: "facebook" | "instagram", pickedPermissionIds: string[]) {
+    try {
+      sessionStorage.setItem(`kont.${platformId}.grantedPermissionIds`, JSON.stringify(pickedPermissionIds));
+    } catch {
+      // continue even if sessionStorage is blocked
+    }
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    const start = new URL("/api/meta/oauth/start", window.location.origin);
+    start.searchParams.set("intent", platformId);
+    start.searchParams.set("returnTo", returnTo);
+    const scopes = metaScopesForPermissions(platformId, pickedPermissionIds);
+    if (scopes.length) start.searchParams.set("scopes", scopes.join(","));
+    start.searchParams.set("perms", pickedPermissionIds.join(","));
+    window.location.assign(`${start.pathname}${start.search}`);
+  }
+
   function openPermissions(platformId: PlatformId) {
     setPermPlatformId(platformId);
     setPermOpen(true);
@@ -617,12 +839,17 @@ export function PlatformsView() {
     );
     setQcOpen(false);
     setRevokeId(null);
-    if (platformId === "youtube" || platformId === "googleDrive") setScopeNotice(null);
+    if (platformId === "youtube" || platformId === "googleDrive" || platformId === "facebook" || platformId === "instagram") {
+      setScopeNotice(null);
+    }
     if (isReelPlatformId(platformId)) {
       void syncReelPlatformConnectionToServer(platformId, false, null);
     }
     if (platformId === "googleDrive") {
       void fetch("/api/google-drive", { method: "DELETE" }).catch(() => undefined);
+    }
+    if (platformId === "telegram") {
+      void fetch("/api/platforms/telegram", { method: "DELETE" }).catch(() => undefined);
     }
   }
 
@@ -699,7 +926,7 @@ export function PlatformsView() {
                   </div>
                   <div className="mt-0.5 font-semibold tabular-nums tracking-tight text-[var(--fg)]">
                     <span className="text-2xl leading-none text-[var(--ice)]">{connectedCount}</span>
-                    <span className="ms-1 text-sm text-[var(--muted)]">/ {PLATFORM_META.length}</span>
+                    <span className="ms-1 text-sm text-[var(--muted)]">/ {PLATFORM_META.filter((p) => !p.comingSoon).length}</span>
                   </div>
                 </div>
               </div>
@@ -825,7 +1052,14 @@ export function PlatformsView() {
                                   onConnect={(id) => openPermissions(id)}
                                   onDisconnect={(id) => setRevokeId(id)}
                                   onSyncNow={(id) => syncNow(id)}
-                                  scopeNotice={p.id === "youtube" || p.id === "googleDrive" ? scopeNotice : null}
+                                  scopeNotice={
+                                    p.id === "youtube" ||
+                                    p.id === "googleDrive" ||
+                                    p.id === "facebook" ||
+                                    p.id === "instagram"
+                                      ? scopeNotice
+                                      : null
+                                  }
                                   onDismissScopeNotice={() => setScopeNotice(null)}
                                 />
                               </div>
@@ -932,6 +1166,7 @@ export function PlatformsView() {
               const account = state.account;
               const accent = platformBrandAccent(meta.id);
               const selected = meta.id === activeId && qcOpen;
+              const disabled = Boolean(meta.comingSoon);
               return (
                 <article
                   key={meta.id}
@@ -940,12 +1175,14 @@ export function PlatformsView() {
                     PLATFORM_CARD_SURFACE_CLASS,
                     connected ? "is-connected" : "",
                     selected ? "is-selected" : "",
+                    disabled ? "is-coming-soon" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}
                   style={{
                     ["--platform-accent" as string]: accent,
                     ["--platform-group" as string]: platformGroupAccent(meta.group),
+                    ...(disabled ? { opacity: 0.55, filter: "grayscale(0.4)" } : {}),
                   }}
                 >
                   <div
@@ -964,12 +1201,18 @@ export function PlatformsView() {
                       <div className="platform-catalog-card__icon">
                         <PlatformIcon id={meta.id} />
                       </div>
-                      <span className="platform-catalog-card__status">
-                        <span className="platform-catalog-card__status-dot" aria-hidden />
-                        {connected ? (
-                          <span className="platform-catalog-card__status-label">{P.onlineLabel}</span>
-                        ) : null}
-                      </span>
+                      {disabled ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-400/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-500">
+                          Coming soon
+                        </span>
+                      ) : (
+                        <span className="platform-catalog-card__status">
+                          <span className="platform-catalog-card__status-dot" aria-hidden />
+                          {connected ? (
+                            <span className="platform-catalog-card__status-label">{P.onlineLabel}</span>
+                          ) : null}
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="platform-catalog-card__name mt-3">{meta.label}</h3>
@@ -978,16 +1221,22 @@ export function PlatformsView() {
                     </p>
                     <span className="platform-catalog-card__chip">{groupLabels[meta.group]}</span>
                     <p className="platform-catalog-card__hint">
-                      {connected
-                        ? account?.lastSyncAt
-                          ? `${P.lastSync}: ${formatRelative(account.lastSyncAt)}`
-                          : P.noSync
-                        : meta.hint}
+                      {disabled
+                        ? meta.hint
+                        : connected
+                          ? account?.lastSyncAt
+                            ? `${P.lastSync}: ${formatRelative(account.lastSyncAt)}`
+                            : P.noSync
+                          : meta.hint}
                     </p>
                   </div>
 
                   <div className="platform-catalog-card__footer">
-                    {connected ? (
+                    {disabled ? (
+                      <span className="cursor-default rounded-xl border border-[var(--line)] px-4 py-2 text-xs font-semibold text-[var(--muted)]">
+                        Coming soon
+                      </span>
+                    ) : connected ? (
                       <StudioGhostButton
                         type="button"
                         className="studio-btn-ghost--md"

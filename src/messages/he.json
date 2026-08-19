@@ -265,7 +265,7 @@
         "automation": "אוטומציות",
         "dashboard": "דשבורד",
         "inbox": "תיבת דואר נכנס",
-        "accounts": "חשבונות",
+        "platforms": "פלטפורמות",
         "insights": "תובנות",
         "audience": "קהל"
       },
@@ -675,7 +675,7 @@
       "statusPosted": "פורסם",
       "statusArchived": "בארכיון",
       "edit": "עריכה",
-      "duplicate": "העתקה",
+      "toDraft": "לטיוטה",
       "archive": "ארכיון",
       "delete": "מחיקה",
       "duplicateTitleSuffix": " (עותק)",
@@ -767,14 +767,17 @@
         "couldNotLoadContent": "לא ניתן לטעון תוכן.",
         "loadFailed": "הטעינה נכשלה",
         "saveFailed": "השמירה נכשלה",
+        "toDraftFailed": "לא ניתן להחזיר לטיוטה",
         "archiveFailed": "העברה לארכיון נכשלה",
         "deleteFailed": "המחיקה נכשלה",
-        "duplicateFailed": "לא ניתן לשכפל",
         "pickDateTime": "בחרו תאריך ושעה.",
         "pickDate": "בחרו תאריך.",
         "videoRequired": "וידאו נדרש."
       },
       "dialogs": {
+        "toDraftTitle": "העברה לטיוטה",
+        "toDraftMessage": "ב-KONT זה יהפוך לטיוטה. הפוסט ברשתות יישאר כמו שהוא.",
+        "toDraftConfirm": "לטיוטה",
         "archiveTitle": "העברת תוכן לארכיון",
         "archiveMessage": "להעביר פריט זה לארכיון? הוא יוסתר מלוח השנה ולא יפורסם.",
         "archiveConfirm": "ארכיון",
@@ -813,6 +816,10 @@
       "revokeConfirmTitle": "לנתק את {platform}?",
       "revokeConfirmMessage": "החשבון יוסר מיד מהפלטפורמות המחוברות. אפשר לחבר אותו שוב אחר כך.",
       "revokeConfirm": "ניתוק",
+      "logTime": "זמן",
+      "logEvent": "אירוע",
+      "logInfo": "מידע",
+      "logConnect": "חיבור",
       "manageDetails": "פרטים",
       "manageSettings": "הגדרות",
       "manageLogs": "יומן",
@@ -830,8 +837,18 @@
       "youtubeScopeMismatch": "Google אישר הרשאות שונות מאלה שסימנת ב-KONT.",
       "youtubeScopeMissing": "לא אושר ב-Google: {list}",
       "youtubeScopeExtra": "אושר בנוסף ב-Google: {list}",
+      "scopeMismatch": "הספק אישר סט הרשאות שונה מזה שבחרת.",
+      "scopeMissing": "לא אושר: {list}",
+      "scopeExtra": "אושר בנוסף: {list}",
       "driveConnectFailed": "Google Drive: לא ניתן לחבר חשבון",
-      "driveDenied": "Google Drive: הגישה נדחתה. אפשר לנסות לחבר שוב."
+      "driveDenied": "Google Drive: הגישה נדחתה. אפשר לנסות לחבר שוב.",
+      "facebookConnectFailed": "Facebook: לא ניתן לחבר את הדף",
+      "facebookDenied": "Facebook: הגישה נדחתה. אפשר לנסות לחבר שוב.",
+      "facebookNoPages": "Facebook: לא נמצאו דפים. צרו Page ותנו גישה לדפים שאתם מנהלים.",
+      "instagramConnectFailed": "Instagram: לא ניתן לחבר חשבון",
+      "instagramDenied": "Instagram: הגישה נדחתה. אפשר לנסות לחבר שוב.",
+      "instagramNoAccount": "Instagram: אין חשבון מקצועי שמקושר ל-Facebook Page. המירו ל-Business/Creator וקשרו ב-Meta Business Suite.",
+      "metaLongLivedFailed": "Meta: לא ניתן ליצור טוקן ארוך-טווח. בדקו META_APP_ID / META_APP_SECRET ושה-Facebook Login החזיר user token ולא Page token."
     },
     "inbox": {
       "label": "תיבת דואר נכנס",
@@ -1021,12 +1038,16 @@
         "label": "תיבת דואר נכנס",
         "hint": "כל תשובה, שולחן אחד"
       },
+      "storage": {
+        "label": "Storage",
+        "hint": "Drive, גיליונות ונכסים"
+      },
       "media": {
         "label": "מדיה",
         "hint": "פוסטים ורילס במקום אחד"
       },
-      "accounts": {
-        "label": "חשבונות",
+      "platforms": {
+        "label": "פלטפורמות",
         "hint": "כל הערוצים, קישור אחד"
       },
       "queue": {
@@ -1071,6 +1092,10 @@
       },
       "inbox": {
         "body": "מקום אחד לתגובות, הודעות פרטיות ואזכורים בערוצים מחוברים — עדיין ברשימה.",
+        "primary": "הצטרפות לרשימת המתנה"
+      },
+      "storage": {
+        "body": "מקום שקט לאחסון מחובר — קבצי Google Drive, מקורות Sheets ונכסים מסונכרנים בעתיד.",
         "primary": "הצטרפות לרשימת המתנה"
       },
       "sub": {

@@ -10,6 +10,7 @@ import {
   type AppLocale,
 } from "@/i18n/config";
 import { rejectCrossOriginApiMutation } from "@/lib/api/origin";
+import { SESSION_IDLE_SECONDS } from "@/lib/sessionTtl";
 
 const SESSION_COOKIE = "cf_session";
 
@@ -24,14 +25,16 @@ function pickLocale(req: NextRequest): AppLocale {
   return DEFAULT_LOCALE;
 }
 
-function isStaticOrApi(pathname: string): boolean {
-  if (pathname.startsWith("/api")) return true;
-  if (pathname.startsWith("/_next")) return true;
-  if (pathname.startsWith("/brand")) return true;
-  if (pathname.startsWith("/fonts")) return true;
-  if (pathname.startsWith("/icons")) return true;
-  if (/\.[a-zA-Z0-9]+$/.test(pathname)) return true;
-  return false;
+function slideSessionCookie(req: NextRequest, res: NextResponse) {
+  const token = req.cookies.get(SESSION_COOKIE)?.value;
+  if (!token) return;
+  res.cookies.set(SESSION_COOKIE, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: SESSION_IDLE_SECONDS,
+  });
 }
 
 export function middleware(req: NextRequest) {
@@ -40,8 +43,14 @@ export function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  if (isStaticOrApi(pathname)) {
+  if (pathname.startsWith("/_next") || pathname.startsWith("/brand") || pathname.startsWith("/fonts") || pathname.startsWith("/icons") || /\.[a-zA-Z0-9]+$/.test(pathname)) {
     return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/api")) {
+    const res = NextResponse.next();
+    slideSessionCookie(req, res);
+    return res;
   }
 
   const pathLocale = localeFromPathname(pathname);
@@ -57,6 +66,7 @@ export function middleware(req: NextRequest) {
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
     });
+    slideSessionCookie(req, res);
     return res;
   }
 
@@ -84,6 +94,7 @@ export function middleware(req: NextRequest) {
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
   });
+  slideSessionCookie(req, res);
   return res;
 }
 

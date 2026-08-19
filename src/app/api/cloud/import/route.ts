@@ -2,8 +2,9 @@ import { AuditAction } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import { auditContextFromRequest, writeAudit } from "@/lib/audit";
-import { json, readJsonRecord } from "@/lib/api/http";
+import { json, readJsonRecord, tooManyRequests } from "@/lib/api/http";
 import { requireUser } from "@/lib/api/httpAuth";
+import { clientKeyFromRequest, rateLimit } from "@/lib/api/rateLimit";
 import { CloudProviderError, isCloudProviderId } from "@/lib/cloud/types";
 import { importCloudFile } from "@/lib/cloud/providers";
 import { persistMediaBuffer } from "@/lib/media/persist";
@@ -14,6 +15,9 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 export async function POST(req: Request): Promise<NextResponse> {
+  const rl = await rateLimit(clientKeyFromRequest(req, "cloud:import"), { limit: 20, windowMs: 15 * 60_000 });
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
+
   const userId = await requireUser();
   if (userId instanceof NextResponse) return userId;
 

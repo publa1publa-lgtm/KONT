@@ -265,7 +265,7 @@
         "automation": "Автоматизации",
         "dashboard": "Дашборд",
         "inbox": "Входящие",
-        "accounts": "Аккаунты",
+        "platforms": "Платформы",
         "insights": "Инсайты",
         "audience": "Аудитория"
       },
@@ -675,7 +675,7 @@
       "statusPosted": "Опубликовано",
       "statusArchived": "В архиве",
       "edit": "Редактировать",
-      "duplicate": "Копировать",
+      "toDraft": "В черновик",
       "archive": "В архив",
       "delete": "Удалить",
       "duplicateTitleSuffix": " (копия)",
@@ -767,14 +767,17 @@
         "couldNotLoadContent": "Не удалось загрузить контент.",
         "loadFailed": "Ошибка загрузки",
         "saveFailed": "Ошибка сохранения",
+        "toDraftFailed": "Не удалось вернуть в черновик",
         "archiveFailed": "Ошибка архивации",
         "deleteFailed": "Ошибка удаления",
-        "duplicateFailed": "Не удалось скопировать",
         "pickDateTime": "Выберите дату и время.",
         "pickDate": "Выберите дату.",
         "videoRequired": "Требуется видео."
       },
       "dialogs": {
+        "toDraftTitle": "Вернуть в черновик",
+        "toDraftMessage": "В KONT это станет черновиком. Пост в соцсетях останется как есть.",
+        "toDraftConfirm": "В черновик",
         "archiveTitle": "Архивировать контент",
         "archiveMessage": "Переместить в архив? Материал скроется из календаря и не будет опубликован.",
         "archiveConfirm": "В архив",
@@ -813,6 +816,10 @@
       "revokeConfirmTitle": "Отключить {platform}?",
       "revokeConfirmMessage": "Аккаунт сразу пропадёт из Connected platforms. Потом его можно подключить снова.",
       "revokeConfirm": "Отключить",
+      "logTime": "Время",
+      "logEvent": "Событие",
+      "logInfo": "Инфо",
+      "logConnect": "Подключение",
       "manageDetails": "Обзор",
       "manageSettings": "Настройки",
       "manageLogs": "Журнал",
@@ -830,8 +837,18 @@
       "youtubeScopeMismatch": "Google выдал другие права, чем вы отметили в KONT.",
       "youtubeScopeMissing": "Google не подтвердил: {list}",
       "youtubeScopeExtra": "Google дополнительно выдал: {list}",
+      "scopeMismatch": "Провайдер подтвердил другой набор разрешений, чем вы выбрали.",
+      "scopeMissing": "Не выдано: {list}",
+      "scopeExtra": "Дополнительно выдано: {list}",
       "driveConnectFailed": "Google Drive: не удалось подключить аккаунт",
-      "driveDenied": "Google Drive: доступ отклонён. Можно попробовать подключить снова."
+      "driveDenied": "Google Drive: доступ отклонён. Можно попробовать подключить снова.",
+      "facebookConnectFailed": "Facebook: не удалось подключить страницу",
+      "facebookDenied": "Facebook: доступ отклонён. Можно попробовать подключить снова.",
+      "facebookNoPages": "Facebook: страницы не найдены. Создайте Page и выдайте доступ к страницам, которыми вы управляете.",
+      "instagramConnectFailed": "Instagram: не удалось подключить аккаунт",
+      "instagramDenied": "Instagram: доступ отклонён. Можно попробовать подключить снова.",
+      "instagramNoAccount": "Instagram: профессиональный аккаунт не привязан к Facebook Page. Сделайте аккаунт Business/Creator и свяжите его в Meta Business Suite.",
+      "metaLongLivedFailed": "Meta: не удалось получить долгоживущий токен. Проверьте META_APP_ID / META_APP_SECRET и что Facebook Login вернул user token, а не Page token."
     },
     "inbox": {
       "label": "Входящие",
@@ -1021,12 +1038,16 @@
         "label": "Входящие",
         "hint": "Все ответы — один стол"
       },
+      "storage": {
+        "label": "Storage",
+        "hint": "Drive, таблицы и ассеты"
+      },
       "media": {
         "label": "Медиа",
         "hint": "Посты и рилсы в одном месте"
       },
-      "accounts": {
-        "label": "Аккаунты",
+      "platforms": {
+        "label": "Платформы",
         "hint": "Все каналы — одна связка"
       },
       "queue": {
@@ -1071,6 +1092,10 @@
       },
       "inbox": {
         "body": "Одно место для комментариев, личных сообщений и упоминаний по подключённым каналам — пока в планах.",
+        "primary": "Встать в лист ожидания"
+      },
+      "storage": {
+        "body": "Спокойное пространство для подключённых хранилищ — файлов Google Drive, источников Sheets и будущих синхронизированных ассетов.",
         "primary": "Встать в лист ожидания"
       },
       "sub": {

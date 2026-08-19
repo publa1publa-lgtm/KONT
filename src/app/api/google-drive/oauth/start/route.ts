@@ -30,7 +30,7 @@ function oauthCookieOptions() {
 
 /** Starts Google OAuth2 Authorization Code Flow for Drive. */
 export async function start(req: Request): Promise<NextResponse> {
-  const rl = rateLimit(clientKeyFromRequest(req, "drive:oauth:start"), {
+  const rl = await rateLimit(clientKeyFromRequest(req, "drive:oauth:start"), {
     limit: 20,
     windowMs: 15 * 60_000,
   });
@@ -40,12 +40,12 @@ export async function start(req: Request): Promise<NextResponse> {
   const locale = await getServerLocale();
   if (!userId) {
     const login = new URL(withLocale(locale, "/login"), req.url);
-    login.searchParams.set("next", "/studio/accounts");
+    login.searchParams.set("next", "/studio/platforms");
     return NextResponse.redirect(login);
   }
 
   const incoming = new URL(req.url);
-  const returnTo = safeStudioRedirect(incoming.searchParams.get("returnTo")) ?? "/studio/accounts";
+  const returnTo = safeStudioRedirect(incoming.searchParams.get("returnTo")) ?? "/studio/platforms";
   const scopes = sanitizeDriveScopes(incoming.searchParams.get("scopes")?.split(/[,\s]+/) ?? []);
   const requestedPermissionIds = (incoming.searchParams.get("perms") ?? "")
     .split(",")
@@ -77,7 +77,7 @@ export async function GET(req: Request) {
     if (!userId) return unauthorized();
     try {
       const incoming = new URL(req.url);
-      const returnTo = safeStudioRedirect(incoming.searchParams.get("returnTo")) ?? "/studio/accounts";
+      const returnTo = safeStudioRedirect(incoming.searchParams.get("returnTo")) ?? "/studio/platforms";
       const scopes = sanitizeDriveScopes(incoming.searchParams.get("scopes")?.split(/[,\s]+/) ?? []);
       const requestedPermissionIds = (incoming.searchParams.get("perms") ?? "")
         .split(",")

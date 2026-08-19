@@ -18,7 +18,7 @@ export async function getMediaByStoragePath(params: Promise<{ path: string[] }>)
   }
 
   const storageKey = segments.join("/");
-  if (storageKey.includes("..")) {
+  if (storageKey.includes("..") || storageKey.startsWith("/") || storageKey.includes("\0") || !/^[\w\-./]+$/.test(storageKey)) {
     return badRequest("Invalid path");
   }
 

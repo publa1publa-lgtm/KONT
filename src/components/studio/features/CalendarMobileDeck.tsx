@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
-import { addMonths, dateKeyLocal, endOfMonth, startOfMonth } from "@/components/calendar/dateUtils";
+import { addMonths, buildCalendarYearOptions, dateKeyLocal, endOfMonth, startOfMonth } from "@/components/calendar/dateUtils";
 import type { ScheduledPlanEventsByDate, ScheduledPostsByDate } from "@/components/calendar/types";
 import { useI18n } from "@/contexts/i18n-context";
 import { intlLocale } from "@/i18n/config";
+import { SelectMenu } from "@/components/ui/SelectMenu";
 import type { ContentApiItem } from "@/lib/contentApi";
 import type { EventApiItem } from "@/lib/eventsApi";
 import { scheduledAtToDateKeyAndTime } from "@/lib/contentMappers";
@@ -13,6 +14,21 @@ import { ContentKindBadge, contentKindFromApiType } from "./ContentKindBadge";
 import { EventPreviewCard } from "./EventPreviewCard";
 import { getCalendarDayItems } from "./CalendarDayPreviewPanel";
 import { formatStudioCreateCta, StudioCreateButton } from "./StudioCreateButton";
+
+const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
+  DRAFT: { label: "Draft", cls: "studio-status--draft" },
+  READY: { label: "Ready", cls: "studio-status--ready" },
+  SCHEDULED: { label: "Scheduled", cls: "studio-status--scheduled" },
+  PUBLISHING: { label: "Publishing", cls: "studio-status--publishing" },
+  PUBLISHED: { label: "Published", cls: "studio-status--published" },
+  ARCHIVED: { label: "Archived", cls: "studio-status--archived" },
+};
+
+function ContentStatusBadge({ status }: { status: string }) {
+  const s = STATUS_STYLE[status];
+  if (!s) return null;
+  return <span className={`studio-status ${s.cls}`}>{s.label}</span>;
+}
 
 type CalendarMobileDeckProps = {
   month: Date;
@@ -67,6 +83,18 @@ export function CalendarMobileDeck({
     return raw.charAt(0).toUpperCase() + raw.slice(1);
   }, [locale, month]);
 
+  const monthOptions = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(intlLocale(locale), { month: "long" });
+    return Array.from({ length: 12 }, (_, i) => {
+      const label = fmt.format(new Date(2020, i, 1));
+      return { value: i, label: label.charAt(0).toUpperCase() + label.slice(1) };
+    });
+  }, [locale]);
+
+  const yearOptions = useMemo(() => buildCalendarYearOptions(), []);
+
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   const weekdayFmt = useMemo(
     () => new Intl.DateTimeFormat(intlLocale(locale), { weekday: "short" }),
     [locale],
@@ -101,7 +129,17 @@ export function CalendarMobileDeck({
         >
           <CaretLeftIcon className="h-5 w-5" weight="bold" aria-hidden />
         </button>
-        <p className="studio-cal-deck__month-label">{monthLabel}</p>
+
+        <button
+          type="button"
+          className="studio-cal-deck__month-label"
+          onClick={() => setPickerOpen((v) => !v)}
+          aria-expanded={pickerOpen}
+        >
+          {monthLabel}
+          <span className={`ml-1.5 inline-block text-[0.65rem] opacity-50 transition ${pickerOpen ? "rotate-180" : ""}`} aria-hidden>▾</span>
+        </button>
+
         <button
           type="button"
           className="studio-cal-btn studio-cal-btn--icon"
@@ -111,6 +149,33 @@ export function CalendarMobileDeck({
           <CaretRightIcon className="h-5 w-5" weight="bold" aria-hidden />
         </button>
       </div>
+
+      {pickerOpen && (
+        <div className="studio-cal-deck__picker">
+          <SelectMenu
+            variant="studio"
+            label={C.month}
+            value={month.getMonth()}
+            options={monthOptions}
+            widthClassName="flex-1 min-w-0"
+            onChange={(mm) => {
+              onMonthChange(new Date(month.getFullYear(), Number(mm), 1));
+              setPickerOpen(false);
+            }}
+          />
+          <SelectMenu
+            variant="studio"
+            label={C.year}
+            value={month.getFullYear()}
+            options={yearOptions}
+            widthClassName="w-[6.5rem]"
+            onChange={(yy) => {
+              onMonthChange(new Date(Number(yy), month.getMonth(), 1));
+              setPickerOpen(false);
+            }}
+          />
+        </div>
+      )}
 
       <div ref={datesRef} className="studio-cal-deck__dates" role="listbox" aria-label={C.title}>
         {days.map((day) => {
@@ -241,6 +306,7 @@ function DeckCard({
       <div className="studio-cal-deck__slide-copy">
         <p className="studio-cal-deck__slide-title">{item.title}</p>
         {text ? <p className="studio-cal-deck__slide-text">{text}</p> : null}
+        <ContentStatusBadge status={item.status} />
       </div>
     </button>
   );

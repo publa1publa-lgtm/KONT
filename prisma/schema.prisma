@@ -22,6 +22,8 @@ enum PlatformKind {
   LINKEDIN
   PINTEREST
   GOOGLE_DRIVE
+  GOOGLE_SHEETS
+  GOOGLE_CALENDAR
 }
 
 enum PlatformAccountStatus {
@@ -510,4 +512,5 @@ model AuditLog {
 
   @@index([userId, createdAt])
   @@index([action, createdAt])
+  @@index([entityType, entityId])
 }

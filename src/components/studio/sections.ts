@@ -5,6 +5,7 @@ import {
   CalendarDotsIcon,
   ChartLineUpIcon,
   FlaskIcon,
+  HardDrivesIcon,
   ImagesIcon,
   PenNibIcon,
   PlugsConnectedIcon,
@@ -49,11 +50,12 @@ export const SECTIONS: Record<SectionId, StudioSection> = {
     id: "manage",
     gridClass: "grid-cols-6 grid-rows-6",
     items: [
-      { id: "calendar", icon: CalendarDotsIcon, area: "1 / 1 / 7 / 5" },
-      { id: "accounts", icon: PlugsConnectedIcon, area: "1 / 5 / 3 / 7" },
       { id: "events", icon: CalendarBlankIcon, area: "3 / 5 / 5 / 6" },
       { id: "media", icon: ImagesIcon, area: "3 / 6 / 5 / 7" },
-      { id: "inbox", icon: TrayIcon, area: "5 / 5 / 7 / 7" },
+      { id: "inbox", icon: TrayIcon, area: "5 / 5 / 7 / 6" },
+      { id: "storage", icon: HardDrivesIcon, area: "5 / 6 / 7 / 7" },
+      { id: "calendar", icon: CalendarDotsIcon, area: "1 / 1 / 7 / 5" },
+      { id: "platforms", icon: PlugsConnectedIcon, area: "1 / 5 / 3 / 7" },
     ],
   },
   grow: {

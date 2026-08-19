@@ -87,7 +87,6 @@ export function EventsView() {
 
   const actionLabels = {
     edit: C.edit,
-    duplicate: C.duplicate,
     archive: C.archive,
     delete: C.delete,
   };
@@ -128,12 +127,10 @@ export function EventsView() {
                       <ContentTableActions
                         iconsOnly
                         labels={actionLabels}
-                        duplicateBusy={false}
                         onEdit={() => {
                           setEditingId(item.id);
                           setComposerOpen(true);
                         }}
-                        onDuplicate={() => undefined}
                         onArchive={() => setConfirmArchiveId(item.id)}
                         onDelete={() => setConfirmDeleteId(item.id)}
                       />

@@ -18,6 +18,9 @@ Then set at least:
 | --- | --- |
 | `DATABASE_URL` | Postgres connection string |
 | `AUTH_SECRET` | Random string for session cookies (generate: `openssl rand -base64 32`) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI` | YouTube OAuth (`…/api/youtube/oauth/callback`) |
+| `GOOGLE_DRIVE_REDIRECT_URI` | Drive/Sheets/Calendar OAuth (`…/api/google-drive/oauth/callback`) |
+| `META_APP_ID` / `META_APP_SECRET` / `META_REDIRECT_URI` | Facebook + Instagram OAuth (`…/api/meta/oauth/callback`). Optional `META_GRAPH_VERSION` (default `v21.0`). |
 
 Start Postgres (local or hosted), then:
 

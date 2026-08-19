@@ -30,7 +30,7 @@ function CalendarPanel(_props: StudioItemViewProps) {
   return <CalendarView />;
 }
 
-function AccountsPanel(_props: StudioItemViewProps) {
+function PlatformsPanel(_props: StudioItemViewProps) {
   return <PlatformsView />;
 }
 
@@ -43,7 +43,8 @@ export const ITEM_REGISTRY: Record<string, ItemViewEntry> = {
   content: { wired: true, View: ContentPanel },
   calendar: { wired: true, View: CalendarPanel },
   inbox: { wired: false },
-  accounts: { wired: true, View: AccountsPanel },
+  storage: { wired: false },
+  platforms: { wired: true, View: PlatformsPanel },
   automations: { wired: true, View: AutomationsPanel },
   bot: { wired: false },
   events: { wired: true, View: EventsPanel },

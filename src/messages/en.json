@@ -265,7 +265,7 @@
         "automation": "Automations",
         "dashboard": "Dashboard",
         "inbox": "Inbox",
-        "accounts": "Accounts",
+        "platforms": "Platforms",
         "insights": "Insights",
         "audience": "Audience"
       },
@@ -675,7 +675,7 @@
       "statusPosted": "Posted",
       "statusArchived": "Archived",
       "edit": "Edit",
-      "duplicate": "Copy",
+      "toDraft": "To draft",
       "archive": "Archive",
       "delete": "Delete",
       "duplicateTitleSuffix": " (copy)",
@@ -767,14 +767,17 @@
         "couldNotLoadContent": "Could not load content.",
         "loadFailed": "Load failed",
         "saveFailed": "Save failed",
+        "toDraftFailed": "Could not move to draft",
         "archiveFailed": "Archive failed",
         "deleteFailed": "Delete failed",
-        "duplicateFailed": "Could not duplicate",
         "pickDateTime": "Pick a date and time.",
         "pickDate": "Pick a date.",
         "videoRequired": "Video is required."
       },
       "dialogs": {
+        "toDraftTitle": "Move to draft",
+        "toDraftMessage": "This becomes a draft in KONT. The post on social networks stays as it is.",
+        "toDraftConfirm": "To draft",
         "archiveTitle": "Archive content",
         "archiveMessage": "Move this item to the archive? It will be hidden from the calendar and not published.",
         "archiveConfirm": "Archive",
@@ -813,6 +816,10 @@
       "revokeConfirmTitle": "Disconnect {platform}?",
       "revokeConfirmMessage": "This account will be removed from Connected platforms. You can connect it again later.",
       "revokeConfirm": "Disconnect",
+      "logTime": "Time",
+      "logEvent": "Event",
+      "logInfo": "Info",
+      "logConnect": "Connect",
       "manageDetails": "Details",
       "manageSettings": "Settings",
       "manageLogs": "Logs",
@@ -830,8 +837,18 @@
       "youtubeScopeMismatch": "Google approved a different set of permissions than you selected in KONT.",
       "youtubeScopeMissing": "Not granted on Google: {list}",
       "youtubeScopeExtra": "Also granted on Google: {list}",
+      "scopeMismatch": "The provider approved a different set of permissions than you selected.",
+      "scopeMissing": "Not granted: {list}",
+      "scopeExtra": "Also granted: {list}",
       "driveConnectFailed": "Google Drive: could not connect account",
-      "driveDenied": "Google Drive: access was denied. You can try connecting again."
+      "driveDenied": "Google Drive: access was denied. You can try connecting again.",
+      "facebookConnectFailed": "Facebook: could not connect the Page",
+      "facebookDenied": "Facebook: access was denied. You can try connecting again.",
+      "facebookNoPages": "Facebook: no Pages were found. Create a Page and grant access to pages you manage.",
+      "instagramConnectFailed": "Instagram: could not connect the account",
+      "instagramDenied": "Instagram: access was denied. You can try connecting again.",
+      "instagramNoAccount": "Instagram: no professional account is linked to a Facebook Page. Convert to Business/Creator and link it in Meta Business Suite.",
+      "metaLongLivedFailed": "Meta: could not create a long-lived token. Confirm META_APP_ID / META_APP_SECRET and that Facebook Login returned a user token."
     },
     "inbox": {
       "label": "Inbox",
@@ -1021,12 +1038,16 @@
         "label": "Inbox",
         "hint": "Every reply, one desk"
       },
+      "storage": {
+        "label": "Storage",
+        "hint": "Drive, sheets, and assets"
+      },
       "media": {
         "label": "Media",
         "hint": "Posts and reels in one place"
       },
-      "accounts": {
-        "label": "Accounts",
+      "platforms": {
+        "label": "Platforms",
         "hint": "All channels, one link"
       },
       "queue": {
@@ -1071,6 +1092,10 @@
       },
       "inbox": {
         "body": "One desk for comments, DMs, and mentions across connected channels — still on the list.",
+        "primary": "Join the waitlist"
+      },
+      "storage": {
+        "body": "A calm place for connected storage — Google Drive files, Sheets sources, and future synced assets.",
         "primary": "Join the waitlist"
       },
       "sub": {

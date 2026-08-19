@@ -26,6 +26,8 @@ export const PLATFORM_BRAND_ACCENT: Record<string, string> = {
   email: "#64748B",
   notion: "#37352F",
   googleDrive: "#4285F4",
+  googleSheets: "#0F9D58",
+  googleCalendar: "#4285F4",
   dropbox: "#0061FF",
 };
 

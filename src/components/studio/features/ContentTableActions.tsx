@@ -1,4 +1,4 @@
-import { Archive, Copy, PencilLine, Trash2, type LucideIcon } from "lucide-react";
+import { Archive, PencilLine, Trash2, Undo2, type LucideIcon } from "lucide-react";
 
 type ActionTone = "default" | "muted" | "danger";
 
@@ -16,10 +16,7 @@ const labelClassCompact =
 
 const iconShellCompact = "flex h-7 w-7 items-center justify-center rounded-full border transition-colors duration-200";
 
-const toneStyles: Record<
-  ActionTone,
-  { chip: string; icon: string; label: string }
-> = {
+const toneStyles: Record<ActionTone, { chip: string; icon: string; label: string }> = {
   default: {
     chip: "text-[var(--fg)] hover:bg-[var(--studio-nav-hover)] hover:shadow-[inset_0_0_0_1px_var(--studio-nav-active-ring)]",
     icon: "border-[var(--nav-border)] bg-[var(--nav-item)] text-[var(--muted)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:border-[var(--line)] group-hover:bg-[var(--nav-item-hover)] group-hover:text-[var(--fg)]",
@@ -102,29 +99,27 @@ function ActionChip({
 
 export type ContentTableActionsLabels = {
   edit: string;
-  duplicate: string;
-  archive: string;
   delete: string;
+  archive?: string;
+  toDraft?: string;
 };
 
 type ContentTableActionsProps = {
   labels: ContentTableActionsLabels;
-  onEdit: () => void;
-  onDuplicate: () => void;
-  onArchive: () => void;
   onDelete: () => void;
-  duplicateBusy?: boolean;
+  onEdit?: () => void;
+  onArchive?: () => void;
+  onToDraft?: () => void;
   compact?: boolean;
   iconsOnly?: boolean;
 };
 
 export function ContentTableActions({
   labels,
-  onEdit,
-  onDuplicate,
-  onArchive,
   onDelete,
-  duplicateBusy = false,
+  onEdit,
+  onArchive,
+  onToDraft,
   compact = false,
   iconsOnly = false,
 }: ContentTableActionsProps) {
@@ -137,38 +132,34 @@ export function ContentTableActions({
       onClick={(e) => e.stopPropagation()}
       role="toolbar"
     >
-      <ActionChip
-        compact={compact}
-        iconsOnly={iconsOnly}
-        icon={PencilLine}
-        label={labels.edit}
-        onClick={onEdit}
-        tone="default"
-      />
-      <ActionChip
-        compact={compact}
-        iconsOnly={iconsOnly}
-        icon={Copy}
-        label={labels.duplicate}
-        onClick={onDuplicate}
-        tone="default"
-        disabled={duplicateBusy}
-      />
-      <ActionChip
-        compact={compact}
-        iconsOnly={iconsOnly}
-        icon={Archive}
-        label={labels.archive}
-        onClick={onArchive}
-        tone="muted"
-      />
+      {onEdit ? (
+        <ActionChip compact={compact} iconsOnly={iconsOnly} icon={PencilLine} label={labels.edit} onClick={onEdit} />
+      ) : null}
+      {onToDraft && labels.toDraft ? (
+        <ActionChip
+          compact={compact}
+          iconsOnly={iconsOnly}
+          icon={Undo2}
+          label={labels.toDraft}
+          onClick={onToDraft}
+          tone="muted"
+        />
+      ) : null}
+      {onArchive && labels.archive ? (
+        <ActionChip
+          compact={compact}
+          iconsOnly={iconsOnly}
+          icon={Archive}
+          label={labels.archive}
+          onClick={onArchive}
+          tone="muted"
+        />
+      ) : null}
       <span
         className={
           iconsOnly
             ? "mx-px w-px shrink-0 self-stretch bg-[var(--line)]"
-            : compact
-              ? "mx-0.5 my-2 w-px shrink-0 self-stretch bg-[var(--line)]"
-              : "mx-0.5 my-2 w-px shrink-0 self-stretch bg-[var(--line)]"
+            : "mx-0.5 my-2 w-px shrink-0 self-stretch bg-[var(--line)]"
         }
         aria-hidden
       />

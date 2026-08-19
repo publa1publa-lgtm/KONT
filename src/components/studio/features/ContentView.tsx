@@ -16,7 +16,6 @@ import { StudioWrapperList, StudioWrapperListBody, StudioWrapperListRow, studioW
 import {
   CONTENT_LIST_CHANGED_EVENT,
   deleteContent,
-  duplicateContentAsDraft,
   fetchContents,
   notifyContentListChanged,
   updateContent,
@@ -275,10 +274,8 @@ function ContentLibraryRow({
   labels,
   platformLabels,
   actionLabels,
-  duplicateBusy,
   onEdit,
-  onDuplicate,
-  onArchive,
+  onToDraft,
   onDelete,
 }: {
   item: PublishableListItem;
@@ -290,16 +287,14 @@ function ContentLibraryRow({
     statusScheduled: string;
     statusPosted: string;
     statusArchived: string;
+    tableStatus: string;
     tablePlatforms: string;
     tableScheduled: string;
-    tableCreated: string;
   };
   platformLabels: ContentPlatformLabels;
-  actionLabels: { edit: string; duplicate: string; archive: string; delete: string };
-  duplicateBusy: boolean;
+  actionLabels: { edit: string; toDraft: string; delete: string };
   onEdit: () => void;
-  onDuplicate: () => void;
-  onArchive: () => void;
+  onToDraft: () => void;
   onDelete: () => void;
 }) {
   const thumb = contentThumbUrl(item);
@@ -368,10 +363,8 @@ function ContentLibraryRow({
           <ContentTableActions
             iconsOnly
             labels={actionLabels}
-            duplicateBusy={duplicateBusy}
-            onEdit={onEdit}
-            onDuplicate={onDuplicate}
-            onArchive={onArchive}
+            onEdit={displayStatus === "draft" ? onEdit : undefined}
+            onToDraft={displayStatus !== "draft" ? onToDraft : undefined}
             onDelete={onDelete}
           />
         </div>
@@ -393,9 +386,11 @@ function ContentLibraryRow({
           <span className="studio-library-row__created-rule hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
           <span className="studio-library-row__created inline-flex items-center gap-1.5">
             <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-              {labels.tableCreated}
+              {labels.tableStatus}
             </span>
-            <MetaDate createdAt={item.createdAt} />
+            <span className={statusBadgeClass(displayStatus)} title={statusLabel}>
+              {statusLabel}
+            </span>
           </span>
         </div>
 
@@ -413,10 +408,8 @@ function ContentLibraryGridCell({
   item,
   labels,
   actionLabels,
-  duplicateBusy,
   onEdit,
-  onDuplicate,
-  onArchive,
+  onToDraft,
   onDelete,
 }: {
   item: PublishableListItem;
@@ -426,16 +419,15 @@ function ContentLibraryGridCell({
     statusPosted: string;
     statusArchived: string;
   };
-  actionLabels: { edit: string; duplicate: string; archive: string; delete: string };
-  duplicateBusy: boolean;
+  actionLabels: { edit: string; toDraft: string; delete: string };
   onEdit: () => void;
-  onDuplicate: () => void;
-  onArchive: () => void;
+  onToDraft: () => void;
   onDelete: () => void;
 }) {
   const thumb = contentThumbUrl(item);
   const isReel = item.kind === "reel";
   const displayStatus = displayStatusFor(item);
+  const isDraft = displayStatus === "draft";
   const statusLabel =
     displayStatus === "scheduled"
       ? labels.statusScheduled
@@ -449,7 +441,7 @@ function ContentLibraryGridCell({
     <li className="studio-library-grid__cell group relative aspect-square list-none overflow-hidden bg-[var(--studio-surface-3)]">
       <button
         type="button"
-        onClick={onEdit}
+        onClick={isDraft ? onEdit : undefined}
         className="absolute inset-0 z-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ice)]/55"
         aria-label={item.title}
       >
@@ -511,10 +503,8 @@ function ContentLibraryGridCell({
           <ContentTableActions
             iconsOnly
             labels={actionLabels}
-            duplicateBusy={duplicateBusy}
-            onEdit={onEdit}
-            onDuplicate={onDuplicate}
-            onArchive={onArchive}
+            onEdit={isDraft ? onEdit : undefined}
+            onToDraft={!isDraft ? onToDraft : undefined}
             onDelete={onDelete}
           />
         </div>
@@ -536,10 +526,9 @@ export function ContentView() {
   const [layout, setLayout] = useState<ContentLayoutMode>("list");
   const [composerOpen, setComposerOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [confirmArchiveId, setConfirmArchiveId] = useState<string | null>(null);
+  const [confirmDraftId, setConfirmDraftId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [actionBusy, setActionBusy] = useState(false);
-  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
 
   const editingItem = useMemo(
     () => (editingId ? rawItems.find((i) => i.id === editingId) ?? null : null),
@@ -628,15 +617,15 @@ export function ContentView() {
   const openEdit = useCallback(
     async (id: string) => {
       setError(null);
-      const found = rawItems.some((i) => i.id === id);
-      if (!found) {
+      let item = rawItems.find((i) => i.id === id) ?? null;
+      if (!item) {
         try {
           const { items: raw, unauthorized } = await fetchContents();
           if (unauthorized) {
             setError(E.signInToEdit);
             return;
           }
-          const item = raw.find((i) => i.id === id) ?? null;
+          item = raw.find((i) => i.id === id) ?? null;
           if (!item) {
             setError(E.couldNotOpenForEditing);
             return;
@@ -648,41 +637,20 @@ export function ContentView() {
           return;
         }
       }
+      if (String(item.status).toUpperCase() !== "DRAFT") return;
       setEditingId(id);
       setComposerOpen(true);
     },
     [E.couldNotLoadContent, E.couldNotOpenForEditing, E.signInToEdit, rawItems],
   );
 
-  const handleDuplicate = useCallback(
-    async (id: string) => {
-      const source = rawItems.find((i) => i.id === id);
-      if (!source) {
-        setError(E.couldNotLoadContent);
-        return;
-      }
-      setDuplicatingId(id);
-      setError(null);
-      try {
-        await duplicateContentAsDraft(source, `${source.title}${C.duplicateTitleSuffix}`);
-        notifyContentListChanged();
-      } catch (e) {
-        setError(e instanceof Error ? e.message : E.duplicateFailed);
-      } finally {
-        setDuplicatingId(null);
-      }
-    },
-    [C.duplicateTitleSuffix, E.couldNotLoadContent, E.duplicateFailed, rawItems],
-  );
-
   const actionLabels = useMemo(
     () => ({
       edit: C.edit,
-      duplicate: C.duplicate,
-      archive: C.archive,
+      toDraft: C.toDraft,
       delete: C.delete,
     }),
-    [C.archive, C.delete, C.duplicate, C.edit],
+    [C.delete, C.edit, C.toDraft],
   );
 
   const rowCopy = useMemo(
@@ -694,18 +662,18 @@ export function ContentView() {
       statusScheduled: C.statusScheduled,
       statusPosted: C.statusPosted,
       statusArchived: C.statusArchived,
+      tableStatus: C.tableStatus,
       tablePlatforms: C.tablePlatforms,
       tableScheduled: C.tableScheduled,
-      tableCreated: C.tableCreated,
     }),
     [
       C.statusArchived,
       C.statusDraft,
       C.statusPosted,
       C.statusScheduled,
-      C.tableCreated,
       C.tablePlatforms,
       C.tableScheduled,
+      C.tableStatus,
       C.typeEvent,
       C.typePost,
       C.typeReel,
@@ -759,10 +727,8 @@ export function ContentView() {
                       item={p}
                       labels={rowCopy}
                       actionLabels={actionLabels}
-                      duplicateBusy={duplicatingId === p.id}
                       onEdit={() => void openEdit(p.id)}
-                      onDuplicate={() => void handleDuplicate(p.id)}
-                      onArchive={() => setConfirmArchiveId(p.id)}
+                      onToDraft={() => setConfirmDraftId(p.id)}
                       onDelete={() => setConfirmDeleteId(p.id)}
                     />
                   ))}
@@ -782,10 +748,8 @@ export function ContentView() {
                       labels={rowCopy}
                       platformLabels={platformLabels}
                       actionLabels={actionLabels}
-                      duplicateBusy={duplicatingId === p.id}
                       onEdit={() => void openEdit(p.id)}
-                      onDuplicate={() => void handleDuplicate(p.id)}
-                      onArchive={() => setConfirmArchiveId(p.id)}
+                      onToDraft={() => setConfirmDraftId(p.id)}
                       onDelete={() => setConfirmDeleteId(p.id)}
                     />
                   ))
@@ -883,23 +847,23 @@ export function ContentView() {
       />
 
       <ConfirmDialog
-        open={confirmArchiveId !== null}
-        title={D.archiveTitle}
-        message={D.archiveMessage}
-        confirmLabel={D.archiveConfirm}
+        open={confirmDraftId !== null}
+        title={D.toDraftTitle}
+        message={D.toDraftMessage}
+        confirmLabel={D.toDraftConfirm}
         variant="default"
         busy={actionBusy}
-        onClose={() => !actionBusy && setConfirmArchiveId(null)}
+        onClose={() => !actionBusy && setConfirmDraftId(null)}
         onConfirm={async () => {
-          if (!confirmArchiveId) return;
+          if (!confirmDraftId) return;
           setActionBusy(true);
           setError(null);
           try {
-            await updateContent(confirmArchiveId, { status: "ARCHIVED" });
+            await updateContent(confirmDraftId, { status: "DRAFT", scheduledAt: null });
             notifyContentListChanged();
-            setConfirmArchiveId(null);
+            setConfirmDraftId(null);
           } catch (e) {
-            setError(e instanceof Error ? e.message : E.archiveFailed);
+            setError(e instanceof Error ? e.message : E.toDraftFailed);
           } finally {
             setActionBusy(false);
           }

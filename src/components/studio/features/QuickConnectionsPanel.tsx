@@ -9,27 +9,8 @@ import { ConnectionToggle } from "./ConnectionToggle";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { PLATFORM_PANEL_SURFACE_CLASS } from "./platformCardStyles";
 import { StudioWrapperList, studioWrapperList } from "./StudioWrapperList";
-import { permissionLabel, type PlatformId as PermissionPlatformId } from "./PlatformPermissionsModal";
-
-type PlatformId =
-  | "youtube"
-  | "tiktok"
-  | "instagram"
-  | "facebook"
-  | "pinterest"
-  | "linkedin"
-  | "telegram"
-  | "notion"
-  | "googleDrive"
-  | "dropbox"
-  | "email"
-  | "discord";
-
-type ConnectedAccount = {
-  displayName: string;
-  connectedAt: number;
-  lastSyncAt: number | null;
-};
+import { permissionLabel } from "./PlatformPermissionsModal";
+import { formatRelative, type PlatformId, type ConnectedAccount } from "./platformShared";
 
 export type QuickConnectionsActive = {
   meta: {
@@ -46,17 +27,6 @@ export type QuickConnectionsActive = {
     grantedPermissionIds?: string[];
   };
 };
-
-function formatRelative(ms: number): string {
-  const d = Math.max(0, Date.now() - ms);
-  const min = Math.round(d / 60_000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min}m ago`;
-  const h = Math.round(min / 60);
-  if (h < 48) return `${h}h ago`;
-  const days = Math.round(h / 24);
-  return `${days}d ago`;
-}
 
 type TabId = "details" | "settings" | "logs";
 
@@ -110,7 +80,9 @@ export function QuickConnectionsPanel({
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-semibold leading-snug text-[var(--fg)]">{P.youtubeScopeMismatch}</p>
+                <p className="text-sm font-semibold leading-snug text-[var(--fg)]">
+                  {active.meta.id === "youtube" || active.meta.id === "googleDrive" ? P.youtubeScopeMismatch : P.scopeMismatch}
+                </p>
                 {onDismissScopeNotice ? (
                   <button
                     type="button"
@@ -123,16 +95,18 @@ export function QuickConnectionsPanel({
               </div>
               {scopeNotice.missingIds.length ? (
                 <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
-                  {formatTemplate(P.youtubeScopeMissing, {
-                    list: scopeNotice.missingIds.map((id) => permissionLabel(active.meta.id as PermissionPlatformId, id)).join(", "),
-                  })}
+                  {formatTemplate(
+                    active.meta.id === "youtube" || active.meta.id === "googleDrive" ? P.youtubeScopeMissing : P.scopeMissing,
+                    { list: scopeNotice.missingIds.map((id) => permissionLabel(active.meta.id, id)).join(", ") },
+                  )}
                 </p>
               ) : null}
               {scopeNotice.extraIds.length ? (
                 <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
-                  {formatTemplate(P.youtubeScopeExtra, {
-                    list: scopeNotice.extraIds.map((id) => permissionLabel(active.meta.id as PermissionPlatformId, id)).join(", "),
-                  })}
+                  {formatTemplate(
+                    active.meta.id === "youtube" || active.meta.id === "googleDrive" ? P.youtubeScopeExtra : P.scopeExtra,
+                    { list: scopeNotice.extraIds.map((id) => permissionLabel(active.meta.id, id)).join(", ") },
+                  )}
                 </p>
               ) : null}
             </div>
@@ -205,7 +179,7 @@ export function QuickConnectionsPanel({
                   : ["account.identity"]
                 ).map((perm) => (
                   <div key={perm} className="flex items-center justify-between gap-3">
-                    <span className="truncate">{permissionLabel(active.meta.id as PermissionPlatformId, perm)}</span>
+                    <span className="truncate">{permissionLabel(active.meta.id, perm)}</span>
                     <span className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
                       {connected ? P.live : P.available}
                     </span>
@@ -247,37 +221,37 @@ export function QuickConnectionsPanel({
             <table className={`${studioWrapperList.table} studio-stack-table`}>
               <thead className={studioWrapperList.thead}>
                 <tr>
-                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Time</th>
-                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Event</th>
-                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>Info</th>
+                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>{P.logTime}</th>
+                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>{P.logEvent}</th>
+                  <th className={`${studioWrapperList.th} px-4 py-3 text-start`}>{P.logInfo}</th>
                 </tr>
               </thead>
               <tbody className={studioWrapperList.tbody}>
                 <tr className={studioWrapperList.tr}>
                   <td
-                    data-label="Time"
+                    data-label={P.logTime}
                     className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
                   >
                     {active.state.account?.lastSyncAt ? formatRelative(active.state.account.lastSyncAt) : "—"}
                   </td>
-                  <td data-label="Event" className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>
-                    Sync
+                  <td data-label={P.logEvent} className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>
+                    {P.sync}
                   </td>
-                  <td data-label="Info" className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                  <td data-label={P.logInfo} className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
                     {P.lastSync}
                   </td>
                 </tr>
                 <tr className={studioWrapperList.tr}>
                   <td
-                    data-label="Time"
+                    data-label={P.logTime}
                     className={`${studioWrapperList.td} px-4 py-3 font-mono text-xs text-[var(--st-muted)]`}
                   >
                     {active.state.account?.connectedAt ? formatRelative(active.state.account.connectedAt) : "—"}
                   </td>
-                  <td data-label="Event" className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>
-                    {connected ? "Connect" : P.disconnect}
+                  <td data-label={P.logEvent} className={`${studioWrapperList.td} px-4 py-3 font-medium text-[var(--st-ink)]`}>
+                    {connected ? P.logConnect : P.disconnect}
                   </td>
-                  <td data-label="Info" className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
+                  <td data-label={P.logInfo} className={`${studioWrapperList.td} px-4 py-3 text-xs text-[var(--st-muted)]`}>
                     {active.meta.label}
                   </td>
                 </tr>

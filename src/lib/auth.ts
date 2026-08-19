@@ -1,9 +1,13 @@
 import crypto from "node:crypto";
 
-const TOKEN_COOKIE = "cf_session";
-const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 14; // 14 days
+import { SESSION_IDLE_SECONDS } from "@/lib/sessionTtl";
 
-export const SESSION_TTL_SECONDS = TOKEN_TTL_SECONDS;
+const TOKEN_COOKIE = "cf_session";
+/** JWT signature lifetime; idle is enforced via lastSeenAt, not this. */
+const SESSION_JWT_SECONDS = 60 * 60 * 24 * 7;
+
+export { SESSION_IDLE_SECONDS };
+export const SESSION_TTL_SECONDS = SESSION_IDLE_SECONDS;
 
 function getAuthSecret(): string {
   const s = process.env.AUTH_SECRET;
@@ -57,7 +61,7 @@ export function createSessionToken(payload: { userId: string; sessionId: string;
     sid: payload.sessionId,
     jti: payload.jti,
     iat: now,
-    exp: now + TOKEN_TTL_SECONDS,
+    exp: now + SESSION_JWT_SECONDS,
   };
   const signingInput = `${b64urlEncodeJson(header)}.${b64urlEncodeJson(body)}`;
   const sig = crypto.createHmac("sha256", getAuthSecret()).update(signingInput).digest();
@@ -104,7 +108,7 @@ export function sessionCookieOptions(): {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: TOKEN_TTL_SECONDS,
+      maxAge: SESSION_IDLE_SECONDS,
     },
   };
 }

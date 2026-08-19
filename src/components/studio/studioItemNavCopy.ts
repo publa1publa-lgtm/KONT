@@ -14,7 +14,7 @@ export function getStudioItemNavCopy(itemId: string, messages: AppMessages): Stu
     media: messages.studio.content?.subtitle,
     calendar: messages.calendar.subtitle,
     inbox: messages.studio.itemDetails?.inbox?.body,
-    accounts: messages.studio.platforms?.connectedSubtitle,
+    platforms: messages.studio.platforms?.connectedSubtitle,
     automations: messages.studio.placeholders?.pickAutomations,
     bot: messages.studio.placeholders?.pickBots,
   };

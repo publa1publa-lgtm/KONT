@@ -2,6 +2,10 @@ export const DRIVE_SCOPE_BY_PERMISSION_ID = {
   openid: "openid",
   "drive.file": "https://www.googleapis.com/auth/drive.file",
   "drive.readonly": "https://www.googleapis.com/auth/drive.readonly",
+  "spreadsheets": "https://www.googleapis.com/auth/spreadsheets",
+  "spreadsheets.readonly": "https://www.googleapis.com/auth/spreadsheets.readonly",
+  "calendar.events": "https://www.googleapis.com/auth/calendar.events",
+  "calendar.readonly": "https://www.googleapis.com/auth/calendar.readonly",
 } as const;
 
 export type DriveScopePermissionId = keyof typeof DRIVE_SCOPE_BY_PERMISSION_ID;

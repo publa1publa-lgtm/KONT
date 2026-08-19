@@ -3,7 +3,7 @@ import { AuditAction, ContentStatus, Prisma } from "@prisma/client";
 
 import { internalError } from "@/lib/api/errors";
 import { asMediaIds, setContentMainMedia } from "@/lib/media/link";
-import { publishContentTargets, youtubeWasRequested } from "@/lib/publish/run";
+import { publishContentTargets } from "@/lib/publish/run";
 import { toMediaAssetDto } from "@/lib/media/dto";
 import { auditContextFromRequest, writeAudit } from "@/lib/audit";
 import { asRecord, asString, asStringArray } from "@/lib/api/parse";
@@ -11,6 +11,12 @@ import { badRequest, json, notFound } from "@/lib/api/http";
 import { requireUser } from "@/lib/api/httpAuth";
 import { parseContentListPageSize, parseContentStatus } from "@/lib/api/contentParse";
 import * as contentRepo from "@/lib/repos/contentRepo";
+
+function parseScheduledAt(raw: string | null | undefined): Date | null {
+  if (!raw || !raw.trim()) return null;
+  const d = new Date(raw);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
 
 export async function listContent(req: Request): Promise<NextResponse> {
   const userId = await requireUser();
@@ -63,14 +69,7 @@ export async function createContent(req: Request): Promise<NextResponse> {
   const hashtags = asStringArray(body.hashtags);
   const tags = asStringArray(body.tags);
 
-  const scheduledRaw = asString(body.scheduledAt);
-  const scheduledAt =
-    scheduledRaw && scheduledRaw.length > 0
-      ? (() => {
-          const d = new Date(scheduledRaw);
-          return Number.isNaN(d.getTime()) ? null : d;
-        })()
-      : null;
+  const scheduledAt = parseScheduledAt(asString(body.scheduledAt));
 
   const metaRaw = body.metadata;
   const metadata =
@@ -109,11 +108,9 @@ export async function createContent(req: Request): Promise<NextResponse> {
       }
     }
 
-    const publish = await publishContentTargets(userId, created.id);
-    if (type === "REEL" && youtubeWasRequested(metadata) && publish.youtube && !publish.youtube.ok) {
-      await contentRepo.hardDeleteContent(created.id).catch(() => {});
-      return json({ error: publish.youtube.error, code: publish.youtube.code }, 502);
-    }
+    void publishContentTargets(userId, created.id).catch((err) =>
+      console.error("[content.create] background publish failed", err),
+    );
 
     void writeAudit({
       userId,
@@ -121,11 +118,11 @@ export async function createContent(req: Request): Promise<NextResponse> {
       action: AuditAction.CONTENT_CREATED,
       entityType: "Content",
       entityId: created.id,
-      metadata: { type: created.type, status: created.status, youtubeVideoId: publish.youtube && publish.youtube.ok ? publish.youtube.videoId : null },
+      metadata: { type: created.type, status: created.status },
     });
 
     const fresh = await contentRepo.findContentById(created.id);
-    return json({ ...(fresh ?? created), publish }, 201);
+    return json({ ...(fresh ?? created), publishing: true }, 201);
   } catch (e) {
     return internalError("[POST /api/content]", e, "Could not create content");
   }
@@ -162,14 +159,7 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
   if ("tags" in body) data.tags = asStringArray(body.tags);
 
   if ("scheduledAt" in body) {
-    const scheduledRaw = asString(body.scheduledAt);
-    data.scheduledAt =
-      scheduledRaw && scheduledRaw.length > 0
-        ? (() => {
-            const d = new Date(scheduledRaw);
-            return Number.isNaN(d.getTime()) ? null : d;
-          })()
-        : null;
+    data.scheduledAt = parseScheduledAt(asString(body.scheduledAt));
   }
 
   if ("metadata" in body) {
@@ -211,11 +201,9 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
       }
     }
 
-    const fresh = await contentRepo.findContentById(id);
-    const publish = await publishContentTargets(userId, id);
-    if (existing.type === "REEL" && youtubeWasRequested(fresh?.metadata) && publish.youtube && !publish.youtube.ok) {
-      return json({ error: publish.youtube.error, code: publish.youtube.code }, 502);
-    }
+    void publishContentTargets(userId, id).catch((err) =>
+      console.error("[content.patch] background publish failed", err),
+    );
 
     void writeAudit({
       userId,
@@ -226,7 +214,8 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
       metadata: { fields: Object.keys(data) },
     });
 
-    return json({ ...fresh, publish });
+    const fresh = await contentRepo.findContentById(id);
+    return json({ ...fresh, publishing: true });
   } catch (e) {
     return internalError("[PATCH /api/content/:id]", e, "Could not update content");
   }

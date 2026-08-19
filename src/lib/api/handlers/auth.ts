@@ -11,7 +11,7 @@ import { clientKeyFromRequest, rateLimit } from "@/lib/api/rateLimit";
 import * as userRepo from "@/lib/repos/userRepo";
 
 export async function postLogin(req: Request): Promise<NextResponse> {
-  const rl = rateLimit(clientKeyFromRequest(req, "auth:login"), { limit: 30, windowMs: 15 * 60_000 });
+  const rl = await rateLimit(clientKeyFromRequest(req, "auth:login"), { limit: 30, windowMs: 15 * 60_000 });
   if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
 
   const body = await readJsonRecord(req);
@@ -46,7 +46,7 @@ export async function postLogin(req: Request): Promise<NextResponse> {
 }
 
 export async function postRegister(req: Request): Promise<NextResponse> {
-  const rl = rateLimit(clientKeyFromRequest(req, "auth:register"), { limit: 12, windowMs: 60 * 60_000 });
+  const rl = await rateLimit(clientKeyFromRequest(req, "auth:register"), { limit: 12, windowMs: 60 * 60_000 });
   if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
 
   const body = await readJsonRecord(req);

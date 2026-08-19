@@ -67,7 +67,7 @@ export function ProductSection() {
           </div>
 
           <div className="nh-constellation__col nh-constellation__col--right">
-            <FloatCard variant="accounts" icon={Link2} kicker={tabs.accounts} chip="5 live" delay={0.1}>
+            <FloatCard variant="accounts" icon={Link2} kicker={tabs.platforms} chip="5 live" delay={0.1}>
               <AccountsWidget />
             </FloatCard>
 

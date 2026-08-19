@@ -2,7 +2,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
-import { cookieName, sha256Hex, verifySessionToken } from "./auth";
+import { cookieName, SESSION_IDLE_SECONDS, sha256Hex, verifySessionToken } from "./auth";
 
 export type VerifiedSession = {
   userId: string;
@@ -35,9 +35,16 @@ export const getVerifiedSession = cache(async (): Promise<VerifiedSession | null
   const expected = sha256Hex(`${decoded.sessionId}:${decoded.jti}`);
   if (sess.tokenHash !== expected) return null;
 
+  const idleMs = SESSION_IDLE_SECONDS * 1000;
+  if (Date.now() - sess.lastSeenAt.getTime() > idleMs) return null;
+
   if (Date.now() - sess.lastSeenAt.getTime() > 60_000) {
+    const now = new Date();
     void prisma.session
-      .update({ where: { id: sess.id }, data: { lastSeenAt: new Date() } })
+      .update({
+        where: { id: sess.id },
+        data: { lastSeenAt: now, expiresAt: new Date(now.getTime() + idleMs) },
+      })
       .catch(() => {});
   }
 

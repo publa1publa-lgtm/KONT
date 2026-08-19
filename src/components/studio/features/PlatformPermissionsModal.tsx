@@ -8,36 +8,12 @@ import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { formatTemplate } from "@/lib/formatTemplate";
 import { INBOX_UNIFIED_PERMISSION_ID } from "@/lib/studioInboxPermissions";
 import { driveScopesForPermissionIds } from "@/lib/google-drive/permissions";
+import { metaScopesForPermissionIds } from "@/lib/meta/permissions";
 import { youtubeScopesForPermissionIds } from "@/lib/youtube/permissions";
 import { platformBrandAccent, platformIconTileStyle } from "./platformCardStyles";
-import {
-  DiscordLogo,
-  DropboxLogo,
-  EmailLogo,
-  FacebookLogo,
-  GoogleDriveLogo,
-  InstagramLogo,
-  LinkedInLogo,
-  NotionLogo,
-  PinterestLogo,
-  TelegramLogo,
-  TikTokLogo,
-  YouTubeLogo,
-} from "./platformLogos";
+import { PlatformIcon, type PlatformId } from "./platformShared";
 
-export type PlatformId =
-  | "youtube"
-  | "tiktok"
-  | "instagram"
-  | "facebook"
-  | "pinterest"
-  | "linkedin"
-  | "telegram"
-  | "notion"
-  | "googleDrive"
-  | "dropbox"
-  | "email"
-  | "discord";
+export type { PlatformId };
 
 export type PermissionSpec = {
   id: string;
@@ -105,6 +81,13 @@ export function driveScopesForPermissions(permissionIds: readonly string[]): str
   return driveScopesForPermissionIds(permissionIds);
 }
 
+export function metaScopesForPermissions(
+  platformId: "facebook" | "instagram",
+  permissionIds: readonly string[],
+): string[] {
+  return metaScopesForPermissionIds(platformId, permissionIds);
+}
+
 export function permissionLabel(platformId: PlatformId, permissionId: string): string {
   const spec = PLATFORM_PERMISSIONS[platformId].find((p) => p.id === permissionId);
   return spec?.title ?? permissionId;
@@ -120,16 +103,54 @@ export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
   ],
   instagram: [
     ...SOCIAL_SHARED_PERMISSIONS,
-    { id: "instagram.content_publish", title: "Publish to Instagram", description: "Publish Reels and posts to your Instagram account." },
-    { id: "instagram.manage_comments", title: "Manage comments", description: "Read and respond to comments on content posted through KONT." },
-    { id: "instagram.insights.read", title: "Read insights", description: "View analytics and insights for your Instagram content." },
+    {
+      id: "instagram.content_publish",
+      title: "Publish to Instagram",
+      description: "Publish Reels and posts to your Instagram professional account.",
+      defaultOn: true,
+      scope: "instagram_content_publish",
+    },
+    {
+      id: "instagram.manage_comments",
+      title: "Manage comments",
+      description: "Read and respond to comments on content posted through KONT.",
+      scope: "instagram_manage_comments",
+    },
+    {
+      id: "instagram.insights.read",
+      title: "Read insights",
+      description: "View analytics and insights for your Instagram content.",
+      scope: "instagram_manage_insights",
+    },
   ],
   facebook: [
     ...SOCIAL_SHARED_PERMISSIONS,
-    { id: "pages_show_list", title: "Access pages", description: "List and select Facebook Pages you manage." },
-    { id: "pages_manage_posts", title: "Publish posts", description: "Create and manage posts on selected Pages." },
-    { id: "pages_read_engagement", title: "Read engagement", description: "Read reactions and comments for moderation and reporting." },
-    { id: "read_insights", title: "Read insights", description: "View Page insights and analytics." },
+    {
+      id: "pages_show_list",
+      title: "Access pages",
+      description: "List and select Facebook Pages you manage.",
+      required: true,
+      scope: "pages_show_list",
+    },
+    {
+      id: "pages_manage_posts",
+      title: "Publish posts",
+      description: "Create and manage posts on selected Pages.",
+      defaultOn: true,
+      scope: "pages_manage_posts",
+    },
+    {
+      id: "pages_read_engagement",
+      title: "Read engagement",
+      description: "Read reactions and comments for moderation and reporting.",
+      scope: "pages_read_engagement",
+    },
+    {
+      id: "read_insights",
+      title: "Read insights",
+      description: "View Page insights and analytics.",
+      scope: "read_insights",
+    },
   ],
   pinterest: [
     ...SOCIAL_SHARED_PERMISSIONS,
@@ -180,6 +201,50 @@ export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
       scope: "https://www.googleapis.com/auth/drive.readonly",
     },
   ],
+  googleSheets: [
+    {
+      id: "openid",
+      title: "Basic identity",
+      description: "Identify your Google account during OAuth.",
+      required: true,
+      scope: "openid",
+    },
+    {
+      id: "spreadsheets",
+      title: "Read & write spreadsheets",
+      description: "Full access to create, edit, and read Google Sheets for content plans.",
+      defaultOn: true,
+      scope: "https://www.googleapis.com/auth/spreadsheets",
+    },
+    {
+      id: "spreadsheets.readonly",
+      title: "Read spreadsheets",
+      description: "View-only access to Google Sheets data.",
+      scope: "https://www.googleapis.com/auth/spreadsheets.readonly",
+    },
+  ],
+  googleCalendar: [
+    {
+      id: "openid",
+      title: "Basic identity",
+      description: "Identify your Google account during OAuth.",
+      required: true,
+      scope: "openid",
+    },
+    {
+      id: "calendar.events",
+      title: "Manage calendar events",
+      description: "Create and edit events to sync your content schedule.",
+      defaultOn: true,
+      scope: "https://www.googleapis.com/auth/calendar.events",
+    },
+    {
+      id: "calendar.readonly",
+      title: "Read calendar",
+      description: "View your calendar to avoid scheduling conflicts.",
+      scope: "https://www.googleapis.com/auth/calendar.readonly",
+    },
+  ],
   dropbox: [
     { id: "dropbox.oauth", title: "Dropbox OAuth", description: "Authorize ContentFabric to access your Dropbox.", required: true },
     { id: "files.content.read", title: "Read file content", description: "Download files for import/export pipelines." },
@@ -195,35 +260,6 @@ export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
   ],
 };
 
-
-function PlatformConnectIcon({ id, className }: { id: PlatformId; className?: string }) {
-  switch (id) {
-    case "youtube":
-      return <YouTubeLogo className={className} />;
-    case "tiktok":
-      return <TikTokLogo className={className} />;
-    case "instagram":
-      return <InstagramLogo className={className} />;
-    case "facebook":
-      return <FacebookLogo className={className} />;
-    case "pinterest":
-      return <PinterestLogo className={className} />;
-    case "linkedin":
-      return <LinkedInLogo className={className} />;
-    case "telegram":
-      return <TelegramLogo className={className} />;
-    case "notion":
-      return <NotionLogo className={className} />;
-    case "googleDrive":
-      return <GoogleDriveLogo className={className} />;
-    case "dropbox":
-      return <DropboxLogo className={className} />;
-    case "email":
-      return <EmailLogo className={className} />;
-    case "discord":
-      return <DiscordLogo className={className} />;
-  }
-}
 
 function PermissionRow({
   spec,
@@ -361,7 +397,7 @@ export function PlatformPermissionsModal({
               className="studio-permissions-header__icon"
               style={platformIconTileStyle(platformId ? platformBrandAccent(platformId) : "var(--ice)")}
             >
-              <PlatformConnectIcon id={platformId} className="h-[1.35rem] w-[1.35rem]" />
+              <PlatformIcon id={platformId} className="h-[1.35rem] w-[1.35rem]" />
             </div>
             <div className="min-w-0">
               <p className="studio-permissions-header__eyebrow">{PC.permissions}</p>

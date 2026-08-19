@@ -34,7 +34,7 @@ type CompletedDriveOAuth = {
 };
 
 function studioRedirect(req: Request, locale: AppLocale, returnTo: string, params: Record<string, string>): URL {
-  const safe = safeStudioRedirect(returnTo) ?? "/studio/accounts";
+  const safe = safeStudioRedirect(returnTo) ?? "/studio/platforms";
   const url = new URL(withLocale(locale, safe), req.url);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
@@ -119,7 +119,7 @@ export async function callback(req: Request): Promise<NextResponse> {
   const code = incoming.searchParams.get("code");
   const providerError = incoming.searchParams.get("error");
 
-  let returnTo = "/studio/accounts";
+  let returnTo = "/studio/platforms";
   try {
     returnTo = (await readOAuthState(incoming.searchParams.get("state"))).returnTo;
   } catch {

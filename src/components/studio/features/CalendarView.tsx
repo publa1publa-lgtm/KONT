@@ -234,6 +234,7 @@ export function CalendarView() {
           return;
         }
       }
+      if (String(item.status).toUpperCase() !== "DRAFT") return;
       setSelectedDate(null);
       setEditingEvent(null);
       setEditingItem(item);
