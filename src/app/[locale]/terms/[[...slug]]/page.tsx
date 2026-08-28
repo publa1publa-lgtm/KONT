@@ -18,16 +18,16 @@ async function resolve(params: PageProps["params"]) {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale, service, doc } = await resolve(params);
-  return legalMetadata(locale, service, doc);
+  const { locale, doc } = await resolve(params);
+  return legalMetadata(locale, doc);
 }
 
 export default async function TermsPage({ params }: PageProps) {
-  const { locale, slug, service, doc } = await resolve(params);
-  const canonical = legalPath(service, doc);
+  const { locale, slug, doc } = await resolve(params);
+  const canonical = legalPath(doc);
   const current = slug?.length ? `/terms/${slug.join("/")}` : "/terms";
   if (canonical !== current) {
     redirect(withLocale(locale, canonical));
   }
-  return <LegalRoutePage service={service} doc={doc} />;
+  return <LegalRoutePage doc={doc} />;
 }

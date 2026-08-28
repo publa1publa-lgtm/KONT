@@ -4,17 +4,13 @@ import { notFound } from "next/navigation";
 import { LegalHub } from "@/components/legal/LegalHub";
 import { isValidLocale } from "@/i18n/config";
 import { loadMessages } from "@/i18n/messages";
-import type { LegalDocKind, LegalServiceId } from "@/lib/legal/catalog";
+import type { LegalDocKind } from "@/lib/legal/catalog";
 import { getLegalDocument } from "@/lib/legal/content";
 
-export async function legalMetadata(
-  locale: string,
-  service: LegalServiceId,
-  doc: LegalDocKind,
-): Promise<Metadata> {
+export async function legalMetadata(locale: string, doc: LegalDocKind): Promise<Metadata> {
   if (!isValidLocale(locale)) notFound();
   const messages = loadMessages(locale);
-  const document = getLegalDocument(service, doc);
+  const document = getLegalDocument(doc);
 
   return {
     title: `${document.title} — KONT`,
@@ -22,12 +18,6 @@ export async function legalMetadata(
   };
 }
 
-export function LegalRoutePage({
-  service,
-  doc,
-}: {
-  service: LegalServiceId;
-  doc: LegalDocKind;
-}) {
-  return <LegalHub service={service} doc={doc} />;
+export function LegalRoutePage({ doc }: { doc: LegalDocKind }) {
+  return <LegalHub doc={doc} />;
 }

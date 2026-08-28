@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { BrandIcon } from "@/components/brands/BrandIcon";
 import { SendHorizontal } from "lucide-react";
 
 const THREADS = [
@@ -63,7 +63,7 @@ export function InboxWidget() {
               }
             >
               <span className="nh-inbox__thread-icon">
-                <Image src={t.platform} alt="" width={14} height={14} />
+                <BrandIcon src={t.platform} size={14} />
               </span>
               <span className="nh-inbox__thread-copy">
                 <strong>
@@ -79,7 +79,7 @@ export function InboxWidget() {
 
         <div className="nh-inbox__pane">
           <div className="nh-inbox__pane-head">
-            <Image src="/home/icons/color/instagram.svg" alt="" width={16} height={16} />
+            <BrandIcon src="/home/icons/color/instagram.svg" size={16} />
             <span>@studio.north · Comment</span>
           </div>
           <ul className="nh-inbox__messages">

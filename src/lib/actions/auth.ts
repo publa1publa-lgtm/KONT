@@ -19,6 +19,7 @@ import {
 } from "@/lib/auth/validation";
 import { createSession } from "@/lib/sessionStore";
 import { auditContextFromServerHeaders, writeAudit } from "@/lib/audit";
+import { notifyUserRegistered } from "@/lib/ops/notify";
 import * as userRepo from "@/lib/repos/userRepo";
 
 export type AuthActionState = {
@@ -119,6 +120,14 @@ export async function registerAction(
     action: AuditAction.USER_REGISTERED,
     entityType: "User",
     entityId: user.id,
+  });
+  await notifyUserRegistered({
+    id: user.id,
+    email: user.email,
+    login: loginNormalized,
+    firstName,
+    lastName,
+    createdAt: user.createdAt,
   });
 
   await establishSessionAndRedirect(session.token, formData);

@@ -4,13 +4,15 @@ import { useEffect, useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import { useDemoModal } from "@/contexts/demo-modal-context";
-import { useMessages } from "@/contexts/messages-context";
+import { useI18n, useMessages } from "@/contexts/i18n-context";
+import { submitDemoRequest } from "@/lib/demoRequestClient";
 import { cn } from "@/lib/utils";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function RequestDemoModal() {
   const { demoModal } = useMessages();
+  const { locale } = useI18n();
   const { open, closeModal } = useDemoModal();
   const titleId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,13 +55,18 @@ export function RequestDemoModal() {
     }
     setError(null);
     setStatus("submitting");
-    await new Promise((r) => setTimeout(r, 600));
+    const result = await submitDemoRequest(trimmed, locale);
+    if (!result.ok) {
+      setStatus("idle");
+      setError(demoModal.errorSend);
+      return;
+    }
     setStatus("success");
   }
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-4"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) closeModal();
@@ -72,7 +79,9 @@ export function RequestDemoModal() {
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          "relative z-[1] w-full max-w-md rounded-2xl border border-white/10 p-6 sm:p-8",
+          "relative z-[1] w-full max-w-md overflow-y-auto border border-white/10",
+          "max-h-[min(92dvh,40rem)] rounded-t-[1.5rem] px-5 pb-[max(1.35rem,env(safe-area-inset-bottom,0px))] pt-6",
+          "sm:rounded-2xl sm:p-8",
           "bg-[linear-gradient(165deg,rgba(18,18,22,0.95)_0%,rgba(10,10,14,0.92)_100%)]",
           "shadow-[0_28px_90px_-36px_rgba(0,0,0,0.92),0_0_48px_-20px_rgba(0,234,255,0.12)]",
         )}
@@ -80,14 +89,14 @@ export function RequestDemoModal() {
         <button
           type="button"
           onClick={closeModal}
-          className="absolute right-4 top-4 grid size-9 place-items-center rounded-full border border-white/10 text-white/70 transition hover:border-white/20 hover:text-white"
+          className="absolute end-3 top-3 grid size-11 place-items-center rounded-full border border-white/10 text-white/70 transition hover:border-white/20 hover:text-white sm:end-4 sm:top-4 sm:size-9"
           aria-label={demoModal.close}
         >
           <X className="size-4" aria-hidden />
         </button>
 
         {status === "success" ? (
-          <div className="pr-8">
+          <div className="pe-12">
             <h2 id={titleId} className="font-display text-xl font-bold text-[var(--fg)]">
               {demoModal.successTitle}
             </h2>
@@ -97,14 +106,14 @@ export function RequestDemoModal() {
             <button
               type="button"
               onClick={closeModal}
-              className="story-nav-cta-primary mt-8 w-full"
+              className="story-nav-cta-primary mt-8 min-h-12 w-full sm:min-h-0"
             >
               {demoModal.close}
             </button>
           </div>
         ) : (
           <>
-            <h2 id={titleId} className="font-display pr-8 text-xl font-bold text-[var(--fg)]">
+            <h2 id={titleId} className="font-display pe-12 text-xl font-bold text-[var(--fg)]">
               {demoModal.title}
             </h2>
             <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted)]">
@@ -123,7 +132,12 @@ export function RequestDemoModal() {
                   ref={inputRef}
                   id="demo-email"
                   type="email"
+                  inputMode="email"
                   autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  enterKeyHint="send"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -146,7 +160,7 @@ export function RequestDemoModal() {
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className="story-nav-cta-primary w-full disabled:cursor-wait disabled:opacity-70"
+                className="story-nav-cta-primary min-h-12 w-full disabled:cursor-wait disabled:opacity-70 sm:min-h-0"
               >
                 {status === "submitting" ? demoModal.submitting : demoModal.submit}
               </button>

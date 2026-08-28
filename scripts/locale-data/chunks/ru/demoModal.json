@@ -8,5 +8,6 @@
   "demoModal.successTitle": "Вы в списке",
   "demoModal.successBody": "Спасибо — скоро свяжемся.",
   "demoModal.close": "Закрыть",
-  "demoModal.errorInvalid": "Введите корректный адрес email."
+  "demoModal.errorInvalid": "Введите корректный адрес email.",
+  "demoModal.errorSend": "Не удалось отправить заявку. Попробуйте ещё раз."
 }

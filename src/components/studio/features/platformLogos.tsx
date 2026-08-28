@@ -38,10 +38,10 @@ export function YouTubeLogo({ className, title = "YouTube" }: Props) {
 
 export function TikTokLogo({ className, title = "TikTok" }: Props) {
   return (
-    <Svg className={className} title={title}>
+    <Svg className={className} title={title} viewBox="0 0 16 16">
       <path
         fill="currentColor"
-        d="M17.303 6.063a5.76 5.76 0 0 1-1.69-4.083h-3.2v13.64a2.69 2.69 0 1 1-2.694-2.69c.26 0 .512.037.75.105V9.73a6.06 6.06 0 0 0-.75-.047 5.894 5.894 0 1 0 5.894 5.894V8.18a8.89 8.89 0 0 0 5.187 1.664V6.74a5.72 5.72 0 0 1-3.497-.677Z"
+        d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"
       />
     </Svg>
   );

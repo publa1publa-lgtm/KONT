@@ -467,11 +467,26 @@ html.home-route-active body {
 /* Trust line under the hero CTAs */
 .home-hero__trust {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin: 1rem 0 0;
-  font-size: 0.75rem;
-  line-height: 1.4;
+  padding: 0;
+  list-style: none;
+}
+
+.home-hero__trust li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 113, 227, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
   color: var(--home-muted);
 }
 
@@ -916,6 +931,7 @@ html.home-route-active body {
 
 .home-pillar {
   position: relative;
+  scroll-margin-top: calc(var(--home-nav-offset, 5.5rem) + 0.75rem);
   padding: 1.5rem 1.35rem 1.5rem;
   border-radius: var(--r-md);
   border: 1px solid var(--glass-border);

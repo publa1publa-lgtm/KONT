@@ -47,35 +47,35 @@ export function ProductSection() {
           <span className="nh-constellation__glow" aria-hidden="true" />
 
           <div className="nh-constellation__col nh-constellation__col--left">
-            <FloatCard variant="dash" icon={BarChart3} kicker={tabs.dashboard} chip="Last 7 days" delay={0}>
+            <FloatCard id="product-dashboard" variant="dash" icon={BarChart3} kicker={tabs.dashboard} chip="Last 7 days" delay={0}>
               <DashboardWidget />
             </FloatCard>
 
-            <FloatCard variant="auto" icon={GitBranch} kicker={tabs.automation} chip={<LiveChip />} delay={0.08}>
+            <FloatCard id="product-automation" variant="auto" icon={GitBranch} kicker={tabs.automation} chip={<LiveChip />} delay={0.08}>
               <AutomationFlow />
             </FloatCard>
           </div>
 
           <div className="nh-constellation__col nh-constellation__col--mid">
-            <FloatCard variant="cal" icon={CalendarDays} kicker={tabs.calendar} delay={0.06}>
+            <FloatCard id="product-calendar" variant="cal" icon={CalendarDays} kicker={tabs.calendar} delay={0.06}>
               <CalendarWidget />
             </FloatCard>
 
-            <FloatCard variant="inbox" icon={Inbox} kicker={tabs.inbox} chip="3 unread" tall delay={0.14}>
+            <FloatCard id="product-inbox" variant="inbox" icon={Inbox} kicker={tabs.inbox} chip="3 unread" tall delay={0.14}>
               <InboxWidget />
             </FloatCard>
           </div>
 
           <div className="nh-constellation__col nh-constellation__col--right">
-            <FloatCard variant="accounts" icon={Link2} kicker={tabs.platforms} chip="5 live" delay={0.1}>
+            <FloatCard id="product-platforms" variant="accounts" icon={Link2} kicker={tabs.platforms} chip="5 live" delay={0.1}>
               <AccountsWidget />
             </FloatCard>
 
-            <FloatCard variant="insights" icon={Sparkles} kicker={tabs.insights} chip="AI" delay={0.12}>
+            <FloatCard id="product-insights" variant="insights" icon={Sparkles} kicker={tabs.insights} chip="AI" delay={0.12}>
               <InsightsWidget />
             </FloatCard>
 
-            <FloatCard variant="audience" icon={Globe2} kicker={tabs.audience} chip="142 regions" delay={0.18}>
+            <FloatCard id="product-audience" variant="audience" icon={Globe2} kicker={tabs.audience} chip="142 regions" delay={0.18}>
               <AudienceWidget />
             </FloatCard>
           </div>
@@ -86,6 +86,7 @@ export function ProductSection() {
 }
 
 type FloatCardProps = {
+  id?: string;
   variant: string;
   icon: typeof BarChart3;
   kicker: string;
@@ -104,7 +105,7 @@ function LiveChip() {
   );
 }
 
-function FloatCard({ variant, icon: Icon, kicker, chip, tall = false, delay = 0, children }: FloatCardProps) {
+function FloatCard({ id, variant, icon: Icon, kicker, chip, tall = false, delay = 0, children }: FloatCardProps) {
   const reduced = useReducedMotion();
   const cardRef = useRef<HTMLDivElement>(null);
   const tiltX = useSpring(0, { stiffness: 260, damping: 22, mass: 0.55 });
@@ -128,6 +129,7 @@ function FloatCard({ variant, icon: Icon, kicker, chip, tall = false, delay = 0,
 
   return (
     <motion.div
+      id={id}
       ref={cardRef}
       className={`nh-float nh-float--${variant}${tall ? " nh-float--tall" : ""}`}
       style={

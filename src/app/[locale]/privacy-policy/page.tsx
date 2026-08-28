@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
   const messages = loadMessages(locale);
-  const document = getLegalDocument("kont", "privacy");
+  const document = getLegalDocument("privacy");
 
   return {
     title: `${document.title} — KONT`,
@@ -23,5 +23,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default function PrivacyPolicyPage() {
-  return <LegalHub service="kont" doc="privacy" />;
+  return <LegalHub doc="privacy" />;
 }

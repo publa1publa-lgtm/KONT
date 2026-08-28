@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Image from "next/image";
+import { BrandIcon } from "@/components/brands/BrandIcon";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   BarChart3,
@@ -114,7 +114,7 @@ export function HeroDashboard() {
               {QUEUE.map((q) => (
                 <div key={q.title} className="nh-hd-item">
                   <span className="nh-hd-item__avatar">
-                    <Image src={q.src} alt="" width={18} height={18} />
+                    <BrandIcon src={q.src} size={18} />
                   </span>
                   <span className="nh-hd-item__meta">
                     <strong>{q.title}</strong>

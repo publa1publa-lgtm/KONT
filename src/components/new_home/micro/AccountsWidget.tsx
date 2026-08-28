@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { BrandIcon } from "@/components/brands/BrandIcon";
 import { ShieldCheck } from "lucide-react";
 
 const ACCOUNTS = [
@@ -22,7 +22,7 @@ export function AccountsWidget() {
             className={a.connected ? "nh-accounts__item nh-accounts__item--on" : "nh-accounts__item"}
           >
             <span className="nh-accounts__icon">
-              <Image src={a.src} alt="" width={18} height={18} />
+              <BrandIcon src={a.src} size={18} />
             </span>
             <span className="nh-accounts__label">{a.label}</span>
             <span className="nh-accounts__status" aria-hidden />

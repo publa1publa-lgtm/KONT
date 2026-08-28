@@ -8,6 +8,7 @@ import { auditContextFromRequest, writeAudit } from "@/lib/audit";
 import { getSessionUserId, getCurrentSessionId } from "@/lib/session";
 import { readJsonRecord, badRequest, conflict, json, tooManyRequests } from "@/lib/api/http";
 import { clientKeyFromRequest, rateLimit } from "@/lib/api/rateLimit";
+import { notifyUserRegistered } from "@/lib/ops/notify";
 import * as userRepo from "@/lib/repos/userRepo";
 
 export async function postLogin(req: Request): Promise<NextResponse> {
@@ -106,6 +107,14 @@ export async function postRegister(req: Request): Promise<NextResponse> {
     action: AuditAction.USER_REGISTERED,
     entityType: "User",
     entityId: user.id,
+  });
+  await notifyUserRegistered({
+    id: user.id,
+    email: user.email,
+    login: loginNormalized,
+    firstName,
+    lastName,
+    createdAt: user.createdAt,
   });
 
   const { name, options } = sessionCookieOptions();

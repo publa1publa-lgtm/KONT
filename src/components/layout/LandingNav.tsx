@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 
-import { useDemoModal } from "@/contexts/demo-modal-context";
+import { useAuthModal } from "@/contexts/auth-modal-context";
 import { useMessages } from "@/contexts/messages-context";
 import { cn } from "@/lib/utils";
 
 export function LandingNav() {
   const { story } = useMessages();
-  const { openModal } = useDemoModal();
+  const { openRegister } = useAuthModal();
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex justify-center overflow-visible px-4 pt-[max(1.25rem,env(safe-area-inset-top,0px))] sm:px-8">
@@ -42,7 +42,7 @@ export function LandingNav() {
           <div className="flex justify-self-end">
             <button
               type="button"
-              onClick={openModal}
+              onClick={openRegister}
               className="story-nav-cta-primary shrink-0"
             >
               {story.nav.cta}

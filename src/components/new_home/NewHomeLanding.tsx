@@ -2,24 +2,25 @@
 
 import {
   ArrowRight,
-  Lock,
   PenLine,
   CalendarDays,
+  ShieldCheck,
   TrendingUp,
 } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
+import { BrandIcon } from "@/components/brands/BrandIcon";
 import { LandingFooter } from "@/components/layout/LandingFooter";
 import { HeroFloatingIcons } from "@/components/new_home/HeroFloatingIcons";
 import { HeroVisual } from "@/components/new_home/HeroVisual";
 import { HomeCtaCard } from "@/components/new_home/HomeCtaCard";
+import { MobileCtaDock } from "@/components/new_home/MobileCtaDock";
 import { NewHomeNav } from "@/components/new_home/NewHomeNav";
 import { BenefitsSection } from "@/components/new_home/sections/BenefitsSection";
 import { ProductSection } from "@/components/new_home/sections/ProductSection";
-import { useDemoModal } from "@/contexts/demo-modal-context";
 import { useMessages } from "@/contexts/messages-context";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { useStartWorkspace } from "@/hooks/useStartWorkspace";
 
 import "@/components/home/home-landing.css";
 import "./new-home.css";
@@ -52,8 +53,8 @@ const HERO_PLATFORM_ICONS: Record<string, string> = {
 };
 
 export function NewHomeLanding() {
-  const { landing } = useMessages();
-  const { openModal } = useDemoModal();
+  const { landing, story } = useMessages();
+  const { start, isAuthenticated, studioHref } = useStartWorkspace();
 
   const [rootEl, setRootEl] = useState<HTMLElement | null>(null);
 
@@ -84,8 +85,8 @@ export function NewHomeLanding() {
                 <span className="hero2-bleed__seam" />
               </div>
               <div className="home-section__inner home-section__inner--hero">
-                <div className="hero2 hero2--split">
-                  <div className="hero2__copy home-reveal" data-reveal>
+                <div className="hero2 hero2--split home-reveal" data-reveal>
+                  <div className="hero2__copy">
                     <span className="hero2__copy-glow hero2__copy-glow--a" aria-hidden />
                     <span className="hero2__copy-glow hero2__copy-glow--b" aria-hidden />
 
@@ -110,7 +111,7 @@ export function NewHomeLanding() {
                           return (
                             <li key={name}>
                               <span className="hero2__platform-icon" title={name}>
-                                <Image src={src} alt="" width={18} height={18} />
+                                <BrandIcon src={src} size={18} />
                               </span>
                             </li>
                           );
@@ -119,26 +120,39 @@ export function NewHomeLanding() {
                     </div>
 
                     <div className="hero2__actions">
-                      <button
-                        type="button"
-                        className="home-screen__cta cursor-pointer"
-                        onClick={openModal}
-                      >
-                        {h.ctaPrimary}
-                        <ArrowRight className="home-screen__cta-icon" aria-hidden />
-                      </button>
+                      {isAuthenticated ? (
+                        <a href={studioHref} className="home-screen__cta">
+                          {story.nav.studio}
+                          <ArrowRight className="home-screen__cta-icon" aria-hidden />
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          className="home-screen__cta cursor-pointer"
+                          onClick={start}
+                        >
+                          {h.ctaPrimary}
+                          <ArrowRight className="home-screen__cta-icon" aria-hidden />
+                        </button>
+                      )}
                       <a className="hero2__secondary" href="#product">
                         {h.ctaSecondary}
                       </a>
                     </div>
 
-                    <p className="hero2__trust">
-                      <Lock className="home-hero__trust-icon" aria-hidden />
-                      {h.trust}
-                    </p>
+                    <div className="hero2__trust">
+                      <span className="hero2__trust-badge" aria-hidden>
+                        <ShieldCheck strokeWidth={2.25} />
+                      </span>
+                      <ul>
+                        {h.trust.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
 
-                  <div className="hero2__visual home-reveal" data-reveal>
+                  <div className="hero2__visual">
                     <HeroFloatingIcons />
                     <HeroVisual />
                   </div>
@@ -162,6 +176,7 @@ export function NewHomeLanding() {
                   const Icon = PILLAR_ICONS[pillar.id as keyof typeof PILLAR_ICONS];
                   return (
                     <li
+                      id={`pillar-${pillar.id}`}
                       key={pillar.id}
                       className={`home-pillar home-reveal ${PILLAR_ACCENTS[i]}`}
                       data-reveal
@@ -193,7 +208,7 @@ export function NewHomeLanding() {
           <div className="home-cta-orbit" aria-hidden="true">
             {CTA_ORBIT_ICONS.map((icon) => (
               <span key={icon.src} className={`home-cta-orbit__icon ${icon.className}`}>
-                <Image src={icon.src} alt="" width={40} height={40} />
+                <BrandIcon src={icon.src} size={40} />
               </span>
             ))}
           </div>
@@ -205,6 +220,7 @@ export function NewHomeLanding() {
       </main>
 
       <LandingFooter variant="landing" />
+      <MobileCtaDock />
     </div>
   );
 }

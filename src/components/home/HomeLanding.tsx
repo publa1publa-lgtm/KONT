@@ -6,7 +6,6 @@ import {
   CalendarDays,
   Clock,
   Layers,
-  Lock,
   PenLine,
   Shield,
   Sparkles,
@@ -18,9 +17,9 @@ import { useEffect, useRef, useState } from "react";
 import { BenefitsSection } from "@/components/new_home/sections/BenefitsSection";
 import { LandingFooter } from "@/components/layout/LandingFooter";
 import { LandingNav } from "@/components/layout/LandingNav";
-import { useDemoModal } from "@/contexts/demo-modal-context";
 import { useMessages } from "@/contexts/messages-context";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { useStartWorkspace } from "@/hooks/useStartWorkspace";
 
 import "./home-landing.css";
 import "@/components/new_home/new-home.css";
@@ -36,7 +35,7 @@ const PILLAR_ACCENTS = ["home-pillar--create", "home-pillar--manage", "home-pill
 
 export function HomeLanding() {
   const { landing } = useMessages();
-  const { openModal } = useDemoModal();
+  const { start } = useStartWorkspace();
 
   const [rootEl, setRootEl] = useState<HTMLElement | null>(null);
   const [heroEl, setHeroEl] = useState<HTMLElement | null>(null);
@@ -102,7 +101,7 @@ export function HomeLanding() {
                       <button
                         type="button"
                         className="home-screen__cta home-screen__cta--hero"
-                        onClick={openModal}
+                        onClick={start}
                       >
                         {h.ctaPrimary}
                         <ArrowRight className="home-screen__cta-icon" aria-hidden />
@@ -111,10 +110,11 @@ export function HomeLanding() {
                         {h.ctaSecondary}
                       </a>
                     </div>
-                    <p className="home-hero__trust">
-                      <Lock className="home-hero__trust-icon" aria-hidden />
-                      {h.trust}
-                    </p>
+                    <ul className="home-hero__trust">
+                      {h.trust.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
                   </div>
 
                   <div className="home-hero__cards">
@@ -270,7 +270,7 @@ export function HomeLanding() {
                 <button
                   type="button"
                   className="home-screen__cta"
-                  onClick={openModal}
+                  onClick={start}
                 >
                   {landing.cta.primary}
                   <ArrowRight className="home-screen__cta-icon" aria-hidden />

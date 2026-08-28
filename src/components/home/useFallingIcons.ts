@@ -291,7 +291,7 @@ export function useFallingIcons(targets: FallingIconsTargets) {
         (src.includes("/color/") ? " icon-fall--color" : "") +
         blurClass;
       const img = document.createElement("img");
-      img.src = src;
+      img.src = src.includes("tiktok") ? `${src}?v=5` : src;
       img.alt = "";
       img.width = size;
       img.height = size;

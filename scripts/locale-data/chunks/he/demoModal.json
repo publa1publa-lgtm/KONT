@@ -8,5 +8,6 @@
   "demoModal.successTitle": "אתם ברשימה",
   "demoModal.successBody": "תודה — ניצור קשר בקרוב.",
   "demoModal.close": "סגירה",
-  "demoModal.errorInvalid": "הזינו כתובת אימייל תקינה."
+  "demoModal.errorInvalid": "הזינו כתובת אימייל תקינה.",
+  "demoModal.errorSend": "לא ניתן לשלוח את הבקשה. נסו שוב."
 }

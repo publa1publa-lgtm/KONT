@@ -33,6 +33,8 @@ export type PlatformId =
   | "email"
   | "discord";
 
+export type PlatformGroupId = "social" | "messengers" | "storage" | "productivity" | "notifications";
+
 export type ConnectedAccount = {
   displayName: string;
   connectedAt: number;

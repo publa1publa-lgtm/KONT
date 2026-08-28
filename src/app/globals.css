@@ -803,16 +803,22 @@ body {
 }
 
 * {
-  scrollbar-color: rgba(0, 234, 255, 0.25) transparent;
+  scrollbar-color: rgba(0, 96, 235, 0.62) transparent;
   scrollbar-width: thin;
 }
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
 *::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(0, 234, 255, 0.35), rgba(255, 69, 0, 0.25));
+  background: rgba(0, 96, 235, 0.58);
   border-radius: 3px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 96, 235, 0.88);
 }
 
 .grain {

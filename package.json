@@ -8,7 +8,8 @@
     "build:locales": "node scripts/locale-data/translate-all.mjs && node scripts/build-locales.mjs",
     "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ops:telegram": "node scripts/telegram-ops-probe.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -21,6 +22,7 @@
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
     "next": "16.2.3",
+    "nodemailer": "^9.0.5",
     "pg": "^8.20.0",
     "prisma": "^7.8.0",
     "react": "19.2.4",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

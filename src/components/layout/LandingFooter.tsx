@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 import { KontBrandLogo } from "@/components/brand/KontBrandLogo";
-import { useDemoModal } from "@/contexts/demo-modal-context";
 import { useI18n } from "@/contexts/i18n-context";
 import { useMessages } from "@/contexts/messages-context";
+import { useStartWorkspace } from "@/hooks/useStartWorkspace";
 import { stripLocalePrefix, withLocale, type AppLocale } from "@/i18n/config";
 
 type LandingFooterProps = {
@@ -43,7 +43,7 @@ export function LandingFooter({ variant = "default" }: LandingFooterProps) {
   const { locale } = useI18n();
   const pathname = usePathname();
   const F = story.footer;
-  const { openModal } = useDemoModal();
+  const { start, isAuthenticated, studioHref } = useStartWorkspace();
   const isLanding = variant === "landing";
   const homeHref = withLocale(locale, "/");
 
@@ -66,8 +66,15 @@ export function LandingFooter({ variant = "default" }: LandingFooterProps) {
 
   const renderResourceLink = (item: (typeof F.resourceLinks)[number], className: string) => {
     if (item.href === "#") {
+      if (isAuthenticated) {
+        return (
+          <Link key={item.label} href={studioHref} className={className}>
+            {story.nav.studio}
+          </Link>
+        );
+      }
       return (
-        <button key={item.label} type="button" onClick={openModal} className={className}>
+        <button key={item.label} type="button" onClick={start} className={className}>
           {item.label}
         </button>
       );
@@ -90,59 +97,55 @@ export function LandingFooter({ variant = "default" }: LandingFooterProps) {
           transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
           className="nh-footer__inner"
         >
+          <div className="nh-footer__intro">
+            <Link href={homeHref} className="nh-footer__brand cursor-pointer" aria-label={story.brand}>
+              <KontBrandLogo variant="mark" decorative className="nh-footer__logo" />
+              <span className="nh-footer__wordmark" aria-hidden="true">{story.brand}</span>
+            </Link>
+            <p className="nh-footer__tagline">{F.tagline}</p>
+          </div>
+
           <ul className="nh-footer__trust" aria-label="Trust indicators">
             {trustItems.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
 
-          <div className="nh-footer__main">
-            <div className="nh-footer__columns">
-              <div className="nh-footer__col">
-                <p className="nh-footer__label">{F.productColumn}</p>
-                <nav className="nh-footer__nav" aria-label={F.productColumn}>
-                  {F.productLinks.map((item) => (
-                    <Link key={item.href} href={localizeHref(locale, item.href)} className="nh-footer__link">
-                      {item.label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-
-              <div className="nh-footer__col">
-                <p className="nh-footer__label">{F.resourcesColumn}</p>
-                <nav className="nh-footer__nav" aria-label={F.resourcesColumn}>
-                  {F.resourceLinks.map((item) =>
-                    renderResourceLink(
-                      item,
-                      item.href === "#"
-                        ? "nh-footer__link nh-footer__link--button"
-                        : "nh-footer__link",
-                    ),
-                  )}
-                </nav>
-              </div>
-
-              <div className="nh-footer__col">
-                <p className="nh-footer__label">{F.companyColumn}</p>
-                <nav className="nh-footer__nav" aria-label={F.companyColumn}>
-                  {F.companyLinks.map((item) => renderCompanyLink(item, "nh-footer__link"))}
-                </nav>
-              </div>
+          <div className="nh-footer__columns">
+            <div className="nh-footer__col">
+              <p className="nh-footer__label">{F.productColumn}</p>
+              <nav className="nh-footer__nav" aria-label={F.productColumn}>
+                {F.productLinks.map((item) => (
+                  <Link key={item.href} href={localizeHref(locale, item.href)} className="nh-footer__link">
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
             </div>
 
-            <div className="nh-footer__intro">
-              <p className="nh-footer__tagline">{F.tagline}</p>
-              <Link href={homeHref} className="nh-footer__brand" aria-label={story.brand}>
-                <KontBrandLogo variant="mark" decorative className="nh-footer__logo" />
-              </Link>
+            <div className="nh-footer__col">
+              <p className="nh-footer__label">{F.resourcesColumn}</p>
+              <nav className="nh-footer__nav" aria-label={F.resourcesColumn}>
+                {F.resourceLinks.map((item) =>
+                  renderResourceLink(
+                    item,
+                    item.href === "#"
+                      ? "nh-footer__link nh-footer__link--button"
+                      : "nh-footer__link",
+                  ),
+                )}
+              </nav>
+            </div>
+
+            <div className="nh-footer__col nh-footer__col--legal">
+              <p className="nh-footer__label">{F.companyColumn}</p>
+              <nav className="nh-footer__nav" aria-label={F.companyColumn}>
+                {F.companyLinks.map((item) => renderCompanyLink(item, "nh-footer__link"))}
+              </nav>
             </div>
           </div>
 
           <div className="nh-footer__bar">
-            <nav className="nh-footer__legal" aria-label={F.companyColumn}>
-              {F.companyLinks.map((item) => renderCompanyLink(item, "nh-footer__link"))}
-            </nav>
             <p className="nh-footer__copy">
               © {new Date().getFullYear()} {story.brand}
             </p>

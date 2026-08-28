@@ -38,6 +38,7 @@ export function AuthModal() {
 
   useEffect(() => {
     if (!open) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
     const t = window.setTimeout(() => {
       const first = panelRef.current?.querySelector<HTMLElement>(
         "input:not([type='hidden'])",
@@ -54,7 +55,7 @@ export function AuthModal() {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-x-0 bottom-0 z-[100] flex h-[100dvh] max-h-[100svh] items-end justify-center overflow-hidden pt-[max(0.5rem,env(safe-area-inset-top,0px))] sm:inset-0 sm:h-auto sm:max-h-none sm:items-center sm:overflow-y-auto sm:p-4 sm:pt-4"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) closeModal();
@@ -69,7 +70,8 @@ export function AuthModal() {
         aria-labelledby={titleId}
         className={cn(
           "relative z-[1] flex w-full max-w-[32rem] flex-col overflow-hidden",
-          "rounded-[1.5rem] border border-[rgba(0,113,227,0.14)]",
+          "rounded-t-[1.5rem] border border-b-0 border-[rgba(0,113,227,0.14)] sm:max-h-[min(92dvh,44rem)] sm:rounded-[1.5rem] sm:border sm:overflow-y-auto",
+          "pb-[max(0.9rem,env(safe-area-inset-bottom,0px))] sm:pb-5",
           "bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(244,248,255,0.96)_100%)]",
           "shadow-[inset_0_1px_0_rgba(255,255,255,0.98),0_8px_20px_-8px_rgba(8,16,46,0.18),0_40px_72px_-36px_rgba(6,12,40,0.38)]",
         )}
@@ -87,7 +89,7 @@ export function AuthModal() {
           {title}
         </h2>
 
-        <div className="relative flex shrink-0 items-center justify-between gap-3 px-5 pb-0 pt-4 sm:px-6 sm:pt-5">
+        <div className="relative flex shrink-0 items-center justify-between gap-3 px-5 pb-0 pt-3 sm:px-6 sm:pt-5">
           <span className="inline-flex rounded-full bg-[linear-gradient(120deg,#0071e3,#5e5ce6)] px-2.5 py-1">
             <KontBrandLogo decorative className="h-5 w-auto" />
           </span>
@@ -95,14 +97,14 @@ export function AuthModal() {
           <button
             type="button"
             onClick={closeModal}
-            className="grid size-9 shrink-0 place-items-center rounded-full border border-[rgba(0,113,227,0.14)] bg-white text-[rgba(29,29,31,0.55)] transition hover:border-[rgba(0,113,227,0.28)] hover:bg-[rgba(0,113,227,0.06)] hover:text-[#1d1d1f]"
+            className="grid size-11 shrink-0 place-items-center rounded-full border border-[rgba(0,113,227,0.14)] bg-white text-[rgba(29,29,31,0.55)] transition hover:border-[rgba(0,113,227,0.28)] hover:bg-[rgba(0,113,227,0.06)] hover:text-[#1d1d1f] sm:size-9"
             aria-label={auth.cancel}
           >
             <X className="size-4" aria-hidden />
           </button>
         </div>
 
-        <div className="relative px-5 pt-4 sm:px-6">
+        <div className="relative shrink-0 px-5 pt-2.5 sm:px-6 sm:pt-4">
           <div
             role="tablist"
             aria-label="Auth"
@@ -121,7 +123,7 @@ export function AuthModal() {
           </div>
         </div>
 
-        <div className="relative overflow-hidden px-5 py-4 sm:px-6 sm:pb-5">
+        <div className="relative px-5 pt-3 pb-1 sm:px-6 sm:pb-0">
           {isLogin ? (
             <LoginForm embedded onRequestRegister={() => setMode("register")} />
           ) : (
@@ -150,7 +152,7 @@ function ModeTab({
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "rounded-lg px-3 py-2 text-sm font-semibold transition",
+        "rounded-lg px-3 py-2 text-sm font-semibold transition min-h-10 sm:min-h-0 sm:py-2",
         active
           ? "bg-[rgba(219,234,254,0.95)] text-[#0071e3]"
           : "bg-transparent text-[rgba(29,29,31,0.48)] hover:bg-[rgba(15,23,42,0.04)] hover:text-[#1d1d1f]",

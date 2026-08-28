@@ -12,8 +12,10 @@ import {
 } from "@/lib/studioPlatformsStorage";
 import { isReelPlatformId } from "@/lib/reelPlatformIds";
 import { INBOX_UNIFIED_PERMISSION_ID } from "@/lib/studioInboxPermissions";
-import { PlatformIcon, formatRelative, type PlatformId, type ConnectedAccount } from "./platformShared";
-import { QuickConnectionsPanel } from "./QuickConnectionsPanel";
+import { PlatformIcon, formatRelative, type PlatformGroupId, type PlatformId, type ConnectedAccount } from "./platformShared";
+import { PlatformsMobileDeck, type PlatformsMobileRow } from "./PlatformsMobileDeck";
+import { STUDIO_PHONE_MQ } from "../studioPhone";
+import { QuickConnectionsPanel, type QuickConnectionsActive } from "./QuickConnectionsPanel";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { StudioHeader } from "./StudioHeader";
 import { ConnectionToggle } from "./ConnectionToggle";
@@ -34,8 +36,6 @@ import {
   platformGroupAccent,
   platformIconTileStyle,
 } from "./platformCardStyles";
-
-type PlatformGroupId = "social" | "messengers" | "storage" | "productivity" | "notifications";
 
 type PlatformState = {
   id: PlatformId;
@@ -228,8 +228,17 @@ export function PlatformsView() {
   const [permPlatformId, setPermPlatformId] = useState<PlatformId | null>(null);
   const [revokeId, setRevokeId] = useState<PlatformId | null>(null);
   const [scopeNotice, setScopeNotice] = useState<{ missingIds: string[]; extraIds: string[] } | null>(null);
+  const [phone, setPhone] = useState(false);
   const catalogRef = useRef<HTMLDivElement | null>(null);
   const accountsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia(STUDIO_PHONE_MQ);
+    const sync = () => setPhone(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     const parsed = readStoredPlatforms();
@@ -667,6 +676,63 @@ export function PlatformsView() {
     return rows;
   }, [activeId, connectedPlatforms, platforms, qcOpen]);
 
+  const mobileRows = useMemo<PlatformsMobileRow[]>(
+    () =>
+      list.map(({ meta, state }) => ({
+        id: meta.id,
+        group: meta.group,
+        label: meta.label,
+        subtitle: meta.subtitle,
+        hint: meta.hint,
+        comingSoon: meta.comingSoon,
+        connected: state.connected,
+        account: state.account,
+        grantedPermissionIds: state.grantedPermissionIds,
+      })),
+    [list],
+  );
+
+  const mobileConnectedRows = useMemo<PlatformsMobileRow[]>(
+    () =>
+      connectedPlatforms.flatMap((state) => {
+        const meta = PLATFORM_META.find((p) => p.id === state.id);
+        if (!meta) return [];
+        return [
+          {
+            id: meta.id,
+            group: meta.group,
+            label: meta.label,
+            subtitle: meta.subtitle,
+            hint: meta.hint,
+            comingSoon: meta.comingSoon,
+            connected: state.connected,
+            account: state.account,
+            grantedPermissionIds: state.grantedPermissionIds,
+          },
+        ];
+      }),
+    [connectedPlatforms],
+  );
+
+  const mobileActive = useMemo<QuickConnectionsActive | null>(() => {
+    if (!activePlatform) return null;
+    return {
+      meta: {
+        id: activePlatform.meta.id,
+        label: activePlatform.meta.label,
+        subtitle: activePlatform.meta.subtitle,
+        hint: activePlatform.meta.hint,
+        accent: platformBrandAccent(activePlatform.meta.id),
+      },
+      state: {
+        id: activePlatform.id,
+        connected: activePlatform.connected,
+        account: activePlatform.account,
+        grantedPermissionIds: activePlatform.grantedPermissionIds,
+      },
+    };
+  }, [activePlatform]);
+
   useEffect(() => {
     if (!activeId || qcOpen) return;
     const stillVisible = list.some((x) => x.meta.id === activeId) || connectedPlatforms.some((p) => p.id === activeId);
@@ -829,6 +895,7 @@ export function PlatformsView() {
   }
 
   function openPermissions(platformId: PlatformId) {
+    setQcOpen(false);
     setPermPlatformId(platformId);
     setPermOpen(true);
   }
@@ -875,7 +942,7 @@ export function PlatformsView() {
   }
 
   return (
-    <div className="grid gap-5">
+    <div className={phone ? "studio-plat" : "grid gap-5"}>
       <ConfirmDialog
         open={revokeId !== null}
         title={formatTemplate(P.revokeConfirmTitle, {
@@ -903,6 +970,40 @@ export function PlatformsView() {
         }}
       />
 
+      {phone ? (
+        <PlatformsMobileDeck
+          items={mobileRows}
+          connectedItems={mobileConnectedRows}
+          connectedCount={connectedCount}
+          availableCount={PLATFORM_META.filter((p) => !p.comingSoon).length}
+          query={query}
+          onQueryChange={setQuery}
+          connectedOnly={connectedOnly}
+          onConnectedOnlyChange={setConnectedOnly}
+          groupFilter={groupFilter}
+          onGroupFilterChange={setGroupFilter}
+          groupLabels={groupLabels}
+          groupOrder={GROUP_ORDER}
+          active={mobileActive}
+          manageOpen={qcOpen}
+          onOpenManage={toggleManage}
+          onCloseManage={() => setQcOpen(false)}
+          onConnect={openPermissions}
+          onDisconnect={(id) => setRevokeId(id)}
+          onSyncNow={syncNow}
+          scopeNotice={scopeNotice}
+          onDismissScopeNotice={() => setScopeNotice(null)}
+          onResetDemo={() => {
+            setPlatforms(defaultState());
+            setActiveId("youtube");
+            setQuery("");
+            setConnectedOnly(false);
+            setGroupFilter("all");
+            setQcOpen(false);
+          }}
+        />
+      ) : (
+      <>
       <div ref={accountsRef} className="cal-surface relative overflow-hidden rounded-3xl p-5 sm:p-6">
         <div
           className="pointer-events-none absolute -end-16 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--ice)_22%,transparent),transparent_70%)] opacity-80"
@@ -1264,6 +1365,8 @@ export function PlatformsView() {
           </div>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 }

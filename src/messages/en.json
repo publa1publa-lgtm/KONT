@@ -8,12 +8,17 @@
     "nav": {
       "howItWorks": "How it works",
       "product": "Product",
+      "ourPlatform": "Our Platform",
+      "overview": "Overview",
       "benefits": "Why KONT",
       "studio": "Studio",
       "signIn": "Sign in",
       "signUp": "Sign up",
-      "cta": "Request demo",
-      "language": "Language"
+      "cta": "Start free",
+      "language": "Language",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "productMenu": "Product menu"
     },
     "footer": {
       "tagline": "Plan, publish, and grow — one workspace for creators.",
@@ -37,7 +42,7 @@
       ],
       "resourceLinks": [
         {
-          "label": "Request demo",
+          "label": "Start free",
           "href": "#"
         },
         {
@@ -61,13 +66,13 @@
     "scrollHint": "Scroll to explore",
     "hero": {
       "label": "The content workspace",
-      "badge": "Early access now open",
+      "badge": "Publish today",
       "title": "Your chaos stack.",
       "titleAccent": "Our calm workspace.",
-      "text": "Plan, publish, and measure every channel from a single workspace. Built for creators and teams who ship every week.",
-      "ctaPrimary": "Get early access",
+      "text": "Plan, publish, and measure every channel from one workspace.",
+      "ctaPrimary": "Start now",
       "ctaSecondary": "See how it works",
-      "trust": "Official platform APIs · OAuth-only · No shared passwords",
+      "trust": ["Official APIs", "OAuth only", "No shared passwords"],
       "platforms": [
         "Instagram",
         "TikTok",
@@ -82,7 +87,7 @@
       },
       "social": {
         "count": "1,200+ creators",
-        "text": "on the early-access list",
+        "text": "publishing across channels",
         "worksWith": "Publishes to"
       },
       "tags": [
@@ -289,10 +294,10 @@
     },
     "cta": {
       "label": "Ready when you are",
-      "badge": "Limited early access",
+      "badge": "Go live today",
       "title": "Start your workspace in minutes",
       "text": "Connect your channels, invite your team, and publish your first batch this week — no credit card required.",
-      "primary": "Get early access",
+      "primary": "Start free",
       "secondary": "See what's inside",
       "trust": [
         "OAuth-only connections",
@@ -1146,7 +1151,8 @@
     "successTitle": "You're on the list",
     "successBody": "Thanks — we'll be in touch shortly.",
     "close": "Close",
-    "errorInvalid": "Enter a valid email address."
+    "errorInvalid": "Enter a valid email address.",
+    "errorSend": "Could not send the request. Please try again."
   },
   "calendar": {
     "back": "Back",
@@ -1313,14 +1319,29 @@
   "legal": {
     "kicker": "Legal",
     "metaTitle": "Terms of Use — KONT",
-    "metaDescription": "Terms of Use, Privacy Policy, and platform terms for KONT integrations including TikTok, Instagram, YouTube, and more.",
+    "metaDescription": "Terms of Use and Privacy Policy for KONT.",
     "documents": "Documents",
     "services": "Services",
     "selectService": "Choose a service",
     "lastUpdated": "Last updated",
     "onThisPage": "On this page",
+    "contents": "Contents",
+    "nowReading": "Now reading",
     "backHome": "Home",
     "privacyTitle": "Privacy Policy",
-    "termsTitle": "Terms of Use"
+    "termsTitle": "Terms of Use",
+    "toc": {
+      "terms": {
+        "using": "Using KONT",
+        "rules": "Obligations",
+        "legal": "Legal terms"
+      },
+      "privacy": {
+        "about": "About",
+        "data": "Your data",
+        "control": "Your control",
+        "other": "This policy"
+      }
+    }
   }
 }

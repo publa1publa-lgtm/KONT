@@ -102,14 +102,14 @@ export function RegisterForm({
       ) : null}
 
       <form
-        className={compact ? "grid gap-2.5" : "grid gap-4"}
+        className={compact ? "grid gap-2" : "grid gap-4"}
         action={formAction}
         noValidate
         onSubmit={onSubmit}
       >
         {next ? <input type="hidden" name="next" value={next} /> : null}
-        <div className={compact ? "grid gap-2.5 sm:grid-cols-2" : "grid gap-4 sm:grid-cols-2"}>
-          <label className="grid gap-1.5">
+        <div className={compact ? "grid grid-cols-2 gap-2" : "grid gap-4 sm:grid-cols-2"}>
+          <label className={compact ? "grid gap-1" : "grid gap-1.5"}>
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{R.firstName}</span>
             <input
               id={`${uid}-firstName`}
@@ -127,7 +127,7 @@ export function RegisterForm({
             />
             <FieldError id={`${uid}-firstName-error`} message={firstNameError} />
           </label>
-          <label className="grid gap-1.5">
+          <label className={compact ? "grid gap-1" : "grid gap-1.5"}>
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{R.lastName}</span>
             <input
               id={`${uid}-lastName`}
@@ -147,7 +147,7 @@ export function RegisterForm({
           </label>
         </div>
 
-        <label className="grid gap-1.5">
+        <label className={compact ? "grid gap-1" : "grid gap-1.5"}>
           <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{R.login}</span>
           <input
             id={`${uid}-login`}
@@ -174,7 +174,7 @@ export function RegisterForm({
           )}
         </label>
 
-        <label className="grid gap-1.5">
+        <label className={compact ? "grid gap-1" : "grid gap-1.5"}>
           <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{R.email}</span>
           <input
             id={`${uid}-email`}
@@ -192,8 +192,8 @@ export function RegisterForm({
           <FieldError id={`${uid}-email-error`} message={emailError} />
         </label>
 
-        <div className={compact ? "grid gap-2.5 sm:grid-cols-2" : "grid gap-4 sm:grid-cols-2"}>
-          <label className="grid gap-1.5">
+        <div className={compact ? "grid grid-cols-2 gap-2" : "grid gap-4 sm:grid-cols-2"}>
+          <label className={compact ? "grid gap-1" : "grid gap-1.5"}>
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{R.password}</span>
             <PasswordInput
               id={`${uid}-password`}
@@ -211,7 +211,7 @@ export function RegisterForm({
             />
             <FieldError id={`${uid}-password-error`} message={passwordError} />
           </label>
-          <label className="grid gap-1.5">
+          <label className={compact ? "grid gap-1" : "grid gap-1.5"}>
             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{R.confirmPassword}</span>
             <PasswordInput
               id={`${uid}-passwordConfirm`}
@@ -231,7 +231,13 @@ export function RegisterForm({
           </label>
         </div>
 
-        <label className="group flex cursor-pointer items-start gap-2.5 rounded-xl border border-[rgba(0,113,227,0.12)] bg-white/70 p-2.5 transition hover:border-[rgba(0,113,227,0.22)] hover:bg-white">
+        <label
+          className={
+            compact
+              ? "group flex cursor-pointer items-start gap-2 py-0.5"
+              : "group flex cursor-pointer items-start gap-2.5 rounded-xl border border-[rgba(0,113,227,0.12)] bg-white/70 p-2.5 transition hover:border-[rgba(0,113,227,0.22)] hover:bg-white"
+          }
+        >
           <input
             name="marketingOptIn"
             type="checkbox"
@@ -246,7 +252,9 @@ export function RegisterForm({
           type="submit"
           disabled={pending}
           className={[
-            "relative overflow-hidden rounded-xl px-4 py-3 text-sm font-semibold transition",
+            compact
+              ? "relative overflow-hidden rounded-xl px-4 py-2.5 text-sm font-semibold transition"
+              : "relative overflow-hidden rounded-xl px-4 py-3 text-sm font-semibold transition",
             pending
               ? "cursor-not-allowed border border-[rgba(0,113,227,0.12)] bg-[rgba(0,113,227,0.06)] text-[rgba(29,29,31,0.35)]"
               : "bg-gradient-to-r from-[#0071e3] to-[#32ade6] text-white shadow-[0_12px_28px_-14px_rgba(0,113,227,0.75)] hover:brightness-110",

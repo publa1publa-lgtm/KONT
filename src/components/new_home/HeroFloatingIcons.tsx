@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { BrandIcon } from "@/components/brands/BrandIcon";
 
 const FLOAT_ICONS = [
   { src: "/home/icons/color/instagram.svg", label: "Instagram" },
@@ -10,7 +10,6 @@ const FLOAT_ICONS = [
   { src: "/home/icons/color/telegram.svg", label: "Telegram" },
   { src: "/home/icons/color/linkedin.svg", label: "LinkedIn" },
   { src: "/home/icons/color/facebook.svg", label: "Facebook" },
-  { src: "/home/icons/color/threads.svg", label: "Threads" },
 ] as const;
 
 export function HeroFloatingIcons() {
@@ -22,7 +21,7 @@ export function HeroFloatingIcons() {
           className={`hero2-float-icons__item hero2-float-icons__item--${i + 1}${i >= 5 ? " hero2-float-icons__item--sm" : ""}`}
           title={icon.label}
         >
-          <Image src={icon.src} alt="" width={20} height={20} />
+          <BrandIcon src={icon.src} size={20} />
         </span>
       ))}
     </div>
