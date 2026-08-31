@@ -7,7 +7,7 @@ function line(value: string | undefined): string {
   return text ? escapeTelegramHtml(text) : "—";
 }
 
-function formatCreatedAt(value: Date | string | undefined): string {
+function formatCreatedAt(value?: Date | string): string {
   const date = value instanceof Date ? value : value ? new Date(value) : new Date();
   if (Number.isNaN(date.getTime())) return line(undefined);
   return (
