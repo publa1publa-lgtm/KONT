@@ -3,7 +3,8 @@ import { AuditAction, ContentStatus, Prisma } from "@prisma/client";
 
 import { internalError } from "@/lib/api/errors";
 import { asMediaIds, setContentMainMedia } from "@/lib/media/link";
-import { publishContentTargets } from "@/lib/publish/run";
+import { syncContentPublishPlan } from "@/lib/publish/schedule";
+import * as publishJobRepo from "@/lib/repos/publishJobRepo";
 import { toMediaAssetDto } from "@/lib/media/dto";
 import { auditContextFromRequest, writeAudit } from "@/lib/audit";
 import { asRecord, asString, asStringArray } from "@/lib/api/parse";
@@ -108,9 +109,13 @@ export async function createContent(req: Request): Promise<NextResponse> {
       }
     }
 
-    void publishContentTargets(userId, created.id).catch((err) =>
-      console.error("[content.create] background publish failed", err),
-    );
+    const publishPlan = await syncContentPublishPlan({
+      contentId: created.id,
+      userId,
+      status: created.status,
+      scheduledAt: created.scheduledAt,
+      metadata: created.metadata,
+    });
 
     void writeAudit({
       userId,
@@ -122,7 +127,14 @@ export async function createContent(req: Request): Promise<NextResponse> {
     });
 
     const fresh = await contentRepo.findContentById(created.id);
-    return json({ ...(fresh ?? created), publishing: true }, 201);
+    return json(
+      {
+        ...(fresh ?? created),
+        publishing: publishPlan.publishing,
+        scheduledPublish: publishPlan.deferred,
+      },
+      201,
+    );
   } catch (e) {
     return internalError("[POST /api/content]", e, "Could not create content");
   }
@@ -201,9 +213,16 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
       }
     }
 
-    void publishContentTargets(userId, id).catch((err) =>
-      console.error("[content.patch] background publish failed", err),
-    );
+    const fresh = await contentRepo.findContentById(id);
+    if (!fresh) return notFound();
+
+    const publishPlan = await syncContentPublishPlan({
+      contentId: id,
+      userId,
+      status: fresh.status,
+      scheduledAt: fresh.scheduledAt,
+      metadata: fresh.metadata,
+    });
 
     void writeAudit({
       userId,
@@ -214,8 +233,11 @@ export async function patchContent(req: Request, params: Promise<{ id: string }>
       metadata: { fields: Object.keys(data) },
     });
 
-    const fresh = await contentRepo.findContentById(id);
-    return json({ ...fresh, publishing: true });
+    return json({
+      ...fresh,
+      publishing: publishPlan.publishing,
+      scheduledPublish: publishPlan.deferred,
+    });
   } catch (e) {
     return internalError("[PATCH /api/content/:id]", e, "Could not update content");
   }
@@ -232,6 +254,7 @@ export async function deleteContent(req: Request, params: Promise<{ id: string }
   if (!existing) return notFound();
 
   await contentRepo.softDeleteContent(id);
+  await publishJobRepo.cancelPublishJob(id);
 
   void writeAudit({
     userId,

@@ -45,6 +45,9 @@ type YouTubeVideoResource = {
   status?: {
     privacyStatus?: YouTubeVideo["privacyStatus"];
   };
+  statistics?: {
+    viewCount?: string;
+  };
 };
 
 function isExpired(expiresAt: Date, skewMs = ACCESS_TOKEN_SKEW_MS): boolean {
@@ -279,6 +282,41 @@ export async function uploadVideo(userId: string, input: YouTubeUploadInput): Pr
   const sessionUrl = await startResumableSession(accessToken, input, bytes.byteLength, mimeType);
   const resource = await uploadResumableBytes(sessionUrl, accessToken, bytes, mimeType);
   return mapVideo(resource);
+}
+
+export async function getYouTubeVideoSnapshot(
+  userId: string,
+  videoId: string,
+): Promise<{ views: number | null; permalink: string | null; live: boolean }> {
+  const id = videoId.trim();
+  const fallbackPermalink = id ? `https://www.youtube.com/watch?v=${id}` : null;
+  if (!id) return { views: null, permalink: null, live: false };
+
+  try {
+    const accessToken = await getValidAccessToken(userId);
+    const url = new URL(YOUTUBE_VIDEOS_URL);
+    url.searchParams.set("part", "statistics,status");
+    url.searchParams.set("id", id);
+    const body = await youtubeFetch<{ items?: YouTubeVideoResource[] }>(url.toString(), accessToken);
+    const item = body.items?.[0];
+    if (!item?.id) return { views: null, permalink: fallbackPermalink, live: false };
+
+    const rawViews = item.statistics?.viewCount;
+    const views =
+      typeof rawViews === "string" && rawViews.trim()
+        ? Number.parseInt(rawViews, 10)
+        : typeof rawViews === "number" && Number.isFinite(rawViews)
+          ? rawViews
+          : null;
+
+    return {
+      views: views != null && Number.isFinite(views) ? views : null,
+      permalink: fallbackPermalink,
+      live: Boolean(item.id),
+    };
+  } catch {
+    return { views: null, permalink: fallbackPermalink, live: false };
+  }
 }
 
 async function getVideo(userId: string, videoId: string): Promise<YouTubeVideoResource> {

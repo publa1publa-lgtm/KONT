@@ -9,7 +9,11 @@ import { ConnectionToggle } from "./ConnectionToggle";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
 import { PLATFORM_PANEL_SURFACE_CLASS } from "./platformCardStyles";
 import { StudioWrapperList, studioWrapperList } from "./StudioWrapperList";
-import { permissionLabel } from "./PlatformPermissionsModal";
+import {
+  PLATFORM_PERMISSIONS,
+  permissionCategoryOf,
+  permissionLabel,
+} from "./PlatformPermissionsModal";
 import { formatRelative, type PlatformId, type ConnectedAccount } from "./platformShared";
 
 export type QuickConnectionsActive = {
@@ -54,9 +58,20 @@ export function QuickConnectionsPanel({
   const { messages } = useI18n();
   const P = messages.studio.platforms;
   const C = messages.common;
+  const PC = messages.studio.platformConnect;
   const hasNotice = Boolean(scopeNotice && (scopeNotice.missingIds.length || scopeNotice.extraIds.length));
   const [tab, setTab] = useState<TabId>(hasNotice ? "settings" : "details");
   const connected = active.state.connected;
+
+  function labelForPermission(permissionId: string): string {
+    const category = permissionCategoryOf(active.meta.id, permissionId);
+    if (category) return PC.categories[category] ?? permissionLabel(active.meta.id, permissionId);
+    return permissionLabel(active.meta.id, permissionId);
+  }
+
+  function scopesForPermission(permissionId: string): readonly string[] {
+    return PLATFORM_PERMISSIONS[active.meta.id].find((p) => p.id === permissionId)?.scopes ?? [];
+  }
 
   const tabs = useMemo<Array<TabSpec<TabId>>>(
     () => [
@@ -97,7 +112,7 @@ export function QuickConnectionsPanel({
                 <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
                   {formatTemplate(
                     active.meta.id === "youtube" || active.meta.id === "googleDrive" ? P.youtubeScopeMissing : P.scopeMissing,
-                    { list: scopeNotice.missingIds.map((id) => permissionLabel(active.meta.id, id)).join(", ") },
+                    { list: scopeNotice.missingIds.map((id) => labelForPermission(id)).join(", ") },
                   )}
                 </p>
               ) : null}
@@ -105,7 +120,7 @@ export function QuickConnectionsPanel({
                 <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
                   {formatTemplate(
                     active.meta.id === "youtube" || active.meta.id === "googleDrive" ? P.youtubeScopeExtra : P.scopeExtra,
-                    { list: scopeNotice.extraIds.map((id) => permissionLabel(active.meta.id, id)).join(", ") },
+                    { list: scopeNotice.extraIds.map((id) => labelForPermission(id)).join(", ") },
                   )}
                 </p>
               ) : null}
@@ -177,14 +192,31 @@ export function QuickConnectionsPanel({
                 {(active.state.grantedPermissionIds?.length
                   ? active.state.grantedPermissionIds
                   : ["account.identity"]
-                ).map((perm) => (
-                  <div key={perm} className="flex items-center justify-between gap-3">
-                    <span className="truncate">{permissionLabel(active.meta.id, perm)}</span>
-                    <span className="rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
-                      {connected ? P.live : P.available}
-                    </span>
-                  </div>
-                ))}
+                ).map((perm) => {
+                  const scopes = scopesForPermission(perm);
+                  return (
+                    <div key={perm} className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate font-medium text-[var(--fg)]">{labelForPermission(perm)}</div>
+                        {scopes.length > 0 ? (
+                          <div className="mt-1 grid gap-1">
+                            {scopes.map((scope) => (
+                              <code
+                                key={scope}
+                                className="block truncate text-[0.68rem] text-[var(--muted)]"
+                              >
+                                {scope}
+                              </code>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                      <span className="shrink-0 rounded-lg border border-[var(--line)] bg-[var(--studio-surface-3)] px-3 py-1 text-xs font-semibold text-[var(--fg)]/70">
+                        {connected ? P.live : P.available}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

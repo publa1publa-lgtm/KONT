@@ -60,6 +60,14 @@ enum PublishAttemptStatus {
   FAILED
 }
 
+enum PublishJobStatus {
+  PENDING
+  RUNNING
+  DONE
+  FAILED
+  CANCELLED
+}
+
 enum AuditAction {
   USER_REGISTERED
   USER_LOGIN
@@ -156,6 +164,7 @@ model User {
   passwordResets   PasswordReset[]
   oauthStates      OAuthState[]
   linkPage         LinkPage?
+  publishJobs      PublishJob[]
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -312,9 +321,10 @@ model Content {
   /// Soft-delete: keeps history available for audit and any in-flight publish jobs.
   deletedAt   DateTime?
 
-  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  targets ContentTarget[]
-  media   ContentMedia[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targets    ContentTarget[]
+  media      ContentMedia[]
+  publishJob PublishJob?
 
   @@index([userId, createdAt])
   @@index([status])
@@ -462,6 +472,25 @@ model PublishAttempt {
   @@index([status])
 }
 
+/// Deferred publish orchestration — one active job per content row.
+model PublishJob {
+  id        String           @id @default(uuid())
+  contentId String           @unique
+  userId    String
+  runAt     DateTime
+  status    PublishJobStatus @default(PENDING)
+  attemptNo Int              @default(0)
+  lockedAt  DateTime?
+  lastError String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, runAt])
+}
+
 /// Short-lived record bound to an in-flight OAuth flow.
 /// Stores PKCE verifier and CSRF state so /api/oauth/<provider>/callback can validate the redirect.
 model OAuthState {
@@ -513,4 +542,15 @@ model AuditLog {
   @@index([userId, createdAt])
   @@index([action, createdAt])
   @@index([entityType, entityId])
+}
+
+model MetaDataDeletionRequest {
+  id               String    @id @default(uuid())
+  confirmationCode String    @unique
+  metaUserId       String
+  status           String    @default("completed")
+  createdAt        DateTime  @default(now())
+  completedAt      DateTime?
+
+  @@index([metaUserId])
 }

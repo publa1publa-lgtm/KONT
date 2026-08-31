@@ -1,7 +1,23 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
-import { Check, ShieldCheck } from "lucide-react";
+import {
+  BarChart3,
+  Blocks,
+  Check,
+  Eye,
+  FilePenLine,
+  Inbox,
+  KeyRound,
+  LayoutList,
+  Send,
+  Settings2,
+  ShieldCheck,
+  Upload,
+  UserRound,
+  Webhook,
+  type LucideIcon,
+} from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { StudioDialog } from "./StudioDialog";
 import { StudioCreateButton, StudioGhostButton } from "./StudioCreateButton";
@@ -15,56 +31,103 @@ import { PlatformIcon, type PlatformId } from "./platformShared";
 
 export type { PlatformId };
 
+/** Shared capability labels across platforms — only the scopes under them differ. */
+export type PermissionCategoryId =
+  | "account"
+  | "publish"
+  | "manage"
+  | "read"
+  | "analytics"
+  | "inbox"
+  | "pages"
+  | "write"
+  | "send"
+  | "webhook"
+  | "token"
+  | "integration";
+
 export type PermissionSpec = {
   id: string;
-  title: string;
-  description: string;
+  category: PermissionCategoryId;
   required?: boolean;
   /** Pre-checked when the modal opens (optional scopes only). */
   defaultOn?: boolean;
-  /** Provider scope shown under the row (Google / Meta / etc.). */
-  scope?: string;
+  /** Provider permission / scope names shown under the category title. */
+  scopes?: readonly string[];
+};
+
+const GOOGLE_AUTH_PREFIX = "https://www.googleapis.com/auth/";
+
+/** Shorten long Google scope URLs for display; Meta / custom ids stay as-is. */
+export function formatPermissionScopeName(scope: string): string {
+  if (scope.startsWith(GOOGLE_AUTH_PREFIX)) return scope.slice(GOOGLE_AUTH_PREFIX.length);
+  return scope;
+}
+
+export const PERMISSION_CATEGORY_ICONS: Record<PermissionCategoryId, LucideIcon> = {
+  account: UserRound,
+  publish: Upload,
+  manage: Settings2,
+  read: Eye,
+  analytics: BarChart3,
+  inbox: Inbox,
+  pages: LayoutList,
+  write: FilePenLine,
+  send: Send,
+  webhook: Webhook,
+  token: KeyRound,
+  integration: Blocks,
+};
+
+const CATEGORY_FALLBACK_LABEL: Record<PermissionCategoryId, string> = {
+  account: "Account",
+  publish: "Publish",
+  manage: "Manage",
+  read: "Read",
+  analytics: "Analytics",
+  inbox: "Inbox",
+  pages: "Pages",
+  write: "Write",
+  send: "Send",
+  webhook: "Webhooks",
+  token: "Access token",
+  integration: "Integration",
 };
 
 /** Same for every social network. Platform-specific scopes are appended below. */
 export const SOCIAL_SHARED_PERMISSIONS: PermissionSpec[] = [
   {
     id: "account.identity",
-    title: "Account access",
-    description: "Identify your account during OAuth and keep the connection active.",
+    category: "account",
     required: true,
   },
   {
     id: INBOX_UNIFIED_PERMISSION_ID,
-    title: "Unified Inbox",
-    description: "Show comments, mentions, and activity from this account in the studio Inbox.",
+    category: "inbox",
+    scopes: [INBOX_UNIFIED_PERMISSION_ID],
   },
 ];
 
 const YOUTUBE_SCOPE_PERMISSIONS: PermissionSpec[] = [
   {
     id: "youtube.upload",
-    title: "Upload videos",
-    description: "Upload new videos to your YouTube channel. Without this, publishing is unavailable.",
-    scope: "https://www.googleapis.com/auth/youtube.upload",
+    category: "publish",
+    scopes: ["youtube.upload"],
   },
   {
     id: "youtube",
-    title: "Manage YouTube account",
-    description: "Edit metadata, change visibility, and delete videos on your channel.",
-    scope: "https://www.googleapis.com/auth/youtube",
+    category: "manage",
+    scopes: ["youtube"],
   },
   {
     id: "youtube.readonly",
-    title: "Read YouTube data",
-    description: "View your channel, videos, playlists, and public YouTube information.",
-    scope: "https://www.googleapis.com/auth/youtube.readonly",
+    category: "read",
+    scopes: ["youtube.readonly"],
   },
   {
     id: "yt-analytics.readonly",
-    title: "Read analytics",
-    description: "View performance metrics such as views, watch time, and engagement.",
-    scope: "https://www.googleapis.com/auth/yt-analytics.readonly",
+    category: "analytics",
+    scopes: ["yt-analytics.readonly"],
   },
 ];
 
@@ -88,192 +151,221 @@ export function metaScopesForPermissions(
   return metaScopesForPermissionIds(platformId, permissionIds);
 }
 
+export function permissionCategoryOf(
+  platformId: PlatformId,
+  permissionId: string,
+): PermissionCategoryId | null {
+  return PLATFORM_PERMISSIONS[platformId].find((p) => p.id === permissionId)?.category ?? null;
+}
+
+/** Category label for a stored permission id (English fallback if i18n unavailable). */
 export function permissionLabel(platformId: PlatformId, permissionId: string): string {
-  const spec = PLATFORM_PERMISSIONS[platformId].find((p) => p.id === permissionId);
-  return spec?.title ?? permissionId;
+  const category = permissionCategoryOf(platformId, permissionId);
+  return category ? CATEGORY_FALLBACK_LABEL[category] : permissionId;
 }
 
 export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
   youtube: [...SOCIAL_SHARED_PERMISSIONS, ...YOUTUBE_SCOPE_PERMISSIONS],
   tiktok: [
     ...SOCIAL_SHARED_PERMISSIONS,
-    { id: "tiktok.publish", title: "Publish videos", description: "Upload and publish videos to your TikTok account." },
-    { id: "tiktok.manage", title: "Manage posts", description: "Edit or delete posts created through KONT." },
-    { id: "tiktok.analytics.read", title: "Read analytics", description: "View performance metrics for your TikTok posts." },
+    { id: "tiktok.publish", category: "publish", scopes: ["tiktok.publish"] },
+    { id: "tiktok.manage", category: "manage", scopes: ["tiktok.manage"] },
+    { id: "tiktok.analytics.read", category: "analytics", scopes: ["tiktok.analytics.read"] },
   ],
   instagram: [
-    ...SOCIAL_SHARED_PERMISSIONS,
     {
-      id: "instagram.content_publish",
-      title: "Publish to Instagram",
-      description: "Publish Reels and posts to your Instagram professional account.",
-      defaultOn: true,
-      scope: "instagram_content_publish",
+      id: "account.identity",
+      category: "account",
+      required: true,
     },
     {
-      id: "instagram.manage_comments",
-      title: "Manage comments",
-      description: "Read and respond to comments on content posted through KONT.",
-      scope: "instagram_manage_comments",
+      id: "instagram.content_publish",
+      category: "publish",
+      defaultOn: true,
+      required: true,
+      scopes: ["instagram_content_publish"],
     },
     {
       id: "instagram.insights.read",
-      title: "Read insights",
-      description: "View analytics and insights for your Instagram content.",
-      scope: "instagram_manage_insights",
+      category: "analytics",
+      scopes: ["instagram_manage_insights"],
     },
   ],
   facebook: [
-    ...SOCIAL_SHARED_PERMISSIONS,
+    {
+      id: "account.identity",
+      category: "account",
+      required: true,
+    },
     {
       id: "pages_show_list",
-      title: "Access pages",
-      description: "List and select Facebook Pages you manage.",
+      category: "pages",
       required: true,
-      scope: "pages_show_list",
+      scopes: ["pages_show_list"],
     },
     {
       id: "pages_manage_posts",
-      title: "Publish posts",
-      description: "Create and manage posts on selected Pages.",
+      category: "publish",
       defaultOn: true,
-      scope: "pages_manage_posts",
-    },
-    {
-      id: "pages_read_engagement",
-      title: "Read engagement",
-      description: "Read reactions and comments for moderation and reporting.",
-      scope: "pages_read_engagement",
-    },
-    {
-      id: "read_insights",
-      title: "Read insights",
-      description: "View Page insights and analytics.",
-      scope: "read_insights",
+      required: true,
+      scopes: ["pages_manage_posts"],
     },
   ],
   pinterest: [
     ...SOCIAL_SHARED_PERMISSIONS,
-    { id: "pinterest.read_boards", title: "Read boards", description: "List boards and sections you choose to share." },
-    { id: "pinterest.create_pins", title: "Create Pins", description: "Publish new Pins to boards you manage." },
-    { id: "pinterest.analytics.read", title: "Read analytics", description: "View Pin and board performance metrics." },
+    { id: "pinterest.read_boards", category: "read", scopes: ["pinterest.read_boards"] },
+    { id: "pinterest.create_pins", category: "publish", scopes: ["pinterest.create_pins"] },
+    { id: "pinterest.analytics.read", category: "analytics", scopes: ["pinterest.analytics.read"] },
   ],
   linkedin: [
     ...SOCIAL_SHARED_PERMISSIONS,
-    { id: "linkedin.w_member_social", title: "Post as member", description: "Create and manage posts on behalf of the authenticated member." },
-    { id: "linkedin.w_organization_social", title: "Post as organization", description: "Publish to LinkedIn Pages you administer." },
-    { id: "linkedin.r_organization_social", title: "Read organization content", description: "Read posts and analytics for managed Pages." },
+    { id: "linkedin.w_member_social", category: "publish", scopes: ["linkedin.w_member_social"] },
+    { id: "linkedin.w_organization_social", category: "publish", scopes: ["linkedin.w_organization_social"] },
+    { id: "linkedin.r_organization_social", category: "read", scopes: ["linkedin.r_organization_social"] },
   ],
   telegram: [
-    { id: "telegram.bot.token", title: "Bot token", description: "Use your Bot API token to send messages from automations.", required: true },
+    {
+      id: "telegram.bot.token",
+      category: "token",
+      required: true,
+      scopes: ["telegram.bot.token"],
+    },
     {
       id: INBOX_UNIFIED_PERMISSION_ID,
-      title: "Unified Inbox",
-      description: "Show inbound bot conversations and updates in the studio Inbox.",
+      category: "inbox",
+      scopes: [INBOX_UNIFIED_PERMISSION_ID],
     },
-    { id: "telegram.sendMessages", title: "Send messages", description: "Send notifications to chats/users where your bot is allowed." },
-    { id: "telegram.webhooks", title: "Webhooks", description: "Receive updates via webhook (optional, needed for inbound commands)." },
+    {
+      id: "telegram.sendMessages",
+      category: "send",
+      scopes: ["telegram.sendMessages"],
+    },
+    {
+      id: "telegram.webhooks",
+      category: "webhook",
+      scopes: ["telegram.webhooks"],
+    },
   ],
   notion: [
-    { id: "notion.integration", title: "Notion Integration", description: "Use an integration token connected to pages/databases.", required: true },
-    { id: "notion.read", title: "Read pages & databases", description: "Read database rows and page content." },
-    { id: "notion.write", title: "Create & update pages", description: "Create pages, update properties, and append blocks." },
+    {
+      id: "notion.integration",
+      category: "integration",
+      required: true,
+      scopes: ["notion.integration"],
+    },
+    { id: "notion.read", category: "read", scopes: ["notion.read"] },
+    { id: "notion.write", category: "write", scopes: ["notion.write"] },
   ],
   googleDrive: [
     {
       id: "openid",
-      title: "Basic identity",
-      description: "Identify your Google account during OAuth.",
+      category: "account",
       required: true,
-      scope: "openid",
+      scopes: ["openid"],
     },
     {
       id: "drive.file",
-      title: "Create & manage app files",
-      description: "Create and upload files that KONT opens or creates in Drive.",
+      category: "write",
       defaultOn: true,
-      scope: "https://www.googleapis.com/auth/drive.file",
+      scopes: ["drive.file"],
     },
     {
       id: "drive.readonly",
-      title: "Read files",
-      description: "List and read existing Drive files for import.",
-      scope: "https://www.googleapis.com/auth/drive.readonly",
+      category: "read",
+      scopes: ["drive.readonly"],
     },
   ],
   googleSheets: [
     {
       id: "openid",
-      title: "Basic identity",
-      description: "Identify your Google account during OAuth.",
+      category: "account",
       required: true,
-      scope: "openid",
+      scopes: ["openid"],
     },
     {
       id: "spreadsheets",
-      title: "Read & write spreadsheets",
-      description: "Full access to create, edit, and read Google Sheets for content plans.",
+      category: "write",
       defaultOn: true,
-      scope: "https://www.googleapis.com/auth/spreadsheets",
+      scopes: ["spreadsheets"],
     },
     {
       id: "spreadsheets.readonly",
-      title: "Read spreadsheets",
-      description: "View-only access to Google Sheets data.",
-      scope: "https://www.googleapis.com/auth/spreadsheets.readonly",
+      category: "read",
+      scopes: ["spreadsheets.readonly"],
     },
   ],
   googleCalendar: [
     {
       id: "openid",
-      title: "Basic identity",
-      description: "Identify your Google account during OAuth.",
+      category: "account",
       required: true,
-      scope: "openid",
+      scopes: ["openid"],
     },
     {
       id: "calendar.events",
-      title: "Manage calendar events",
-      description: "Create and edit events to sync your content schedule.",
+      category: "manage",
       defaultOn: true,
-      scope: "https://www.googleapis.com/auth/calendar.events",
+      scopes: ["calendar.events"],
     },
     {
       id: "calendar.readonly",
-      title: "Read calendar",
-      description: "View your calendar to avoid scheduling conflicts.",
-      scope: "https://www.googleapis.com/auth/calendar.readonly",
+      category: "read",
+      scopes: ["calendar.readonly"],
     },
   ],
   dropbox: [
-    { id: "dropbox.oauth", title: "Dropbox OAuth", description: "Authorize ContentFabric to access your Dropbox.", required: true },
-    { id: "files.content.read", title: "Read file content", description: "Download files for import/export pipelines." },
-    { id: "files.content.write", title: "Write file content", description: "Upload exports, previews, and generated assets." },
+    {
+      id: "dropbox.oauth",
+      category: "account",
+      required: true,
+      scopes: ["dropbox.oauth"],
+    },
+    { id: "files.content.read", category: "read", scopes: ["files.content.read"] },
+    { id: "files.content.write", category: "write", scopes: ["files.content.write"] },
   ],
   email: [
-    { id: "email.smtp", title: "SMTP / provider API key", description: "Use SMTP credentials or provider API key to send email.", required: true },
-    { id: "email.send", title: "Send emails", description: "Send notification emails to recipients you configure." },
+    {
+      id: "email.smtp",
+      category: "token",
+      required: true,
+      scopes: ["email.smtp"],
+    },
+    { id: "email.send", category: "send", scopes: ["email.send"] },
   ],
   discord: [
-    { id: "discord.webhook", title: "Incoming webhook", description: "Post messages to a channel via webhook URL.", required: true },
-    { id: "discord.postMessages", title: "Post messages", description: "Send automation notifications to Discord." },
+    {
+      id: "discord.webhook",
+      category: "webhook",
+      required: true,
+      scopes: ["discord.webhook"],
+    },
+    { id: "discord.postMessages", category: "send", scopes: ["discord.postMessages"] },
   ],
 };
 
+function permissionScopeLines(spec: PermissionSpec): string[] {
+  if (spec.scopes?.length) return spec.scopes.map(formatPermissionScopeName);
+  return [];
+}
 
 function PermissionRow({
   spec,
+  categoryLabel,
   checked,
   locked,
   requiredLabel,
   onToggle,
 }: {
   spec: PermissionSpec;
+  categoryLabel: string;
   checked: boolean;
   locked: boolean;
   requiredLabel: string;
   onToggle: (next: boolean) => void;
 }) {
+  const Icon = PERMISSION_CATEGORY_ICONS[spec.category];
+  const scopeLines = permissionScopeLines(spec);
+
   return (
     <label
       className={[
@@ -281,6 +373,7 @@ function PermissionRow({
         checked ? "studio-perm-row--checked" : "",
         locked ? "studio-perm-row--locked" : "",
       ].join(" ")}
+      data-category={spec.category}
     >
       <input
         type="checkbox"
@@ -289,16 +382,26 @@ function PermissionRow({
         disabled={locked}
         onChange={(e) => onToggle(e.target.checked)}
       />
-      <span className="studio-perm-row__check pointer-events-none relative z-[1]" aria-hidden>
-        {checked ? <Check strokeWidth={3} /> : null}
+      <span className="studio-perm-row__icon pointer-events-none relative z-[1]" aria-hidden>
+        <Icon strokeWidth={2.1} />
       </span>
-      <span className="pointer-events-none relative z-[1] min-w-0">
+      <span className="studio-perm-row__body pointer-events-none relative z-[1] min-w-0">
         <span className="studio-perm-row__title-row">
-          <span className="studio-perm-row__title">{spec.title}</span>
+          <span className="studio-perm-row__title">{categoryLabel}</span>
           {spec.required ? <span className="studio-perm-row__badge">{requiredLabel}</span> : null}
         </span>
-        <p className="studio-perm-row__desc">{spec.description}</p>
-        <code className="studio-perm-row__id">{spec.scope ?? spec.id}</code>
+        {scopeLines.length > 0 ? (
+          <ul className="studio-perm-row__scopes">
+            {scopeLines.map((scope) => (
+              <li key={scope}>
+                <code className="studio-perm-row__scope">{scope}</code>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </span>
+      <span className="studio-perm-row__check pointer-events-none relative z-[1]" aria-hidden>
+        {checked ? <Check strokeWidth={3} /> : null}
       </span>
     </label>
   );
@@ -310,11 +413,10 @@ function PermissionSection({ label, children }: { label: string; children: React
       <div className="studio-perm-section__head">
         <h3 className="studio-perm-section__label">{label}</h3>
       </div>
-      <div className="grid gap-2">{children}</div>
+          <div className="grid gap-2.5">{children}</div>
     </section>
   );
 }
-
 
 export function PlatformPermissionsModal({
   open,
@@ -322,16 +424,19 @@ export function PlatformPermissionsModal({
   platformLabel,
   onClose,
   onConfirm,
+  extraDefaultIds,
 }: {
   open: boolean;
   platformId: PlatformId | null;
   platformLabel: string;
   onClose: () => void;
   onConfirm: (pickedPermissionIds: string[]) => void;
+  extraDefaultIds?: readonly string[];
 }) {
   const { messages } = useI18n();
   const PC = messages.studio.platformConnect;
   const C = messages.common;
+  const categories = PC.categories;
   const permissions = useMemo(() => (platformId ? PLATFORM_PERMISSIONS[platformId] : []), [platformId]);
 
   const defaultPicked = useMemo(() => {
@@ -351,17 +456,18 @@ export function PlatformPermissionsModal({
     }
     if (!platformId) return;
 
-    const sessionKey = platformId;
+    const sessionKey = `${platformId}:${(extraDefaultIds ?? []).join(",")}`;
     if (resetSessionRef.current === sessionKey) return;
 
     const initial = new Set<string>();
     for (const p of PLATFORM_PERMISSIONS[platformId]) {
       if (p.required || p.defaultOn) initial.add(p.id);
     }
+    for (const id of extraDefaultIds ?? []) initial.add(id);
     setPicked(initial);
     setAccepted(false);
     resetSessionRef.current = sessionKey;
-  }, [open, platformId]);
+  }, [open, platformId, extraDefaultIds]);
 
   const requiredOk = useMemo(() => {
     for (const p of permissions) {
@@ -376,6 +482,10 @@ export function PlatformPermissionsModal({
   const optionalPermissions = useMemo(() => permissions.filter((p) => !p.required), [permissions]);
 
   const agreeId = useId();
+
+  function categoryLabel(category: PermissionCategoryId): string {
+    return categories[category] ?? CATEGORY_FALLBACK_LABEL[category];
+  }
 
   if (!open || !platformId) return null;
 
@@ -469,63 +579,65 @@ export function PlatformPermissionsModal({
     >
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pe-1 [scrollbar-width:thin]">
-        {requiredPermissions.length > 0 ? (
-          <PermissionSection label={C.required}>
-            {requiredPermissions.map((p) => (
-              <PermissionRow
-                key={p.id}
-                spec={p}
-                checked={picked.has(p.id)}
-                locked
-                requiredLabel={C.required}
-                onToggle={() => undefined}
-              />
-            ))}
-          </PermissionSection>
-        ) : null}
-
-        {optionalPermissions.length > 0 ? (
-          requiredPermissions.length > 0 ? (
-            <PermissionSection label={PC.permissions}>
-              {optionalPermissions.map((p) => (
+          {requiredPermissions.length > 0 ? (
+            <PermissionSection label={C.required}>
+              {requiredPermissions.map((p) => (
                 <PermissionRow
                   key={p.id}
                   spec={p}
+                  categoryLabel={categoryLabel(p.category)}
                   checked={picked.has(p.id)}
-                  locked={false}
+                  locked
                   requiredLabel={C.required}
-                  onToggle={(next) => {
-                    const updated = new Set(picked);
-                    if (next) updated.add(p.id);
-                    else updated.delete(p.id);
-                    setPicked(updated);
-                  }}
+                  onToggle={() => undefined}
                 />
               ))}
             </PermissionSection>
-          ) : (
-            <div className="grid gap-2">
-              {optionalPermissions.map((p) => (
-                <PermissionRow
-                  key={p.id}
-                  spec={p}
-                  checked={picked.has(p.id)}
-                  locked={false}
-                  requiredLabel={C.required}
-                  onToggle={(next) => {
-                    const updated = new Set(picked);
-                    if (next) updated.add(p.id);
-                    else updated.delete(p.id);
-                    setPicked(updated);
-                  }}
-                />
-              ))}
-            </div>
-          )
-        ) : null}
+          ) : null}
+
+          {optionalPermissions.length > 0 ? (
+            requiredPermissions.length > 0 ? (
+              <PermissionSection label={PC.permissions}>
+                {optionalPermissions.map((p) => (
+                  <PermissionRow
+                    key={p.id}
+                    spec={p}
+                    categoryLabel={categoryLabel(p.category)}
+                    checked={picked.has(p.id)}
+                    locked={false}
+                    requiredLabel={C.required}
+                    onToggle={(next) => {
+                      const updated = new Set(picked);
+                      if (next) updated.add(p.id);
+                      else updated.delete(p.id);
+                      setPicked(updated);
+                    }}
+                  />
+                ))}
+              </PermissionSection>
+            ) : (
+              <div className="grid gap-2">
+                {optionalPermissions.map((p) => (
+                  <PermissionRow
+                    key={p.id}
+                    spec={p}
+                    categoryLabel={categoryLabel(p.category)}
+                    checked={picked.has(p.id)}
+                    locked={false}
+                    requiredLabel={C.required}
+                    onToggle={(next) => {
+                      const updated = new Set(picked);
+                      if (next) updated.add(p.id);
+                      else updated.delete(p.id);
+                      setPicked(updated);
+                    }}
+                  />
+                ))}
+              </div>
+            )
+          ) : null}
         </div>
       </div>
     </StudioDialog>
   );
 }
-

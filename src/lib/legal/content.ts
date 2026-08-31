@@ -75,6 +75,7 @@ const kontTerms: LegalDocument = {
           type: "ul",
           items: [
             "Publish to Facebook Pages and Instagram professional accounts linked to a Page.",
+            "Show Instagram account analytics for the last 7 days in Studio → Analytics.",
             "Upload and publish video to YouTube.",
             "Import image and video files you pick from Google Drive.",
             "Connect a Telegram bot you control, using a bot token you paste.",
@@ -83,7 +84,7 @@ const kontTerms: LegalDocument = {
         },
         {
           type: "note",
-          text: "TikTok, Pinterest, LinkedIn, Discord, email, Notion, Dropbox, Inbox, comments, insights, and analytics tiles may appear in Studio. Those destinations and surfaces are not live API products. We do not process their platform data until Connect (or that feature) is actually offered and this page is updated. KONT is not affiliated with, endorsed by, or sponsored by Meta, Google, TikTok, ByteDance, Telegram, or any other third-party platform. We use their APIs as an independent client.",
+          text: "TikTok, Pinterest, LinkedIn, Discord, email, Notion, Dropbox, Inbox, comments, and Insights tiles may appear in Studio. Those destinations and surfaces are not live API products. We do not process their platform data until Connect (or that feature) is actually offered and this page is updated. KONT is not affiliated with, endorsed by, or sponsored by Meta, Google, TikTok, ByteDance, Telegram, or any other third-party platform. We use their APIs as an independent client.",
         },
       ],
     },
@@ -230,7 +231,7 @@ const kontPrivacy: LegalDocument = {
         },
         {
           type: "note",
-          text: "Studio may show tiles such as TikTok, Pinterest, LinkedIn, Discord, Inbox, comments, insights, and analytics. Those are placeholders on our roadmap. We do not currently read messages, comments, insights, followers, or personal feeds from connected platforms, and we do not receive TikTok API data until TikTok Connect is live. If we enable a new category of data, we will ask for the matching permissions and update this policy first.",
+          text: "Studio may show tiles such as TikTok, Pinterest, LinkedIn, Discord, Inbox, comments, and Insights. Those are placeholders on our roadmap. Studio → Analytics is live for Instagram: if you connect a professional account and grant insights access, we load account-level totals such as views, reach, follows, and accounts engaged for recent days. Expanding a published post in the content library may also load that media’s lifetime play count. We do not currently read messages, comments, DMs, or personal feeds from connected platforms, and we do not receive TikTok API data until TikTok Connect is live. If we enable a new category of data, we will ask for the matching permissions and update this policy first.",
         },
       ],
     },
@@ -285,6 +286,8 @@ const kontPrivacy: LegalDocument = {
             "Access tokens or a Telegram bot token you paste, stored encrypted, used only to call that platform on your behalf",
             "The caption, media, and destination you submit when you publish or import",
             "Post, video, or file ids and status returned after a publish or import you started",
+            "Instagram account insights (views, reach, follows, and related totals for recent days) when you open Studio → Analytics with insights access granted",
+            "Instagram media play counts when you expand a published post in the content library with insights access granted",
           ],
         },
       ],
@@ -299,6 +302,7 @@ const kontPrivacy: LegalDocument = {
             "Create and authenticate your KONT account, including email verification",
             "Show connected destinations in Studio → Platforms",
             "Publish, schedule, or import the content you submit to the accounts you select",
+            "Show Instagram account analytics in Studio → Analytics when you grant that permission",
             "Show your public link page if you create one",
             "Send transactional email (sign-in, security, and notices required to operate the account)",
             "Send marketing email only if you opted in",
@@ -330,7 +334,7 @@ const kontPrivacy: LegalDocument = {
         {
           type: "ul",
           items: [
-            "Facebook Pages and Instagram professional: who logged in, Pages you manage, the Instagram professional account linked to a Page, encrypted tokens, and post or media ids after you publish. Used only to list destinations and publish content you submit. We do not load comments, DMs, or insights into Studio.",
+            "Facebook Pages and Instagram professional: who logged in, Pages you manage, the Instagram professional account linked to a Page, encrypted tokens, and post or media ids after you publish. Used to list destinations, publish content you submit, and — when you grant insights access — show account analytics in Studio → Analytics and lifetime play counts on published posts in the content library. We do not load comments or DMs into Studio.",
             "YouTube and Google Drive: Google identity needed for the connection, YouTube channel identity, videos and metadata you upload, and names and contents of Drive files you pick to import. We list image and video files you can access so you can choose one; we download only the file you select. We do not read Gmail. We do not currently pull YouTube Analytics into Studio, and we do not sync Google Calendar or Sheets even if those items appear in Studio.",
             "TikTok: not live today — we do not receive TikTok API data until you complete TikTok Login. When that connection is offered, we will receive identity needed to label the account, encrypted tokens, and the caption and video you submit, plus ids and status after that publish. We will not read TikTok DMs, followers, or For You feed.",
             "Telegram: you paste a bot token you control and optionally a chat id. We verify the bot, store the token encrypted, and use it only to send messages you initiate. We do not read your personal Telegram chats.",
@@ -392,7 +396,8 @@ const kontPrivacy: LegalDocument = {
           type: "ul",
           items: [
             "Disconnect a platform in Studio → Platforms. KONT then revokes the grant where the provider allows it and deletes stored tokens for that connection.",
-            "Remove KONT from that platform’s own apps and security settings (Facebook Apps and Websites, Google Third-party access, TikTok connected apps when available). That stops new API access even if you have not opened KONT.",
+            "Remove KONT from Facebook → Settings & privacy → Settings → Apps and websites. Choosing Remove and Send Request triggers our Meta data-deletion callback, which deletes Facebook and Instagram tokens we received from Meta.",
+            "Remove KONT from Google Third-party access and, when available, TikTok connected apps. That stops new API access even if you have not opened KONT.",
             `Request deletion of your KONT account and remaining personal data by emailing ${DELETION_EMAIL} from the address on the account. Write “Delete my KONT account” and include the email on the account. We will delete or irreversibly anonymize that data within 30 days, except records we must keep for security, dispute, or legal reasons (for example a short audit trail that a publish occurred).`,
           ],
         },
@@ -448,7 +453,7 @@ const kontPrivacy: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "We will post updates on this page and change the “Last updated” date. If we start processing new categories of connected-platform data (for example comments, inbox, TikTok Login, or insights), we will update this policy before those permissions go live.",
+          text: "We will post updates on this page and change the “Last updated” date. If we start processing new categories of connected-platform data (for example comments, inbox, or TikTok Login), we will update this policy before those permissions go live.",
         },
       ],
     },

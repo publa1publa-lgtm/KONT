@@ -21,6 +21,12 @@ function platformIdsFromMetadata(metadata: unknown): ReelPlatformId[] {
   return record.platforms.filter((id): id is ReelPlatformId => typeof id === "string" && isReelPlatformId(id));
 }
 
+/** Whether this content should be published to connected platforms. */
+export function contentWantsPublish(status: ContentStatus, metadata: unknown): boolean {
+  if (status === ContentStatus.DRAFT || status === ContentStatus.ARCHIVED) return false;
+  return platformIdsFromMetadata(metadata).length > 0;
+}
+
 export function youtubeWasRequested(metadata: unknown): boolean {
   return platformIdsFromMetadata(metadata).includes("youtube");
 }

@@ -19,8 +19,18 @@ export type InstagramScopePermissionId = keyof typeof INSTAGRAM_SCOPE_BY_PERMISS
 const ALLOWED = new Set<string>(META_OAUTH_SCOPES);
 
 const REQUIRED: Record<MetaConnectIntent, readonly MetaOAuthScope[]> = {
+  // App Review: publish loop. Insights is optional (`instagram.insights.read`) for Studio Analytics.
+  // business_management is required so Pages owned via Meta Business Suite appear in /me/accounts
+  // (otherwise Graph often returns [] and Instagram connect looks "broken").
   facebook: ["pages_show_list", "pages_manage_posts", "business_management"],
-  instagram: ["pages_show_list", "pages_manage_posts", "pages_read_engagement", "business_management", "instagram_basic", "instagram_content_publish"],
+  instagram: [
+    "pages_show_list",
+    "pages_manage_posts",
+    "pages_read_engagement",
+    "business_management",
+    "instagram_basic",
+    "instagram_content_publish",
+  ],
 };
 
 function scopeMap(intent: MetaConnectIntent) {
@@ -87,4 +97,8 @@ export function hasFacebookPublishScope(scopes: readonly string[]): boolean {
 
 export function hasInstagramPublishScope(scopes: readonly string[]): boolean {
   return scopes.includes("instagram_content_publish");
+}
+
+export function hasInstagramInsightsScope(scopes: readonly string[]): boolean {
+  return scopes.includes("instagram_manage_insights");
 }

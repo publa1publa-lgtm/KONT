@@ -1,4 +1,4 @@
-export const LEGAL_UPDATED_AT = "August 27, 2026";
+export const LEGAL_UPDATED_AT = "August 30, 2026";
 
 export type LegalDocKind = "terms" | "privacy";
 

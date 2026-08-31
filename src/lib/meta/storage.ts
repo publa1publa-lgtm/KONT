@@ -66,6 +66,7 @@ export async function saveMetaAccount(
       selectedPageId: page.pageId,
       igUserId: page.igUserId,
       igUsername: page.igUsername,
+      facebookUserId: account.profile.userId,
       longLived: true,
     },
   });

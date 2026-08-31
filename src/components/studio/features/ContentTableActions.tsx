@@ -1,4 +1,4 @@
-import { Archive, PencilLine, Trash2, Undo2, type LucideIcon } from "lucide-react";
+import { Archive, ChevronDown, PencilLine, Trash2, Undo2, type LucideIcon } from "lucide-react";
 
 type ActionTone = "default" | "muted" | "danger";
 
@@ -49,6 +49,7 @@ function ActionChip({
   disabled = false,
   compact = false,
   iconsOnly = false,
+  chevronOpen = false,
 }: {
   icon: LucideIcon;
   label: string;
@@ -57,8 +58,14 @@ function ActionChip({
   disabled?: boolean;
   compact?: boolean;
   iconsOnly?: boolean;
+  chevronOpen?: boolean;
 }) {
   const s = toneStyles[tone];
+  const iconCls = [
+    compact || iconsOnly ? "h-3.5 w-3.5" : "h-[17px] w-[17px]",
+    "shrink-0 transition-transform duration-200",
+    chevronOpen ? "rotate-180" : "",
+  ].join(" ");
   if (iconsOnly) {
     return (
       <button
@@ -67,10 +74,11 @@ function ActionChip({
         onClick={onClick}
         disabled={disabled}
         aria-label={label}
+        aria-expanded={chevronOpen || undefined}
         title={label}
       >
         <span className={[iconShellCompact, s.icon].join(" ")}>
-          <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden />
+          <Icon className={iconCls} strokeWidth={2} aria-hidden />
         </span>
       </button>
     );
@@ -84,13 +92,10 @@ function ActionChip({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
+      aria-expanded={chevronOpen || undefined}
     >
       <span className={[shell, s.icon].join(" ")}>
-        <Icon
-          className={[compact ? "h-3.5 w-3.5" : "h-[17px] w-[17px]", "shrink-0"].join(" ")}
-          strokeWidth={2}
-          aria-hidden
-        />
+        <Icon className={iconCls} strokeWidth={2} aria-hidden />
       </span>
       <span className={[labelCls, s.label].join(" ")}>{label}</span>
     </button>
@@ -102,6 +107,7 @@ export type ContentTableActionsLabels = {
   delete: string;
   archive?: string;
   toDraft?: string;
+  expand?: string;
 };
 
 type ContentTableActionsProps = {
@@ -110,6 +116,8 @@ type ContentTableActionsProps = {
   onEdit?: () => void;
   onArchive?: () => void;
   onToDraft?: () => void;
+  onToggleDetails?: () => void;
+  detailsOpen?: boolean;
   compact?: boolean;
   iconsOnly?: boolean;
 };
@@ -120,6 +128,8 @@ export function ContentTableActions({
   onEdit,
   onArchive,
   onToDraft,
+  onToggleDetails,
+  detailsOpen = false,
   compact = false,
   iconsOnly = false,
 }: ContentTableActionsProps) {
@@ -132,6 +142,17 @@ export function ContentTableActions({
       onClick={(e) => e.stopPropagation()}
       role="toolbar"
     >
+      {onToggleDetails && labels.expand ? (
+        <ActionChip
+          compact={compact}
+          iconsOnly={iconsOnly}
+          icon={ChevronDown}
+          label={labels.expand}
+          onClick={onToggleDetails}
+          tone="muted"
+          chevronOpen={detailsOpen}
+        />
+      ) : null}
       {onEdit ? (
         <ActionChip compact={compact} iconsOnly={iconsOnly} icon={PencilLine} label={labels.edit} onClick={onEdit} />
       ) : null}

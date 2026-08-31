@@ -683,6 +683,25 @@
       "toDraft": "To draft",
       "archive": "Archive",
       "delete": "Delete",
+      "expand": "Details",
+      "details": {
+        "title": "Platforms",
+        "viewsCol": "Views",
+        "openPost": "Open post",
+        "loading": "Loading…",
+        "loadFailed": "Could not load platform details.",
+        "empty": "No publish targets yet.",
+        "views": "{count} views",
+        "viewsUnknown": "—",
+        "status": {
+          "pending": "Pending",
+          "scheduled": "Scheduled",
+          "publishing": "Publishing",
+          "published": "Published",
+          "failed": "Failed",
+          "cancelled": "Cancelled"
+        }
+      },
       "duplicateTitleSuffix": " (copy)",
       "composerTitle": "Content",
       "composerSubtitle": "Create content",
@@ -849,10 +868,11 @@
       "driveDenied": "Google Drive: access was denied. You can try connecting again.",
       "facebookConnectFailed": "Facebook: could not connect the Page",
       "facebookDenied": "Facebook: access was denied. You can try connecting again.",
-      "facebookNoPages": "Facebook: no Pages were found. Create a Page and grant access to pages you manage.",
+      "facebookNoPages": "Facebook: no Pages were returned. In the Facebook dialog, select the Page you manage. Pages in Meta Business Suite need Business management access.",
       "instagramConnectFailed": "Instagram: could not connect the account",
       "instagramDenied": "Instagram: access was denied. You can try connecting again.",
-      "instagramNoAccount": "Instagram: no professional account is linked to a Facebook Page. Convert to Business/Creator and link it in Meta Business Suite.",
+      "instagramNoAccount": "Instagram: no professional account is linked to that Facebook Page. Convert to Business/Creator and link it in Meta Business Suite.",
+      "instagramNoPages": "Instagram: Facebook returned no Pages. In the Facebook dialog, select the Page linked to your Instagram. Pages in Meta Business Suite need Business management access.",
       "metaLongLivedFailed": "Meta: could not create a long-lived token. Confirm META_APP_ID / META_APP_SECRET and that Facebook Login returned a user token."
     },
     "inbox": {
@@ -982,7 +1002,39 @@
       "agreeTitle": "I’ve reviewed and agree",
       "agreeBody": "I understand what data will be accessed and I consent to granting the selected permissions.",
       "requiredHint": "Required scopes are locked to prevent broken connections.",
-      "continue": "Continue"
+      "continue": "Continue",
+      "categories": {
+        "account": "Account",
+        "publish": "Publish",
+        "manage": "Manage",
+        "read": "Read",
+        "analytics": "Analytics",
+        "inbox": "Inbox",
+        "pages": "Pages",
+        "write": "Write",
+        "send": "Send",
+        "webhook": "Webhooks",
+        "token": "Access token",
+        "integration": "Integration"
+      }
+    },
+    "analytics": {
+      "title": "Instagram",
+      "subtitle": "Account totals for the last 7 days.",
+      "weekLabel": "Last 7 days",
+      "viewsLabel": "views",
+      "reach": "Reach",
+      "followers": "Followers",
+      "follows": "New follows",
+      "engaged": "Accounts engaged",
+      "empty": "No insights for this period yet.",
+      "notConnected": "Connect Instagram to see account analytics.",
+      "connect": "Connect Instagram",
+      "reconnect": "Reconnect Instagram",
+      "reconnectHint": "Grant Read analytics to load account insights.",
+      "loading": "Loading…",
+      "loadFailed": "Could not load Instagram analytics.",
+      "signIn": "Sign in to load analytics."
     },
     "preview": {
       "live": "live",
@@ -1120,8 +1172,8 @@
         "primary": "Create event"
       },
       "analytics": {
-        "body": "Reach, engagement, and growth in one calm read — no dashboards that shout.",
-        "primary": "Join the waitlist"
+        "body": "Play counts for Reels and videos on your connected Instagram professional account.",
+        "primary": "Open analytics"
       },
       "insights": {
         "body": "Signals you can actually act on. Not vanity charts — clear next steps.",

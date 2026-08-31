@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import { AnalyticsView } from "./features/AnalyticsView";
 import { AutomationsViewLite } from "./features/AutomationsViewLite";
 import { CalendarView } from "./features/CalendarView";
 import { ContentView } from "./features/ContentView";
@@ -38,6 +39,10 @@ function EventsPanel(_props: StudioItemViewProps) {
   return <EventsView />;
 }
 
+function AnalyticsPanel(_props: StudioItemViewProps) {
+  return <AnalyticsView />;
+}
+
 /** Maps onboarding tile ids to ported feature views from contentfabric. */
 export const ITEM_REGISTRY: Record<string, ItemViewEntry> = {
   content: { wired: true, View: ContentPanel },
@@ -51,7 +56,7 @@ export const ITEM_REGISTRY: Record<string, ItemViewEntry> = {
   sub: { wired: false },
   media: { wired: true, View: ContentPanel },
   queue: { wired: false },
-  analytics: { wired: false },
+  analytics: { wired: true, View: AnalyticsPanel },
   insights: { wired: false },
   reports: { wired: false },
   audience: { wired: false },

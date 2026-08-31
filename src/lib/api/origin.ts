@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const META_CALLBACK_PATHS = new Set(["/api/meta/deauthorize", "/api/meta/data-deletion"]);
+
 function forbidden(): NextResponse {
   return NextResponse.json(
     { error: "Forbidden" },
@@ -14,6 +16,7 @@ export function rejectCrossOriginApiMutation(req: NextRequest): NextResponse | n
   const method = req.method.toUpperCase();
   if (!["POST", "PUT", "PATCH", "DELETE"].includes(method)) return null;
   if (!req.nextUrl.pathname.startsWith("/api/")) return null;
+  if (META_CALLBACK_PATHS.has(req.nextUrl.pathname)) return null;
 
   const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
   if (!host) return null;

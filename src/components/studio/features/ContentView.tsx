@@ -10,6 +10,7 @@ import { ContentTableActions } from "./ContentTableActions";
 import { ContentHashtagChips } from "./ContentHashtagChips";
 import { ContentKindBadge, contentKindFromApiType } from "./ContentKindBadge";
 import { ContentPlatformIcons, type ContentPlatformLabels } from "./ContentPlatformIcons";
+import { ContentRowDetails } from "./ContentRowDetails";
 import { formatStudioCreateCta, StudioCreateShell } from "./StudioCreateShell";
 import { StudioHeader } from "./StudioHeader";
 import { StudioWrapperList, StudioWrapperListBody, StudioWrapperListRow, studioWrapperList } from "./StudioWrapperList";
@@ -292,11 +293,12 @@ function ContentLibraryRow({
     tableScheduled: string;
   };
   platformLabels: ContentPlatformLabels;
-  actionLabels: { edit: string; toDraft: string; delete: string };
+  actionLabels: { edit: string; toDraft: string; delete: string; expand: string };
   onEdit: () => void;
   onToDraft: () => void;
   onDelete: () => void;
 }) {
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const thumb = contentThumbUrl(item);
   const excerpt = contentExcerpt(item);
   const isReel = item.kind === "reel";
@@ -366,6 +368,8 @@ function ContentLibraryRow({
             onEdit={displayStatus === "draft" ? onEdit : undefined}
             onToDraft={displayStatus !== "draft" ? onToDraft : undefined}
             onDelete={onDelete}
+            onToggleDetails={() => setDetailsOpen((open) => !open)}
+            detailsOpen={detailsOpen}
           />
         </div>
 
@@ -397,6 +401,12 @@ function ContentLibraryRow({
         {item.hashtags && item.hashtags.length > 0 ? (
           <div className="studio-library-row__tags">
             <ContentHashtagChips tags={item.hashtags} size="md" />
+          </div>
+        ) : null}
+
+        {detailsOpen ? (
+          <div className="studio-library-row__detail">
+            <ContentRowDetails contentId={item.id} />
           </div>
         ) : null}
       </div>
@@ -649,8 +659,9 @@ export function ContentView() {
       edit: C.edit,
       toDraft: C.toDraft,
       delete: C.delete,
+      expand: C.expand,
     }),
-    [C.delete, C.edit, C.toDraft],
+    [C.delete, C.edit, C.expand, C.toDraft],
   );
 
   const rowCopy = useMemo(

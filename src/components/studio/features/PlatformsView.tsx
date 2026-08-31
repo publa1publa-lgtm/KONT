@@ -414,10 +414,12 @@ export function PlatformsView() {
       const reason = params.get("reason") || "unknown";
       const denied = platformId === "facebook" ? P.facebookDenied : P.instagramDenied;
       const failed = platformId === "facebook" ? P.facebookConnectFailed : P.instagramConnectFailed;
-      const noPages = platformId === "facebook" ? P.facebookNoPages : P.instagramNoAccount;
+      const noPages = platformId === "facebook" ? P.facebookNoPages : P.instagramNoPages;
+      const noIg = P.instagramNoAccount;
       const longLived = P.metaLongLivedFailed;
       if (reason === "access_denied") window.alert(denied);
-      else if (reason === "no_facebook_pages" || reason === "no_instagram_account") window.alert(noPages);
+      else if (reason === "no_facebook_pages") window.alert(noPages);
+      else if (reason === "no_instagram_account") window.alert(noIg);
       else if (reason === "meta_long_lived") window.alert(longLived);
       else window.alert(failed);
     }
@@ -458,6 +460,7 @@ export function PlatformsView() {
     P.instagramConnectFailed,
     P.instagramDenied,
     P.instagramNoAccount,
+    P.instagramNoPages,
     P.metaLongLivedFailed,
     P.youtubeConnectFailed,
     P.youtubeDenied,

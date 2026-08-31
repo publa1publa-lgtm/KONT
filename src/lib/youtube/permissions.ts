@@ -10,9 +10,18 @@ export const YOUTUBE_SCOPE_BY_PERMISSION_ID = {
 export type YouTubeScopePermissionId = keyof typeof YOUTUBE_SCOPE_BY_PERMISSION_ID;
 
 const YOUTUBE_UPLOAD_SCOPE = YOUTUBE_SCOPE_BY_PERMISSION_ID["youtube.upload"];
+const YOUTUBE_READ_SCOPE = YOUTUBE_SCOPE_BY_PERMISSION_ID["youtube.readonly"];
 
 export function hasYouTubeUploadScope(scopes: readonly string[]): boolean {
   return expandGrantedScopes(scopes).has(YOUTUBE_UPLOAD_SCOPE);
+}
+
+export function hasYouTubeReadScope(scopes: readonly string[]): boolean {
+  const expanded = expandGrantedScopes(scopes);
+  return (
+    expanded.has(YOUTUBE_READ_SCOPE) ||
+    expanded.has(YOUTUBE_SCOPE_BY_PERMISSION_ID.youtube)
+  );
 }
 
 /** Broader Google scopes that already include a narrower one. */

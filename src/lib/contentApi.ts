@@ -279,3 +279,27 @@ export async function importCloudMedia(input: {
   const data = (await r.json()) as { media: MediaAssetApi; deduped?: boolean };
   return { media: data.media, deduped: Boolean(data.deduped) };
 }
+
+export type ContentTargetApi = {
+  id: string;
+  platform: string;
+  handle: string | null;
+  status: string;
+  remoteId: string | null;
+  publishedAt: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+  live: boolean;
+  views: number | null;
+  permalink: string | null;
+};
+
+export async function fetchContentTargets(contentId: string): Promise<ContentTargetApi[]> {
+  const r = await fetch(`/api/content/${encodeURIComponent(contentId)}/targets`, { cache: "no-store" });
+  if (!r.ok) {
+    const err = (await r.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(err?.error ?? "Could not load publish details.");
+  }
+  const d = (await r.json()) as { targets?: ContentTargetApi[] };
+  return Array.isArray(d.targets) ? d.targets : [];
+}

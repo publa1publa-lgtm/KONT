@@ -138,6 +138,8 @@ export function generateAuthUrl(options: {
     response_type: "code",
     scope: sanitizeMetaScopes(options.intent, options.scopes).join(","),
     state: options.state,
+    // Re-prompt so reconnects for insights/pages show the Page picker again.
+    auth_type: "rerequest",
   });
   return `${facebookDialogBase()}/dialog/oauth?${params.toString()}`;
 }
@@ -344,15 +346,21 @@ export async function fetchManagedPages(userAccessToken: string): Promise<MetaPa
 export function pickFacebookPage(pages: MetaPageProfile[]): MetaPageProfile {
   const first = pages[0];
   if (!first) {
-    throw new MetaError("No Facebook Pages found. Create a Page and grant pages_show_list.", {
-      code: "NO_FACEBOOK_PAGES",
-      status: 400,
-    });
+    throw new MetaError(
+      "No Facebook Pages were returned. In the Facebook dialog, select the Page you manage (Business Suite Pages need Business management access).",
+      { code: "NO_FACEBOOK_PAGES", status: 400 },
+    );
   }
   return first;
 }
 
 export function pickInstagramPage(pages: MetaPageProfile[]): MetaPageProfile {
+  if (pages.length === 0) {
+    throw new MetaError(
+      "No Facebook Pages were returned. In the Facebook dialog, select the Page linked to your Instagram account. Pages in Meta Business Suite need Business management access.",
+      { code: "NO_FACEBOOK_PAGES", status: 400 },
+    );
+  }
   const withIg = pages.find((page) => page.igUserId);
   if (!withIg?.igUserId) {
     throw new MetaError(
@@ -361,6 +369,22 @@ export function pickInstagramPage(pages: MetaPageProfile[]): MetaPageProfile {
     );
   }
   return withIg;
+}
+
+/** Refresh a known Page token when /me/accounts is empty (common for Business Suite Pages). */
+export async function refreshKnownPage(
+  userAccessToken: string,
+  pageId: string,
+): Promise<MetaPageProfile | null> {
+  try {
+    const row = await graphGet<RawPage>(`/${pageId}`, userAccessToken, {
+      fields: "id,name,access_token,instagram_business_account{id,username,name}",
+    });
+    return rawPageToProfile(row);
+  } catch (err) {
+    console.warn("[meta.refreshKnownPage] failed", pageId, err);
+    return null;
+  }
 }
 
 export async function revokeMetaGrant(userAccessToken: string): Promise<void> {

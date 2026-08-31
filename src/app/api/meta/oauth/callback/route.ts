@@ -13,12 +13,13 @@ import {
   parseOAuthState,
   pickFacebookPage,
   pickInstagramPage,
+  refreshKnownPage,
   type MetaOAuthState,
   META_OAUTH_STATE_COOKIE,
 } from "@/lib/meta/oauth";
 import { diffMetaPermissions } from "@/lib/meta/permissions";
-import { saveMetaAccount } from "@/lib/meta/storage";
-import { metaAccountHandle, MetaError, type MetaConnectIntent } from "@/lib/meta/types";
+import { getMetaAccount, saveMetaAccount } from "@/lib/meta/storage";
+import { metaAccountHandle, MetaError, type MetaConnectIntent, type MetaPageProfile } from "@/lib/meta/types";
 import { safeStudioRedirect } from "@/lib/safeRedirectPath";
 
 export const dynamic = "force-dynamic";
@@ -89,7 +90,29 @@ export async function GET(req: Request): Promise<NextResponse> {
     const expiresAt = debug.expiresAt ?? tokens.userTokenExpiresAt;
     const profile = await fetchMetaUser(tokens.userAccessToken);
     const pages = await fetchManagedPages(tokens.userAccessToken);
-    const selectedPage = state.intent === "instagram" ? pickInstagramPage(pages) : pickFacebookPage(pages);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[meta.oauth.callback] scopes", scope, "pages", pages.length);
+    }
+
+    let selectedPage: MetaPageProfile;
+    try {
+      selectedPage = state.intent === "instagram" ? pickInstagramPage(pages) : pickFacebookPage(pages);
+    } catch (err) {
+      // Reconnect path: /me/accounts often returns [] for Business Suite Pages even though
+      // the user already connected successfully. Refresh the known Page by id instead.
+      const existing = await getMetaAccount(state.userId, state.intent).catch(() => null);
+      const knownId = existing?.selectedPage.pageId;
+      if (!knownId) throw err;
+
+      const refreshed = await refreshKnownPage(tokens.userAccessToken, knownId);
+      if (!refreshed) throw err;
+      if (state.intent === "instagram" && !refreshed.igUserId) throw err;
+
+      selectedPage = refreshed;
+      if (!pages.some((p) => p.pageId === refreshed.pageId)) pages.push(refreshed);
+      console.log("[meta.oauth.callback] reused known page", refreshed.pageId, refreshed.igUserId);
+    }
+
     const diff = diffMetaPermissions(state.intent, state.requestedPermissionIds, scope);
 
     await saveMetaAccount(state.userId, state.intent, {

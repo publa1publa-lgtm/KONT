@@ -47,6 +47,8 @@ Also add `AUTH_SECRET` (Production + Preview):
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
+For scheduled publishing, add `CRON_SECRET` (same command) in Production. Vercel Cron calls `/api/cron/publish-due` every minute when `vercel.json` is deployed.
+
 Pull env onto the machine (this writes `.env.development.local`, gitignored):
 
 ```bash

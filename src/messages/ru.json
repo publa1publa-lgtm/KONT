@@ -683,6 +683,25 @@
       "toDraft": "В черновик",
       "archive": "В архив",
       "delete": "Удалить",
+      "expand": "Детали",
+      "details": {
+        "title": "Платформы",
+        "viewsCol": "Просмотры",
+        "openPost": "Открыть пост",
+        "loading": "Загрузка…",
+        "loadFailed": "Не удалось загрузить данные платформ.",
+        "empty": "Платформы для публикации ещё не выбраны.",
+        "views": "{count} просмотров",
+        "viewsUnknown": "—",
+        "status": {
+          "pending": "Ожидает",
+          "scheduled": "Запланировано",
+          "publishing": "Публикуется",
+          "published": "Опубликовано",
+          "failed": "Ошибка",
+          "cancelled": "Отменено"
+        }
+      },
       "duplicateTitleSuffix": " (копия)",
       "composerTitle": "Контент",
       "composerSubtitle": "Создать контент",
@@ -849,10 +868,11 @@
       "driveDenied": "Google Drive: доступ отклонён. Можно попробовать подключить снова.",
       "facebookConnectFailed": "Facebook: не удалось подключить страницу",
       "facebookDenied": "Facebook: доступ отклонён. Можно попробовать подключить снова.",
-      "facebookNoPages": "Facebook: страницы не найдены. Создайте Page и выдайте доступ к страницам, которыми вы управляете.",
+      "facebookNoPages": "Facebook: страницы не вернулись. В окне Facebook выберите Page, которым вы управляете. Для страниц в Meta Business Suite нужно разрешение Business management.",
       "instagramConnectFailed": "Instagram: не удалось подключить аккаунт",
       "instagramDenied": "Instagram: доступ отклонён. Можно попробовать подключить снова.",
-      "instagramNoAccount": "Instagram: профессиональный аккаунт не привязан к Facebook Page. Сделайте аккаунт Business/Creator и свяжите его в Meta Business Suite.",
+      "instagramNoAccount": "Instagram: к этой Facebook Page не привязан профессиональный аккаунт. Сделайте аккаунт Business/Creator и свяжите его в Meta Business Suite.",
+      "instagramNoPages": "Instagram: Facebook не вернул Pages. В окне Facebook выберите Page, привязанную к Instagram. Для страниц в Meta Business Suite нужно разрешение Business management.",
       "metaLongLivedFailed": "Meta: не удалось получить долгоживущий токен. Проверьте META_APP_ID / META_APP_SECRET и что Facebook Login вернул user token, а не Page token."
     },
     "inbox": {
@@ -982,7 +1002,39 @@
       "agreeTitle": "Я ознакомился и согласен",
       "agreeBody": "Я понимаю, какие данные будут доступны, и согласен предоставить выбранные разрешения.",
       "requiredHint": "Обязательные области заблокированы, чтобы не сломать подключение.",
-      "continue": "Продолжить"
+      "continue": "Продолжить",
+      "categories": {
+        "account": "Аккаунт",
+        "publish": "Публикация",
+        "manage": "Управление",
+        "read": "Чтение",
+        "analytics": "Аналитика",
+        "inbox": "Inbox",
+        "pages": "Страницы",
+        "write": "Запись",
+        "send": "Отправка",
+        "webhook": "Webhooks",
+        "token": "Токен доступа",
+        "integration": "Интеграция"
+      }
+    },
+    "analytics": {
+      "title": "Instagram",
+      "subtitle": "Account totals for the last 7 days.",
+      "weekLabel": "Last 7 days",
+      "viewsLabel": "views",
+      "reach": "Reach",
+      "followers": "Followers",
+      "follows": "New follows",
+      "engaged": "Accounts engaged",
+      "empty": "No insights for this period yet.",
+      "notConnected": "Connect Instagram to see account analytics.",
+      "connect": "Connect Instagram",
+      "reconnect": "Reconnect Instagram",
+      "reconnectHint": "Grant Read analytics to load account insights.",
+      "loading": "Loading…",
+      "loadFailed": "Could not load Instagram analytics.",
+      "signIn": "Sign in to load analytics."
     },
     "preview": {
       "live": "в эфире",
@@ -1120,8 +1172,8 @@
         "primary": "Создать событие"
       },
       "analytics": {
-        "body": "Охват, вовлечённость и рост в одном спокойном обзоре — без кричащих дашбордов.",
-        "primary": "Встать в лист ожидания"
+        "body": "Просмотры Reels и видео на подключённом профессиональном аккаунте Instagram.",
+        "primary": "Открыть аналитику"
       },
       "insights": {
         "body": "Сигналы, на которые можно опереться. Не vanity-метрики — ясные следующие шаги.",

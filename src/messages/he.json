@@ -683,6 +683,25 @@
       "toDraft": "לטיוטה",
       "archive": "ארכיון",
       "delete": "מחיקה",
+      "expand": "פרטים",
+      "details": {
+        "title": "פלטפורמות",
+        "viewsCol": "צפיות",
+        "openPost": "פתיחת פוסט",
+        "loading": "טוען…",
+        "loadFailed": "לא ניתן לטעון פרטי פלטפורמות.",
+        "empty": "עדיין אין יעדי פרסום.",
+        "views": "{count} צפיות",
+        "viewsUnknown": "—",
+        "status": {
+          "pending": "ממתין",
+          "scheduled": "מתוזמן",
+          "publishing": "מפרסם",
+          "published": "פורסם",
+          "failed": "נכשל",
+          "cancelled": "בוטל"
+        }
+      },
       "duplicateTitleSuffix": " (עותק)",
       "composerTitle": "תוכן",
       "composerSubtitle": "יצירת תוכן",
@@ -849,10 +868,11 @@
       "driveDenied": "Google Drive: הגישה נדחתה. אפשר לנסות לחבר שוב.",
       "facebookConnectFailed": "Facebook: לא ניתן לחבר את הדף",
       "facebookDenied": "Facebook: הגישה נדחתה. אפשר לנסות לחבר שוב.",
-      "facebookNoPages": "Facebook: לא נמצאו דפים. צרו Page ותנו גישה לדפים שאתם מנהלים.",
+      "facebookNoPages": "Facebook: לא הוחזרו דפים. בחלון Facebook בחרו את ה-Page שאתם מנהלים. דפים ב-Meta Business Suite דורשים הרשאת Business management.",
       "instagramConnectFailed": "Instagram: לא ניתן לחבר חשבון",
       "instagramDenied": "Instagram: הגישה נדחתה. אפשר לנסות לחבר שוב.",
-      "instagramNoAccount": "Instagram: אין חשבון מקצועי שמקושר ל-Facebook Page. המירו ל-Business/Creator וקשרו ב-Meta Business Suite.",
+      "instagramNoAccount": "Instagram: אין חשבון מקצועי שמקושר ל-Facebook Page הזה. המירו ל-Business/Creator וקשרו ב-Meta Business Suite.",
+      "instagramNoPages": "Instagram: Facebook לא החזיר Pages. בחלון Facebook בחרו את ה-Page שמקושר ל-Instagram. דפים ב-Meta Business Suite דורשים הרשאת Business management.",
       "metaLongLivedFailed": "Meta: לא ניתן ליצור טוקן ארוך-טווח. בדקו META_APP_ID / META_APP_SECRET ושה-Facebook Login החזיר user token ולא Page token."
     },
     "inbox": {
@@ -982,7 +1002,39 @@
       "agreeTitle": "סקרתי ואני מסכים/ה",
       "agreeBody": "אני מבין/ה אילו נתונים ייגשו אליהם ואני מסכים/ה להעניק את ההרשאות שנבחרו.",
       "requiredHint": "היקפים נדרשים נעולים כדי למנוע חיבורים שבורים.",
-      "continue": "המשך"
+      "continue": "המשך",
+      "categories": {
+        "account": "חשבון",
+        "publish": "פרסום",
+        "manage": "ניהול",
+        "read": "קריאה",
+        "analytics": "אנליטיקה",
+        "inbox": "Inbox",
+        "pages": "עמודים",
+        "write": "כתיבה",
+        "send": "שליחה",
+        "webhook": "Webhooks",
+        "token": "טוקן גישה",
+        "integration": "אינטגרציה"
+      }
+    },
+    "analytics": {
+      "title": "Instagram",
+      "subtitle": "Account totals for the last 7 days.",
+      "weekLabel": "Last 7 days",
+      "viewsLabel": "views",
+      "reach": "Reach",
+      "followers": "Followers",
+      "follows": "New follows",
+      "engaged": "Accounts engaged",
+      "empty": "No insights for this period yet.",
+      "notConnected": "Connect Instagram to see account analytics.",
+      "connect": "Connect Instagram",
+      "reconnect": "Reconnect Instagram",
+      "reconnectHint": "Grant Read analytics to load account insights.",
+      "loading": "Loading…",
+      "loadFailed": "Could not load Instagram analytics.",
+      "signIn": "Sign in to load analytics."
     },
     "preview": {
       "live": "חי",
@@ -1120,8 +1172,8 @@
         "primary": "יצירת אירוע"
       },
       "analytics": {
-        "body": "חשיפה, מעורבות וצמיחה בקריאה אחת שקטה — בלי דשבורדים שצועקים.",
-        "primary": "הצטרפות לרשימת המתנה"
+        "body": "ספירות צפיות ל-Reels ולסרטונים בחשבון Instagram המקצועי המחובר.",
+        "primary": "פתיחת אנליטיקה"
       },
       "insights": {
         "body": "אותות שאפשר באמת לפעול לפיהם. לא גרפים לכבוד — צעדים ברורים הבאים.",
