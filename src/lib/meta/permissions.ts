@@ -4,6 +4,7 @@ const FACEBOOK_SCOPE_BY_PERMISSION_ID = {
   pages_show_list: "pages_show_list",
   pages_manage_posts: "pages_manage_posts",
   pages_read_engagement: "pages_read_engagement",
+  pages_messaging: "pages_messaging",
   read_insights: "read_insights",
 } as const;
 
@@ -11,6 +12,7 @@ const INSTAGRAM_SCOPE_BY_PERMISSION_ID = {
   "instagram.content_publish": "instagram_content_publish",
   "instagram.manage_comments": "instagram_manage_comments",
   "instagram.insights.read": "instagram_manage_insights",
+  "instagram.manage_messages": "instagram_manage_messages",
 } as const;
 
 export type FacebookScopePermissionId = keyof typeof FACEBOOK_SCOPE_BY_PERMISSION_ID;
@@ -43,6 +45,12 @@ export function metaScopesForPermissionIds(intent: MetaConnectIntent, permission
   for (const id of permissionIds) {
     const scope = map[id as keyof typeof map];
     if (scope) scopes.push(scope);
+  }
+  const wantsInbox =
+    permissionIds.includes("pages_messaging") || permissionIds.includes("instagram.manage_messages");
+  if (wantsInbox) {
+    scopes.push("pages_manage_metadata");
+    if (intent === "facebook") scopes.push("pages_read_engagement");
   }
   return [...new Set(scopes.filter((scope) => ALLOWED.has(scope)))];
 }
@@ -101,4 +109,11 @@ export function hasInstagramPublishScope(scopes: readonly string[]): boolean {
 
 export function hasInstagramInsightsScope(scopes: readonly string[]): boolean {
   return scopes.includes("instagram_manage_insights");
+}
+
+export function hasMetaMessagingScopes(intent: MetaConnectIntent, scopes: readonly string[]): boolean {
+  if (intent === "instagram") {
+    return scopes.includes("instagram_manage_messages") && scopes.includes("pages_manage_metadata");
+  }
+  return scopes.includes("pages_messaging") && scopes.includes("pages_manage_metadata");
 }

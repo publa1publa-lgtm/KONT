@@ -190,6 +190,11 @@ export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
       category: "analytics",
       scopes: ["instagram_manage_insights"],
     },
+    {
+      id: "instagram.manage_messages",
+      category: "inbox",
+      scopes: ["instagram_manage_messages", "pages_manage_metadata"],
+    },
   ],
   facebook: [
     {
@@ -209,6 +214,11 @@ export const PLATFORM_PERMISSIONS: Record<PlatformId, PermissionSpec[]> = {
       defaultOn: true,
       required: true,
       scopes: ["pages_manage_posts"],
+    },
+    {
+      id: "pages_messaging",
+      category: "inbox",
+      scopes: ["pages_messaging", "pages_manage_metadata", "pages_read_engagement"],
     },
   ],
   pinterest: [

@@ -50,6 +50,33 @@ export async function notifyUserRegistered(input: {
   }
 }
 
+export async function notifyUserLogin(input: {
+  id: string;
+  email: string;
+  login?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+}): Promise<void> {
+  if (!isOpsTelegramConfigured()) return;
+
+  const text = [
+    `<b>Login</b>`,
+    `<b>${line(input.firstName ?? undefined)}</b>`,
+    `<b>${line(input.lastName ?? undefined)}</b>`,
+    "—",
+    `<code>${line(input.login ?? undefined)}</code>`,
+    line(input.email),
+    "—",
+    `<i>${formatCreatedAt()}</i>`,
+  ].join("\n");
+
+  try {
+    await sendOpsTelegram({ topic: "users", parseMode: "HTML", text });
+  } catch (err) {
+    console.error("[ops/telegram] user.login", err);
+  }
+}
+
 export async function notifyDemoRequested(input: { email: string; locale: string }): Promise<void> {
   if (!isOpsTelegramConfigured()) return;
 

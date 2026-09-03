@@ -5,6 +5,7 @@ import { ChevronRight, Link2, Search } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatTemplate } from "@/lib/formatTemplate";
+import { toast } from "@/lib/toast";
 import {
   STUDIO_PLATFORMS_STORAGE_KEY,
   readStudioPlatformStates,
@@ -54,26 +55,11 @@ const PLATFORM_META: Array<{
   comingSoon?: boolean;
 }> = [
   {
-    id: "tiktok",
-    group: "social",
-    label: "TikTok",
-    subtitle: "Short-form distribution",
-    hint: "Coming soon — full TikTok integration",
-    comingSoon: true,
-  },
-  {
-    id: "youtube",
-    group: "social",
-    label: "YouTube",
-    subtitle: "Upload & schedule videos",
-    hint: "OAuth (Google) — scopes, channel access",
-  },
-  {
     id: "instagram",
     group: "social",
     label: "Instagram",
-    subtitle: "Reels & cross-post",
-    hint: "Meta — IG account + page linkage",
+    subtitle: "Reels & posts",
+    hint: "Meta — IG professional account + Page linkage",
   },
   {
     id: "facebook",
@@ -83,78 +69,37 @@ const PLATFORM_META: Array<{
     hint: "Meta — pages_manage_posts",
   },
   {
-    id: "pinterest",
+    id: "youtube",
     group: "social",
-    label: "Pinterest",
-    subtitle: "Pins & boards",
-    hint: "OAuth — create pins, read boards",
+    label: "YouTube",
+    subtitle: "Upload videos & Shorts",
+    hint: "OAuth (Google) — scopes, channel access",
   },
   {
-    id: "linkedin",
+    id: "tiktok",
     group: "social",
-    label: "LinkedIn",
-    subtitle: "Posts & articles",
-    hint: "OAuth — organization & member publishing",
+    label: "TikTok",
+    subtitle: "Short-form distribution",
+    hint: "Coming soon — full TikTok integration",
+    comingSoon: true,
   },
   {
     id: "telegram",
     group: "messengers",
     label: "Telegram",
     subtitle: "Bots & notifications",
-    hint: "Bot API — token-based, no heavy review",
-  },
-  {
-    id: "discord",
-    group: "notifications",
-    label: "Discord",
-    subtitle: "Team notifications",
-    hint: "Webhook — paste URL, send messages",
-  },
-  {
-    id: "email",
-    group: "notifications",
-    label: "Email",
-    subtitle: "Universal alerts",
-    hint: "SMTP / provider API key",
-  },
-  {
-    id: "notion",
-    group: "productivity",
-    label: "Notion",
-    subtitle: "Content planning database",
-    hint: "Integration token + shared pages/databases",
+    hint: "Bot API — token-based",
   },
   {
     id: "googleDrive",
     group: "storage",
     label: "Google Drive",
-    subtitle: "Import/export assets",
+    subtitle: "Import assets",
     hint: "OAuth — Drive scopes",
-  },
-  {
-    id: "googleSheets",
-    group: "productivity",
-    label: "Google Sheets",
-    subtitle: "Content plans & data",
-    hint: "OAuth — Spreadsheets scopes",
-  },
-  {
-    id: "googleCalendar",
-    group: "productivity",
-    label: "Google Calendar",
-    subtitle: "Schedule sync",
-    hint: "OAuth — Calendar scopes",
-  },
-  {
-    id: "dropbox",
-    group: "storage",
-    label: "Dropbox",
-    subtitle: "Import/export assets",
-    hint: "OAuth — Dropbox scopes",
   },
 ];
 
-const GROUP_ORDER: PlatformGroupId[] = ["social", "messengers", "productivity", "storage", "notifications"];
+const GROUP_ORDER: PlatformGroupId[] = ["social", "messengers", "storage"];
 
 function defaultState(): PlatformState[] {
   return PLATFORM_META.map((p) => ({ id: p.id, connected: false, account: null, grantedPermissionIds: [] }));
@@ -284,11 +229,11 @@ export function PlatformsView() {
             }
           : p,
       );
-      setActiveId("youtube");
+      setActiveId("instagram");
       setQcOpen(true);
     } else if (youtubeStatus === "error") {
       const reason = params.get("reason") || "unknown";
-      window.alert(reason === "access_denied" ? P.youtubeDenied : P.youtubeConnectFailed);
+      toast.error(reason === "access_denied" ? P.youtubeDenied : P.youtubeConnectFailed);
     } else if (driveStatus === "connected") {
       const account = params.get("account")?.trim() || "Google Drive";
       const googleGranted = (params.get("granted") ?? "")
@@ -370,7 +315,7 @@ export function PlatformsView() {
       setQcOpen(false);
     } else if (driveStatus === "error") {
       const reason = params.get("reason") || "unknown";
-      window.alert(reason === "access_denied" ? P.driveDenied : P.driveConnectFailed);
+      toast.error(reason === "access_denied" ? P.driveDenied : P.driveConnectFailed);
     } else if (facebookStatus === "connected" || instagramStatus === "connected") {
       const platformId = facebookStatus === "connected" ? "facebook" : "instagram";
       const account = params.get("account")?.trim() || (platformId === "facebook" ? "Facebook Page" : "Instagram");
@@ -417,11 +362,11 @@ export function PlatformsView() {
       const noPages = platformId === "facebook" ? P.facebookNoPages : P.instagramNoPages;
       const noIg = P.instagramNoAccount;
       const longLived = P.metaLongLivedFailed;
-      if (reason === "access_denied") window.alert(denied);
-      else if (reason === "no_facebook_pages") window.alert(noPages);
-      else if (reason === "no_instagram_account") window.alert(noIg);
-      else if (reason === "meta_long_lived") window.alert(longLived);
-      else window.alert(failed);
+      if (reason === "access_denied") toast.error(denied);
+      else if (reason === "no_facebook_pages") toast.error(noPages);
+      else if (reason === "no_instagram_account") toast.error(noIg);
+      else if (reason === "meta_long_lived") toast.error(longLived);
+      else toast.error(failed);
     }
 
     if (
@@ -743,41 +688,31 @@ export function PlatformsView() {
   }, [activeId, connectedPlatforms, list, qcOpen]);
 
   async function connect(platformId: PlatformId, grantedPermissionIds: string[]) {
+    const catalog = PLATFORM_META.find((p) => p.id === platformId);
+    if (catalog?.comingSoon) {
+      toast.error("This platform is coming soon.");
+      return;
+    }
+
     let displayName =
       platformId === "youtube"
-        ? "YouTube Channel • Demo"
-        : platformId === "tiktok"
-          ? "@demo_creator"
-          : platformId === "instagram"
-            ? "@demo.reels"
-            : platformId === "facebook"
-              ? "Demo Page • ContentFabric"
-              : platformId === "linkedin"
-                ? "LinkedIn • Demo"
-                : platformId === "telegram"
-                  ? "@contentfabric_bot"
-                  : platformId === "discord"
-                    ? "Discord webhook • Demo"
-                    : platformId === "email"
-                      ? "alerts@contentfabric.demo"
-                      : platformId === "notion"
-                        ? "Workspace • Demo"
-                        : platformId === "googleDrive"
-                          ? "Drive • Demo"
-                          : platformId === "googleSheets"
-                            ? "Sheets • Demo"
-                            : platformId === "googleCalendar"
-                              ? "Calendar • Demo"
-                              : platformId === "pinterest"
-                                ? "Pinterest"
-                                : "Dropbox • Demo";
+        ? "YouTube Channel"
+        : platformId === "instagram"
+          ? "Instagram"
+          : platformId === "facebook"
+            ? "Facebook Page"
+            : platformId === "telegram"
+              ? "Telegram bot"
+              : platformId === "googleDrive"
+                ? "Google Drive"
+                : platformId;
 
     if (platformId === "youtube") {
       startYouTubeOAuth(grantedPermissionIds);
       return;
     }
 
-    if (platformId === "googleDrive" || platformId === "googleSheets" || platformId === "googleCalendar") {
+    if (platformId === "googleDrive") {
       startGoogleDriveOAuth(grantedPermissionIds);
       return;
     }
@@ -802,36 +737,17 @@ export function PlatformsView() {
           account?: { handle?: string | null };
         };
         if (!r.ok) {
-          window.alert(data.error || "Telegram connection failed.");
+          toast.error(data.error || "Telegram connection failed.");
           return;
         }
         displayName = data.account?.handle?.trim() || displayName;
       } catch {
-        window.alert("Telegram connection failed.");
+        toast.error("Telegram connection failed.");
         return;
       }
-    }
-
-    if (platformId === "pinterest") {
-      try {
-        const r = await fetch("/api/platforms/pinterest/connect", { method: "POST" });
-        const data = (await r.json().catch(() => ({}))) as {
-          error?: string;
-          hint?: string;
-          account?: { handle?: string | null; username?: string | null };
-        };
-        if (!r.ok) {
-          window.alert([data.error, data.hint].filter(Boolean).join("\n\n") || P.pinterestConnectFailed);
-          return;
-        }
-        displayName =
-          data.account?.handle?.trim() ||
-          (data.account?.username ? `@${data.account.username}` : "") ||
-          displayName;
-      } catch {
-        window.alert(P.pinterestNetworkError);
-        return;
-      }
+    } else {
+      toast.error("This platform cannot be connected yet.");
+      return;
     }
 
     const account: ConnectedAccount = {
@@ -845,10 +761,7 @@ export function PlatformsView() {
       ),
     );
     setActiveId(platformId);
-      setQcOpen(false);
-    if (isReelPlatformId(platformId)) {
-      void syncReelPlatformConnectionToServer(platformId, true, account.displayName);
-    }
+    setQcOpen(false);
   }
 
   function startYouTubeOAuth(pickedPermissionIds: string[]) {
@@ -998,7 +911,7 @@ export function PlatformsView() {
           onDismissScopeNotice={() => setScopeNotice(null)}
           onResetDemo={() => {
             setPlatforms(defaultState());
-            setActiveId("youtube");
+            setActiveId("instagram");
             setQuery("");
             setConnectedOnly(false);
             setGroupFilter("all");
@@ -1185,22 +1098,6 @@ export function PlatformsView() {
           label={P.yourPlatforms}
           title={P.yourPlatforms}
           subtitle={P.catalogSubtitle}
-          right={
-            <StudioGhostButton
-              type="button"
-              className="studio-btn-ghost--sm"
-              onClick={() => {
-                setPlatforms(defaultState());
-                setActiveId("youtube");
-                setQuery("");
-                setConnectedOnly(false);
-                setGroupFilter("all");
-                setQcOpen(false);
-              }}
-            >
-              {P.resetDemo}
-            </StudioGhostButton>
-          }
         />
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

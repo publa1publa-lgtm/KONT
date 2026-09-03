@@ -60,17 +60,20 @@ export type ContentPlatformLabels = Record<ReelPlatformId, string>;
 type ContentPlatformIconsProps = {
   platforms?: ReelPlatformId[];
   labels: ContentPlatformLabels;
+  density?: "default" | "compact";
 };
 
-export function ContentPlatformIcons({ platforms, labels }: ContentPlatformIconsProps) {
+export function ContentPlatformIcons({ platforms, labels, density = "default" }: ContentPlatformIconsProps) {
   const ordered = REEL_PLATFORM_IDS.filter((id) => (platforms ?? []).includes(id));
   if (!ordered.length) {
     return <span className="text-[11px] text-[var(--muted)]">—</span>;
   }
 
+  const compact = density === "compact";
+
   return (
     <div
-      className="flex flex-wrap items-center justify-center gap-1"
+      className={["flex flex-wrap items-center", compact ? "gap-0.5" : "justify-center gap-1"].join(" ")}
       role="list"
       aria-label={ordered.map((id) => labels[id]).join(", ")}
     >
@@ -78,11 +81,22 @@ export function ContentPlatformIcons({ platforms, labels }: ContentPlatformIcons
         <span
           key={id}
           role="listitem"
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border"
-          style={platformIconTileStyle(PLATFORM_ACCENT[id])}
+          className={
+            compact
+              ? "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[var(--muted)]"
+              : "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border"
+          }
+          style={compact ? undefined : platformIconTileStyle(PLATFORM_ACCENT[id])}
           title={labels[id]}
         >
-          <PlatformIcon id={id} className={`h-3.5 w-3.5 ${platformIconColor(id)}`} />
+          <PlatformIcon
+            id={id}
+            className={
+              compact
+                ? `h-3 w-3 ${platformIconColor(id)}`
+                : `h-3.5 w-3.5 ${platformIconColor(id)}`
+            }
+          />
         </span>
       ))}
     </div>

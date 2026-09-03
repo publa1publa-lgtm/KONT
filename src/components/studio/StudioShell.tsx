@@ -20,6 +20,7 @@ import {
   applyStudioTheme,
   readStudioTheme,
 } from "@/lib/studio/preferences";
+import { ToastHost } from "@/components/ui/ToastHost";
 
 import "./studio.css";
 
@@ -132,6 +133,8 @@ export function StudioShell() {
           </AnimatePresence>
         </div>
       </main>
+
+      <ToastHost />
     </div>
   );
 }

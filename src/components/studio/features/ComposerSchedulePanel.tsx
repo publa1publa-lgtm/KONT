@@ -29,6 +29,8 @@ type ComposerSchedulePanelProps = {
   onPostNowChange?: (next: boolean) => void;
   postNowLabel?: string;
   postNowSummary?: string;
+  /** When false, hide schedule toggle/date/time and keep Post now only (no paid cron yet). */
+  allowScheduling?: boolean;
 };
 
 function parseDateKey(dateKey: string): Date | null {
@@ -55,10 +57,12 @@ export function ComposerSchedulePanel({
   onPostNowChange,
   postNowLabel,
   postNowSummary,
+  allowScheduling = true,
 }: ComposerSchedulePanelProps) {
   const { locale } = useI18n();
   const date = useMemo(() => parseDateKey(pickedDateKey), [pickedDateKey]);
-  const scheduling = !showPostNow || !postNow;
+  const effectivePostNow = showPostNow && (!allowScheduling || postNow);
+  const scheduling = allowScheduling && (!showPostNow || !effectivePostNow);
 
   const dateSummary = useMemo(() => {
     if (!date) return null;
@@ -83,7 +87,7 @@ export function ComposerSchedulePanel({
     <div className={panelClass}>
       <div className="border-b border-[var(--wrapper-color-rim)] bg-white/80 px-4 py-3">
         <p className={composerFieldLabel}>{scheduleLabel}</p>
-        {showPostNow && postNow ? (
+        {showPostNow && effectivePostNow ? (
           <p className="mt-2 text-sm font-semibold leading-snug text-[var(--fg)]">{postNowSummary}</p>
         ) : (
           <>
@@ -98,7 +102,7 @@ export function ComposerSchedulePanel({
       </div>
 
       <div className="grid gap-3 p-4">
-        {showPostNow ? (
+        {showPostNow && allowScheduling ? (
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--wrapper-color-rim)] bg-[var(--studio-surface-3)]/80 px-3 py-2.5 transition hover:bg-[var(--studio-surface-2)]">
             <input
               type="checkbox"

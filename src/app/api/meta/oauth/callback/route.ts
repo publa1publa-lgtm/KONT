@@ -21,6 +21,7 @@ import { diffMetaPermissions } from "@/lib/meta/permissions";
 import { getMetaAccount, saveMetaAccount } from "@/lib/meta/storage";
 import { metaAccountHandle, MetaError, type MetaConnectIntent, type MetaPageProfile } from "@/lib/meta/types";
 import { safeStudioRedirect } from "@/lib/safeRedirectPath";
+import { getSessionUserId } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -45,10 +46,18 @@ function clearStateCookie(res: NextResponse): NextResponse {
 async function readOAuthState(queryState: string | null): Promise<MetaOAuthState> {
   const jar = await cookies();
   const cookieState = jar.get(META_OAUTH_STATE_COOKIE)?.value ?? null;
-  if (cookieState && queryState && cookieState !== queryState) {
+  if (!cookieState) {
+    throw new MetaError("OAuth state cookie missing.", { code: "OAUTH_STATE", status: 400 });
+  }
+  if (queryState && cookieState !== queryState) {
     throw new MetaError("OAuth state mismatch.", { code: "OAUTH_STATE", status: 400 });
   }
-  return parseOAuthState(cookieState ?? queryState);
+  const state = parseOAuthState(cookieState);
+  const sessionUserId = await getSessionUserId();
+  if (!sessionUserId || sessionUserId !== state.userId) {
+    throw new MetaError("OAuth session mismatch.", { code: "OAUTH_SESSION", status: 401 });
+  }
+  return state;
 }
 
 function failRedirect(

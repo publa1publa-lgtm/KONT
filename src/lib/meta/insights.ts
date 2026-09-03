@@ -61,6 +61,20 @@ function asFiniteNumber(value: unknown): number | null {
   return null;
 }
 
+function isMetaMediaNotFound(err: unknown): boolean {
+  if (!(err instanceof MetaError)) return false;
+  if (err.status === 404) return true;
+  if (err.code === "META_100" || err.code === "META_803" || /^META_(100|803)_/.test(err.code)) {
+    return true;
+  }
+  const msg = err.message.toLowerCase();
+  return (
+    msg.includes("does not exist") ||
+    msg.includes("unsupported get request") ||
+    msg.includes("cannot be loaded")
+  );
+}
+
 function insightValue(rows: IgInsightRow[] | undefined): number | null {
   if (!rows?.length) return null;
   const preferred =
@@ -188,25 +202,63 @@ export async function getInstagramMediaSnapshot(
   mediaId: string,
   accessToken: string,
   hasInsights: boolean,
-): Promise<{ views: number | null; permalink: string | null; live: boolean }> {
-  try {
-    const fields = hasInsights ? "id,permalink,total_views_count" : "id,permalink";
-    const node = await graphGet<IgMediaNode>(`/${mediaId}`, accessToken, { fields });
-    let views = asFiniteNumber(node.total_views_count);
-    if (views == null && hasInsights) {
-      for (const metric of ["views", "plays", "total_views"]) {
-        try {
-          views = await fetchMediaViews(mediaId, accessToken, metric);
-          if (views != null) break;
-        } catch {
-          continue;
-        }
+): Promise<{
+  views: number | null;
+  permalink: string | null;
+  live: boolean | null;
+  publishedAt: string | null;
+}> {
+  const empty = { views: null, permalink: null, live: null as boolean | null, publishedAt: null };
+
+  // Keep the original views field set intact — adding timestamp in the same request
+  // has caused Meta to reject some media objects. Fetch date separately.
+  const viewFieldSets = hasInsights
+    ? ["id,permalink,total_views_count", "id,permalink"]
+    : ["id,permalink"];
+
+  let node: IgMediaNode | null = null;
+  let missing = false;
+  for (const fields of viewFieldSets) {
+    try {
+      node = await graphGet<IgMediaNode>(`/${mediaId}`, accessToken, { fields });
+      missing = false;
+      break;
+    } catch (err) {
+      if (isMetaMediaNotFound(err)) {
+        missing = true;
+        break;
       }
     }
-    return { views, permalink: node.permalink ?? null, live: Boolean(node.id) };
-  } catch {
-    return { views: null, permalink: null, live: false };
   }
+  if (missing) return { ...empty, live: false };
+  if (!node?.id) return empty;
+
+  let publishedAt: string | null = null;
+  try {
+    const stamped = await graphGet<IgMediaNode>(`/${mediaId}`, accessToken, { fields: "timestamp" });
+    publishedAt = stamped.timestamp ?? null;
+  } catch {
+    publishedAt = null;
+  }
+
+  let views = asFiniteNumber(node.total_views_count);
+  if (views == null && hasInsights) {
+    for (const metric of ["views", "total_views", "plays"]) {
+      try {
+        views = await fetchMediaViews(mediaId, accessToken, metric);
+        if (views != null) break;
+      } catch {
+        continue;
+      }
+    }
+  }
+
+  return {
+    views,
+    permalink: node.permalink ?? null,
+    live: true,
+    publishedAt,
+  };
 }
 
 export async function listInstagramVideosWithViews(options: {

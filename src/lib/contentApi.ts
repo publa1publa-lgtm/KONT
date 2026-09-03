@@ -289,7 +289,8 @@ export type ContentTargetApi = {
   publishedAt: string | null;
   errorCode: string | null;
   errorMessage: string | null;
-  live: boolean;
+  /** true = found on platform, false = checked and missing, null = not verified */
+  live: boolean | null;
   views: number | null;
   permalink: string | null;
 };

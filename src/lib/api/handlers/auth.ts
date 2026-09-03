@@ -8,7 +8,7 @@ import { auditContextFromRequest, writeAudit } from "@/lib/audit";
 import { getSessionUserId, getCurrentSessionId } from "@/lib/session";
 import { readJsonRecord, badRequest, conflict, json, tooManyRequests } from "@/lib/api/http";
 import { clientKeyFromRequest, rateLimit } from "@/lib/api/rateLimit";
-import { notifyUserRegistered } from "@/lib/ops/notify";
+import { notifyUserLogin, notifyUserRegistered } from "@/lib/ops/notify";
 import * as userRepo from "@/lib/repos/userRepo";
 
 export async function postLogin(req: Request): Promise<NextResponse> {
@@ -38,6 +38,15 @@ export async function postLogin(req: Request): Promise<NextResponse> {
     action: AuditAction.USER_LOGIN,
     entityType: "User",
     entityId: auth.userId,
+  });
+
+  const profile = await userRepo.findUserProfile(auth.userId).catch(() => null);
+  void notifyUserLogin({
+    id: auth.userId,
+    email: auth.email,
+    login: profile?.login,
+    firstName: profile?.firstName,
+    lastName: profile?.lastName,
   });
 
   const { name, options } = sessionCookieOptions();

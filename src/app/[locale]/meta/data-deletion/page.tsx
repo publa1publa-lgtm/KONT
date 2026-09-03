@@ -29,11 +29,12 @@ export default async function MetaDataDeletionStatusPage({ params, searchParams 
         <>
           <p className="mt-4 text-[15px] leading-relaxed text-[rgba(29,29,31,0.68)]">
             Confirmation code <code className="rounded bg-[#f2f4f8] px-1.5 py-0.5 text-[13px]">{request.confirmationCode}</code>{" "}
-            is complete. Facebook and Instagram tokens received from Meta for that user were revoked and deleted from KONT.
+            is complete. Facebook and Instagram data KONT received from Meta for that user — encrypted access
+            tokens, Page and Instagram account identifiers, and connection metadata — were deleted from KONT.
           </p>
           <p className="mt-3 text-[14px] leading-relaxed text-[rgba(29,29,31,0.55)]">
-            Posts already published to Facebook or Instagram stay on those platforms. The KONT account itself is not deleted
-            by this request — email admin@kontme.com if you also want the KONT login removed.
+            Posts already published to Facebook or Instagram stay on those platforms. The KONT account itself is not
+            deleted by this request — email admin@kontme.com if you also want the KONT login removed.
           </p>
         </>
       ) : (

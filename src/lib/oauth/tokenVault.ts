@@ -1,6 +1,6 @@
 import "server-only";
 
-import { PlatformAccountStatus, type PlatformKind, type Prisma } from "@prisma/client";
+import { PlatformAccountStatus, Prisma, type PlatformKind } from "@prisma/client";
 
 import {
   decryptOptionalSecret,
@@ -227,17 +227,34 @@ export async function readPlatformTokens(
   }
 }
 
-/** Soft-revoke and destroy ciphertext so a DB dump cannot recover the token. */
+/**
+ * Soft-revoke connection: destroy ciphertext and Meta/Google-derived identity metadata.
+ * Clears providerMetadata / handle / scopes so data-deletion callbacks meet Platform Policies.
+ * Renames platformUserId so @@unique([platform, platformUserId]) frees the slot for reconnect.
+ */
 export async function wipePlatformTokens(userId: string, platform: PlatformKind, reason = "user_disconnect") {
-  await prisma.platformAccount.updateMany({
+  const rows = await prisma.platformAccount.findMany({
     where: { userId, platform, deletedAt: null },
-    data: {
-      status: PlatformAccountStatus.REVOKED,
-      revokedAt: new Date(),
-      revokedReason: reason,
-      accessTokenEnc: null,
-      refreshTokenEnc: null,
-      tokenExpiresAt: null,
-    },
+    select: { id: true },
   });
+  const now = new Date();
+  for (const row of rows) {
+    await prisma.platformAccount.update({
+      where: { id: row.id },
+      data: {
+        status: PlatformAccountStatus.REVOKED,
+        revokedAt: now,
+        revokedReason: reason,
+        deletedAt: now,
+        accessTokenEnc: null,
+        refreshTokenEnc: null,
+        tokenExpiresAt: null,
+        connectionExpiresAt: null,
+        providerMetadata: Prisma.DbNull,
+        scopes: [],
+        handle: null,
+        platformUserId: `deleted:${row.id}`,
+      },
+    });
+  }
 }

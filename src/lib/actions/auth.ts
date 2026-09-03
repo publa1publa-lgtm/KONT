@@ -19,7 +19,7 @@ import {
 } from "@/lib/auth/validation";
 import { createSession } from "@/lib/sessionStore";
 import { auditContextFromServerHeaders, writeAudit } from "@/lib/audit";
-import { notifyUserRegistered } from "@/lib/ops/notify";
+import { notifyUserLogin, notifyUserRegistered } from "@/lib/ops/notify";
 import * as userRepo from "@/lib/repos/userRepo";
 
 export type AuthActionState = {
@@ -58,6 +58,15 @@ export async function loginAction(
     action: AuditAction.USER_LOGIN,
     entityType: "User",
     entityId: auth.userId,
+  });
+
+  const profile = await userRepo.findUserProfile(auth.userId).catch(() => null);
+  void notifyUserLogin({
+    id: auth.userId,
+    email: auth.email,
+    login: profile?.login,
+    firstName: profile?.firstName,
+    lastName: profile?.lastName,
   });
 
   await establishSessionAndRedirect(session.token, formData);

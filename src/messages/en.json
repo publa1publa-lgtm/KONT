@@ -69,31 +69,30 @@
       "badge": "Publish today",
       "title": "Your chaos stack.",
       "titleAccent": "Our calm workspace.",
-      "text": "Plan, publish, and measure every channel from one workspace.",
+      "text": "Plan and publish to Instagram, Facebook, and YouTube from one workspace — more channels as we unlock API access.",
       "ctaPrimary": "Start now",
       "ctaSecondary": "See how it works",
       "trust": ["Official APIs", "OAuth only", "No shared passwords"],
       "platforms": [
         "Instagram",
-        "TikTok",
+        "Facebook",
         "YouTube",
-        "X",
         "Telegram",
-        "LinkedIn"
+        "Google Drive"
       ],
       "multiChannel": {
         "kicker": "Multi-channel",
-        "title": "One post. Every surface."
+        "title": "One workspace. Live platforms today."
       },
       "social": {
-        "count": "1,200+ creators",
-        "text": "publishing across channels",
+        "count": "Early access",
+        "text": "creators publishing with KONT",
         "worksWith": "Publishes to"
       },
       "tags": [
         "OAuth-only",
-        "Auto-format",
-        "Smart timing"
+        "Meta + Google",
+        "Encrypted tokens"
       ],
       "secure": {
         "kicker": "Secure connect",
@@ -109,38 +108,38 @@
             "icon": "/home/icons/color/instagram.svg"
           },
           {
-            "action": "Scheduled",
-            "detail": "YouTube Short · 6:00 PM",
-            "icon": "/home/icons/color/youtube.svg"
+            "action": "Published",
+            "detail": "Facebook Page · photo live",
+            "icon": "/home/icons/color/facebook.svg"
           },
           {
-            "action": "Auto-formatted",
-            "detail": "TikTok · 3 crops ready",
-            "icon": "/home/icons/color/tiktok.svg"
+            "action": "Published",
+            "detail": "YouTube · Short uploaded",
+            "icon": "/home/icons/color/youtube.svg"
           }
         ],
         "insights": [
           {
-            "value": "94%",
-            "label": "On-time delivery rate"
+            "value": "IG",
+            "label": "Analytics in Studio"
           },
           {
-            "value": "2m",
-            "label": "All channels synced"
+            "value": "3",
+            "label": "Live publish platforms"
           },
           {
-            "value": "847",
-            "label": "Posts scheduled this week"
+            "value": "OAuth",
+            "label": "Official API connect"
           }
         ],
         "metrics": [
           {
-            "value": "3.2×",
-            "label": "Faster publishing cycles"
+            "value": "1",
+            "label": "Workspace for create & publish"
           },
           {
-            "value": "12+",
-            "label": "Platforms in one place"
+            "value": "3+",
+            "label": "Live platforms today"
           }
         ]
       },
@@ -148,40 +147,40 @@
         "kicker": "Quick wins",
         "title": "Ship more, with less friction",
         "items": [
-          "Schedule a full week in one pass",
-          "Auto-format for every channel",
-          "Comments stay on the post"
+          "Connect Instagram, Facebook, or YouTube with OAuth",
+          "Compose a post or Reel and publish now",
+          "See Instagram account analytics when insights are granted"
         ]
       },
       "timing": {
-        "kicker": "Smart timing",
-        "title": "Publish when your audience is live",
+        "kicker": "Publish now",
+        "title": "Ship when you are ready",
         "chips": [
-          "Peak hours",
-          "Timezone-aware",
-          "Suggested slots"
+          "Post now",
+          "Encrypted tokens",
+          "Disconnect anytime"
         ]
       }
     },
     "pillars": {
       "label": "How it works",
       "title": "CREATE . MANAGE . GROW",
-      "text": "Three spaces. One flow. The same calm workspace — from first draft to proof it worked.",
+      "text": "Three spaces. One flow — from draft to publish on the platforms we support today.",
       "items": [
         {
           "id": "create",
           "title": "CREATE .",
-          "body": "Compose. Caption. Automate. Posts, reels, and workflows start on one canvas — adapt once, ship to every channel."
+          "body": "Compose posts and reels on one canvas — then publish to connected Instagram, Facebook, or YouTube accounts."
         },
         {
           "id": "manage",
           "title": "MANAGE .",
-          "body": "Plan. Review. Publish. Calendar, inbox, and connected accounts keep every post on track — without tab chaos."
+          "body": "Calendar, library, and connected accounts keep your content organized — without tab chaos."
         },
         {
           "id": "grow",
           "title": "GROW .",
-          "body": "Measure. Learn. Act. Analytics and insights show what resonates — so your next move is informed, not guessed."
+          "body": "Instagram analytics in Studio when you grant insights. More reporting surfaces are on the roadmap."
         }
       ]
     },
@@ -189,7 +188,7 @@
       "label": "Why teams switch",
       "title": "The patchwork",
       "titleAccent": "ends here.",
-      "text": "Top teams don't need more tools — they need one calm surface built for how publishing actually works.",
+      "text": "You do not need more tabs — you need one calm surface for the channels that are live today.",
       "compare": {
         "before": {
           "tag": "Fragmented",
@@ -197,74 +196,74 @@
           "items": [
             "Drafts scattered across Notion, Drive, and DMs",
             "Approvals buried in Slack threads",
-            "Scheduling in one tool, analytics in three others",
+            "Publishing in one tool, analytics somewhere else",
             "Every publish day starts with tab archaeology"
           ],
-          "metric": "6 tools · ~47 min lost per post"
+          "metric": "Too many tools · time lost per post"
         },
         "after": {
-          "tag": "Unified",
-          "title": "One workspace, every channel",
+          "tag": "Focused",
+          "title": "One workspace, live platforms",
           "items": [
-            "Compose once — auto-format for Reels, Shorts, and posts",
-            "Approvals and comments live on the asset, not in chat",
-            "Calendar, inbox, and analytics in the same view",
-            "Publish to 12+ platforms without leaving the workspace"
+            "Compose once for Reels, Shorts, and posts",
+            "Connect with OAuth — revoke anytime",
+            "Calendar and library in the same Studio",
+            "Publish to Instagram, Facebook, and YouTube without leaving KONT"
           ],
-          "metric": "1 workspace · under 6 min avg."
+          "metric": "1 workspace · live Meta + Google publish"
         }
       },
       "stats": [
         {
-          "value": 3.2,
-          "decimals": 1,
-          "suffix": "×",
-          "label": "Faster publishing cycles"
-        },
-        {
-          "value": 12,
-          "suffix": "+",
-          "label": "Platforms in one place"
-        },
-        {
-          "value": 40,
-          "suffix": "%",
-          "label": "Less time lost to tab-switching"
+          "value": 3,
+          "decimals": 0,
+          "suffix": "",
+          "label": "Live publish platforms"
         },
         {
           "value": 1,
           "suffix": "",
-          "label": "Source of truth for the team"
+          "label": "Workspace for your content"
+        },
+        {
+          "value": 100,
+          "suffix": "%",
+          "label": "OAuth — no shared passwords"
+        },
+        {
+          "value": 1,
+          "suffix": "",
+          "label": "Source of truth for drafts you ship"
         }
       ],
       "items": [
         {
           "title": "Kill the tab marathon",
-          "body": "Stop copying captions between tools. Plan, edit, and schedule from a single canvas — channel-aware slots included.",
-          "outcome": "3.2× faster cycles"
+          "body": "Stop copying captions between apps. Plan and publish Instagram, Facebook, and YouTube from a single Studio.",
+          "outcome": "Fewer tools to juggle"
         },
         {
-          "title": "Templates that ship, not stall",
-          "body": "Reusable formats for every surface, a locked brand voice, and zero last-minute rewrites before go-live.",
-          "outcome": "70% fewer rewrites"
+          "title": "Official API connects",
+          "body": "Meta and Google OAuth only. Encrypted tokens at rest. Disconnect whenever you want.",
+          "outcome": "You stay in control"
         },
         {
           "title": "Signals you can act on",
-          "body": "Cross-platform performance in one read — double down on winners instead of guessing from four dashboards.",
-          "outcome": "One analytics truth"
+          "body": "Instagram account analytics in Studio when insights are granted — more surfaces coming as APIs unlock.",
+          "outcome": "Honest roadmap"
         }
       ],
       "testimonial": {
-        "quote": "We used to lose half a day every time we shipped a campaign. Now the whole team sees one calendar, one inbox, one truth.",
-        "author": "Maya Chen",
-        "role": "Head of Content · 8-person studio",
-        "metric": "Weekly ops: 12h → 3h"
+        "quote": "We needed one place to publish Reels and Page posts without five browser tabs. KONT is that place while we grow into more channels.",
+        "author": "Early creator",
+        "role": "Content · early access",
+        "metric": "Meta + YouTube publish live"
       }
     },
     "bento": {
       "label": "Product preview",
       "title": "See the product, not a pitch deck",
-      "text": "The core of Studio — calendar, unified inbox, audience map, connected accounts, automations, and analytics. Live widgets, not screenshots.",
+      "text": "Studio today: content library, calendar, connected accounts (Instagram, Facebook, YouTube, Drive, Telegram), Instagram analytics, and Inbox for Instagram/Messenger DMs when messaging access is granted (loaded on demand, not stored). Extra networks remain on the roadmap.",
       "tabs": {
         "calendar": "Calendar",
         "automation": "Automations",
@@ -308,6 +307,10 @@
     }
   },
   "studio": {
+    "toasts": {
+      "acknowledge": "Got it",
+      "dismiss": "Dismiss"
+    },
     "nav": {
       "calendar": "Calendar",
       "content": "Content",
@@ -687,12 +690,14 @@
       "details": {
         "title": "Platforms",
         "viewsCol": "Views",
+        "dateCol": "Published",
         "openPost": "Open post",
         "loading": "Loading…",
         "loadFailed": "Could not load platform details.",
         "empty": "No publish targets yet.",
         "views": "{count} views",
         "viewsUnknown": "—",
+        "missingOnPlatform": "Not on platform",
         "status": {
           "pending": "Pending",
           "scheduled": "Scheduled",
@@ -755,7 +760,7 @@
           "title": "Publishing",
           "loadingAccounts": "Loading connected accounts…",
           "draftOnlyTitle": "Draft",
-          "draftOnlyBody": "Saved to your library only. Connect Instagram or TikTok under Platforms to publish here.",
+          "draftOnlyBody": "Saved to your library only. Connect Instagram, Facebook, or YouTube under Platforms to publish here.",
           "intro": "Draft keeps the item local. Or choose connected accounts to target.",
           "draftLabel": "Draft",
           "draftHint": "Library only — no publish targets yet.",
@@ -877,7 +882,21 @@
     },
     "inbox": {
       "label": "Inbox",
-      "subtitle": "One place for comments, DMs, and mentions across connected channels — preview for review.",
+      "subtitle": "Instagram and Messenger DMs from connected Meta accounts.",
+      "liveSubtitle": "Live DMs from Instagram and Facebook Messenger — loaded on demand, not stored in KONT.",
+      "ephemeralBanner": "Privacy: conversations are fetched when you open Inbox and kept only in this browser session. KONT does not save DM content to the database.",
+      "refresh": "Refresh",
+      "loading": "Loading conversations…",
+      "loadFailed": "Could not load inbox.",
+      "reconnectHint": "Open Platforms → Connect Instagram or Facebook and enable Inbox / messaging, then refresh.",
+      "emptyHint": "Make sure the Page can receive messages and that someone has written to you first.",
+      "listEmptyLive": "No conversations yet for this channel.",
+      "pickThreadLive": "Select a conversation to read messages.",
+      "noMessages": "No messages in this thread.",
+      "noPreview": "(no text)",
+      "replyHintLive": "Replies use Meta’s HUMAN_AGENT tag (up to 7 days after the user’s last message). Not stored in KONT.",
+      "sentLive": "Reply sent via Meta.",
+      "sendFailed": "Could not send reply.",
       "demoBanner": "Preview data only. This screen is not connected to live networks.",
       "demoEyebrow": "Demo",
       "unreadBadge": "Unread",

@@ -8,7 +8,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ContentComposerModal } from "./ContentComposerModal";
 import { ContentTableActions } from "./ContentTableActions";
 import { ContentHashtagChips } from "./ContentHashtagChips";
-import { ContentKindBadge, contentKindFromApiType } from "./ContentKindBadge";
+import { contentKindFromApiType } from "./ContentKindBadge";
 import { ContentPlatformIcons, type ContentPlatformLabels } from "./ContentPlatformIcons";
 import { ContentRowDetails } from "./ContentRowDetails";
 import { formatStudioCreateCta, StudioCreateShell } from "./StudioCreateShell";
@@ -204,17 +204,17 @@ function displayStatusFor(item: PublishableListItem, nowMs = Date.now()): Displa
 
 function statusBadgeClass(status: DisplayStatus): string {
   const base =
-    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide";
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-wide";
   if (status === "scheduled") {
-    return `${base} border-[var(--ice)]/35 bg-[var(--ice)]/12 text-[var(--ice)]`;
+    return `${base} border-[var(--ice)]/30 bg-[var(--ice)]/10 text-[var(--ice)]`;
   }
   if (status === "posted") {
-    return `${base} border-[var(--ice)]/22 bg-[var(--ice)]/6 text-[var(--ice)]`;
+    return `${base} border-[var(--ice)]/18 bg-[var(--ice)]/5 text-[var(--ice)]`;
   }
   if (status === "archived") {
     return `${base} border-[var(--line)] bg-[var(--studio-surface-3)] text-[var(--muted)]`;
   }
-  return `${base} border-[var(--ember)]/25 bg-[var(--ember)]/10 text-[var(--ember)]`;
+  return `${base} border-[var(--ember)]/22 bg-[var(--ember)]/8 text-[var(--ember)]`;
 }
 
 function MetaDate({
@@ -258,14 +258,14 @@ function ContentKindThumbIcon({ kind }: { kind: PublishableListItem["kind"] }) {
   return (
     <span
       className={[
-        "absolute left-1.5 top-1.5 inline-flex h-7 w-7 items-center justify-center rounded-lg border shadow-[0_6px_16px_-10px_rgba(0,0,0,0.55)] backdrop-blur-md",
+        "absolute left-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded-md border backdrop-blur-sm",
         kind === "reel"
-          ? "border-[var(--ice)]/35 bg-[var(--ice)]/18 text-[var(--ice)]"
-          : "border-white/25 bg-black/35 text-white/90",
+          ? "border-[var(--ice)]/30 bg-[var(--ice)]/16 text-[var(--ice)]"
+          : "border-white/20 bg-black/30 text-white/85",
       ].join(" ")}
       aria-hidden
     >
-      <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+      <Icon className="h-3 w-3" strokeWidth={2.25} />
     </span>
   );
 }
@@ -281,14 +281,10 @@ function ContentLibraryRow({
 }: {
   item: PublishableListItem;
   labels: {
-    typeReel: string;
-    typePost: string;
-    typeEvent: string;
     statusDraft: string;
     statusScheduled: string;
     statusPosted: string;
     statusArchived: string;
-    tableStatus: string;
     tablePlatforms: string;
     tableScheduled: string;
   };
@@ -313,11 +309,11 @@ function ContentLibraryRow({
           : labels.statusDraft;
 
   return (
-    <StudioWrapperListRow as="li" className="studio-library-row p-3.5 sm:p-4">
+    <StudioWrapperListRow as="li" className="studio-library-row p-3 sm:p-3.5">
       <div className="studio-library-row__layout">
         <div
           className={[
-            "studio-library-row__thumb relative h-[4.75rem] w-[4.75rem] shrink-0 overflow-hidden rounded-xl border border-[var(--line)]/70 sm:h-[5.25rem] sm:w-[5.25rem]",
+            "studio-library-row__thumb relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-[0.9rem] border border-[var(--line)]/55 sm:h-[4.85rem] sm:w-[4.85rem]",
             isReel ? "bg-[var(--ice)]/8" : "bg-[var(--studio-surface-3)]",
           ].join(" ")}
         >
@@ -341,23 +337,16 @@ function ContentLibraryRow({
         </div>
 
         <div className="studio-library-row__copy min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-[var(--fg)] sm:text-base">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-[var(--fg)] sm:text-[0.95rem]">
               {item.title}
             </h3>
-            <ContentKindBadge
-              kind={item.kind}
-              reelLabel={labels.typeReel}
-              postLabel={labels.typePost}
-              eventLabel={labels.typeEvent}
-              align="center"
-            />
             <span className={statusBadgeClass(displayStatus)} title={statusLabel}>
               {statusLabel}
             </span>
           </div>
           {excerpt ? (
-            <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-[var(--muted)]">{excerpt}</p>
+            <p className="mt-0.5 line-clamp-2 text-[12.5px] leading-relaxed text-[var(--muted)]">{excerpt}</p>
           ) : null}
         </div>
 
@@ -373,34 +362,19 @@ function ContentLibraryRow({
           />
         </div>
 
-        <div className="studio-library-row__meta flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] leading-none text-[var(--muted)]">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-              {labels.tablePlatforms}
-            </span>
-            <ContentPlatformIcons platforms={item.platforms} labels={platformLabels} />
+        <div className="studio-library-row__meta flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-none text-[var(--muted)]">
+          <span className="inline-flex items-center" aria-label={labels.tablePlatforms}>
+            <ContentPlatformIcons platforms={item.platforms} labels={platformLabels} density="compact" />
           </span>
-          <span className="studio-library-row__rule hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
-          <span className="inline-flex items-center gap-1.5">
-            <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-              {labels.tableScheduled}
-            </span>
+          <span className="studio-library-row__rule hidden h-3 w-px bg-[var(--line)]/80 sm:block" aria-hidden />
+          <span className="inline-flex items-center" aria-label={labels.tableScheduled}>
             <MetaDate scheduled={item} tone="scheduled" />
-          </span>
-          <span className="studio-library-row__created-rule hidden h-3 w-px bg-[var(--line)] sm:block" aria-hidden />
-          <span className="studio-library-row__created inline-flex items-center gap-1.5">
-            <span className="font-semibold uppercase tracking-[0.12em] text-[var(--muted)]/70">
-              {labels.tableStatus}
-            </span>
-            <span className={statusBadgeClass(displayStatus)} title={statusLabel}>
-              {statusLabel}
-            </span>
           </span>
         </div>
 
         {item.hashtags && item.hashtags.length > 0 ? (
           <div className="studio-library-row__tags">
-            <ContentHashtagChips tags={item.hashtags} size="md" />
+            <ContentHashtagChips tags={item.hashtags} size="sm" maxLines={1} />
           </div>
         ) : null}
 
@@ -666,29 +640,14 @@ export function ContentView() {
 
   const rowCopy = useMemo(
     () => ({
-      typeReel: C.typeReel,
-      typePost: C.typePost,
-      typeEvent: C.typeEvent,
       statusDraft: C.statusDraft,
       statusScheduled: C.statusScheduled,
       statusPosted: C.statusPosted,
       statusArchived: C.statusArchived,
-      tableStatus: C.tableStatus,
       tablePlatforms: C.tablePlatforms,
       tableScheduled: C.tableScheduled,
     }),
-    [
-      C.statusArchived,
-      C.statusDraft,
-      C.statusPosted,
-      C.statusScheduled,
-      C.tablePlatforms,
-      C.tableScheduled,
-      C.tableStatus,
-      C.typeEvent,
-      C.typePost,
-      C.typeReel,
-    ],
+    [C.statusArchived, C.statusDraft, C.statusPosted, C.statusScheduled, C.tablePlatforms, C.tableScheduled],
   );
 
   const platformLabels = useMemo((): ContentPlatformLabels => {

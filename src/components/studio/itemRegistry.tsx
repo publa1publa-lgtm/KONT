@@ -5,6 +5,7 @@ import { AutomationsViewLite } from "./features/AutomationsViewLite";
 import { CalendarView } from "./features/CalendarView";
 import { ContentView } from "./features/ContentView";
 import { EventsView } from "./features/EventsView";
+import { InboxView } from "./features/InboxView";
 import { PlatformsView } from "./features/PlatformsView";
 
 export type StudioItemViewProps = {
@@ -43,11 +44,15 @@ function AnalyticsPanel(_props: StudioItemViewProps) {
   return <AnalyticsView />;
 }
 
+function InboxPanel(props: StudioItemViewProps) {
+  return <InboxView {...props} />;
+}
+
 /** Maps onboarding tile ids to ported feature views from contentfabric. */
 export const ITEM_REGISTRY: Record<string, ItemViewEntry> = {
   content: { wired: true, View: ContentPanel },
   calendar: { wired: true, View: CalendarPanel },
-  inbox: { wired: false },
+  inbox: { wired: true, View: InboxPanel },
   storage: { wired: false },
   platforms: { wired: true, View: PlatformsPanel },
   automations: { wired: true, View: AutomationsPanel },

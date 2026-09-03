@@ -23,7 +23,6 @@ export async function syncDemoPlatformConnection(req: Request): Promise<NextResp
 
   const platformId = (body as { platformId?: unknown }).platformId;
   const connected = (body as { connected?: unknown }).connected;
-  const handleRaw = (body as { handle?: unknown }).handle;
 
   if (typeof platformId !== "string" || !isReelPlatformId(platformId)) {
     return badRequest("platformId must be a supported social platform");
@@ -31,7 +30,6 @@ export async function syncDemoPlatformConnection(req: Request): Promise<NextResp
   if (typeof connected !== "boolean") return badRequest("connected must be a boolean");
 
   const platform = reelPlatformIdToPlatformKind(platformId);
-  const handle = typeof handleRaw === "string" ? handleRaw : null;
 
   if (connected) {
     if (platform === PlatformKind.YOUTUBE) {
@@ -40,8 +38,7 @@ export async function syncDemoPlatformConnection(req: Request): Promise<NextResp
     if (platform === PlatformKind.FACEBOOK || platform === PlatformKind.INSTAGRAM) {
       return badRequest("Facebook and Instagram must be connected through Meta OAuth.");
     }
-    const row = await platformAccountRepo.upsertDemoPlatformAccount(userId, platform, handle);
-    return json({ ok: true, account: { id: row.id, platformId, handle: row.handle } });
+    return badRequest("This platform cannot be connected via demo sync. Use the official OAuth or Coming soon.");
   }
 
   if (platform === PlatformKind.YOUTUBE) {

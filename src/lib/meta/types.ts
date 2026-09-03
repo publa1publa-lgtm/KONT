@@ -2,12 +2,15 @@ export const META_OAUTH_SCOPES = [
   "pages_show_list",
   "pages_manage_posts",
   "pages_read_engagement",
+  "pages_manage_metadata",
+  "pages_messaging",
   "read_insights",
   "business_management",
   "instagram_basic",
   "instagram_content_publish",
   "instagram_manage_comments",
   "instagram_manage_insights",
+  "instagram_manage_messages",
 ] as const;
 
 export type MetaOAuthScope = (typeof META_OAUTH_SCOPES)[number];

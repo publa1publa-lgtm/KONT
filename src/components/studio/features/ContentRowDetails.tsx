@@ -25,27 +25,42 @@ function formatViewCount(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
+function formatPublishedAt(
+  value: string | null,
+  locale: string,
+): { iso: string; label: string; title: string } | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  const now = new Date();
+  const label = new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+    ...(d.getFullYear() !== now.getFullYear() ? { year: "numeric" } : {}),
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+  const title = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(d);
+  return { iso: d.toISOString(), label, title };
+}
+
 function statusKey(status: string): TargetStatus {
   const s = status.toLowerCase();
   if (s === "scheduled" || s === "publishing" || s === "published" || s === "failed" || s === "cancelled") return s;
   return "pending";
 }
 
-function targetStatusClass(status: TargetStatus): string {
-  const base = "studio-status shrink-0";
+function softStatusClass(status: TargetStatus): string {
+  const base = "studio-library-row__detail-tag";
   switch (status) {
-    case "published":
-      return `${base} studio-status--published`;
     case "scheduled":
-      return `${base} studio-status--scheduled`;
+      return `${base} studio-library-row__detail-tag--scheduled`;
     case "publishing":
-      return `${base} studio-status--publishing`;
-    case "failed":
-      return `${base} studio-target-status--failed`;
+      return `${base} studio-library-row__detail-tag--publishing`;
     case "cancelled":
-      return `${base} studio-status--archived`;
+      return `${base} studio-library-row__detail-tag--muted`;
     default:
-      return `${base} studio-status--draft`;
+      return `${base} studio-library-row__detail-tag--muted`;
   }
 }
 
@@ -84,30 +99,78 @@ function PlatformGlyph({ id, className }: { id: ReelPlatformId; className?: stri
   }
 }
 
+type DateSlot =
+  | { kind: "error"; label: string; title: string }
+  | { kind: "date"; iso: string; label: string; title: string }
+  | { kind: "status"; status: TargetStatus; label: string }
+  | { kind: "empty"; label: string };
+
+function resolveDateSlot(
+  target: ContentTargetApi,
+  labels: {
+    missingOnPlatform: string;
+    failed: string;
+    status: Record<TargetStatus, string>;
+    empty: string;
+  },
+  locale: string,
+): DateSlot {
+  const st = statusKey(target.status);
+
+  if (st === "failed") {
+    const label = target.errorMessage?.trim() || labels.failed;
+    return { kind: "error", label, title: target.errorMessage?.trim() || labels.failed };
+  }
+
+  if (target.live === false) {
+    return {
+      kind: "error",
+      label: labels.missingOnPlatform,
+      title: target.errorMessage?.trim() || labels.missingOnPlatform,
+    };
+  }
+
+  if (st === "published" && !target.remoteId) {
+    return { kind: "error", label: labels.missingOnPlatform, title: labels.missingOnPlatform };
+  }
+
+  const published = formatPublishedAt(target.publishedAt, locale);
+  if (published) {
+    return { kind: "date", iso: published.iso, label: published.label, title: published.title };
+  }
+
+  if (st === "scheduled" || st === "publishing" || st === "pending" || st === "cancelled") {
+    return { kind: "status", status: st, label: labels.status[st] };
+  }
+
+  return { kind: "empty", label: labels.empty };
+}
+
 function TargetRow({
   target,
   platformLabel,
-  statusLabel,
   viewsLabel,
   viewsUnknown,
+  dateSlot,
   openLabel,
   locale,
 }: {
   target: ContentTargetApi;
   platformLabel: string;
-  statusLabel: string;
   viewsLabel: string;
   viewsUnknown: string;
+  dateSlot: DateSlot;
   openLabel: string;
   locale: string;
 }) {
   const kind = platformKindFromApi(target.platform);
   const reelId = kind ? platformKindToReelPlatformId(kind) : null;
-  const st = statusKey(target.status);
   const accent = reelId ? platformBrandAccent(reelId) : "var(--ice)";
   const handle = target.handle?.replace(/^@/, "") ?? null;
 
   const viewsText =
+    target.views == null ? viewsUnknown : formatViewCount(target.views, locale);
+  const viewsTitle =
     target.views == null
       ? viewsUnknown
       : formatTemplate(viewsLabel, { count: formatViewCount(target.views, locale) });
@@ -120,22 +183,29 @@ function TargetRow({
           style={platformIconTileStyle(accent)}
           aria-hidden
         >
-          {reelId ? <PlatformGlyph id={reelId} className="h-3.5 w-3.5" /> : null}
+          {reelId ? <PlatformGlyph id={reelId} className="h-3 w-3" /> : null}
         </span>
         <div className="min-w-0">
           <p className="studio-library-row__detail-platform-name">{platformLabel}</p>
           {handle ? <p className="studio-library-row__detail-platform-handle">@{handle}</p> : null}
-          {st === "failed" && target.errorMessage ? (
-            <p className="studio-library-row__detail-platform-error" title={target.errorMessage}>
-              {target.errorMessage}
-            </p>
-          ) : null}
         </div>
       </div>
 
-      <span className={targetStatusClass(st)}>{statusLabel}</span>
+      {dateSlot.kind === "error" ? (
+        <span className="studio-library-row__detail-tag studio-library-row__detail-tag--danger" title={dateSlot.title}>
+          {dateSlot.label}
+        </span>
+      ) : dateSlot.kind === "date" ? (
+        <time className="studio-library-row__detail-date" dateTime={dateSlot.iso} title={dateSlot.title}>
+          {dateSlot.label}
+        </time>
+      ) : dateSlot.kind === "status" ? (
+        <span className={softStatusClass(dateSlot.status)}>{dateSlot.label}</span>
+      ) : (
+        <span className="studio-library-row__detail-date studio-library-row__detail-date--empty">{dateSlot.label}</span>
+      )}
 
-      <span className="studio-library-row__detail-metric" title={viewsLabel}>
+      <span className="studio-library-row__detail-metric" title={viewsTitle}>
         {viewsText}
       </span>
 
@@ -209,28 +279,34 @@ export function ContentRowDetails({ contentId }: { contentId: string }) {
   }
 
   const intl = intlLocale(locale);
+  const slotLabels = {
+    missingOnPlatform: D.missingOnPlatform,
+    failed: D.status.failed,
+    status: D.status,
+    empty: D.viewsUnknown,
+  };
 
   return (
     <div className="studio-library-row__detail-panel">
       <div className="studio-library-row__detail-head" aria-hidden>
-        <span>{D.title}</span>
-        <span>{D.viewsCol}</span>
-        <span className="studio-library-row__detail-head-spacer" />
+        <span className="studio-library-row__detail-head-platform">{D.title}</span>
+        <span className="studio-library-row__detail-head-date">{D.dateCol}</span>
+        <span className="studio-library-row__detail-head-views">{D.viewsCol}</span>
+        <span className="studio-library-row__detail-head-spacer" aria-hidden />
       </div>
       <ul className="studio-library-row__detail-list">
         {targets.map((target) => {
           const kind = platformKindFromApi(target.platform);
           const reelId = kind ? platformKindToReelPlatformId(kind) : null;
           const platformLabel = reelId ? labels[reelId] : target.platform;
-          const st = statusKey(target.status);
           return (
             <TargetRow
               key={target.id}
               target={target}
               platformLabel={platformLabel}
-              statusLabel={D.status[st]}
               viewsLabel={D.views}
               viewsUnknown={D.viewsUnknown}
+              dateSlot={resolveDateSlot(target, slotLabels, intl)}
               openLabel={D.openPost}
               locale={intl}
             />

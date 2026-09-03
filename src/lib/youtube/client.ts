@@ -287,19 +287,32 @@ export async function uploadVideo(userId: string, input: YouTubeUploadInput): Pr
 export async function getYouTubeVideoSnapshot(
   userId: string,
   videoId: string,
-): Promise<{ views: number | null; permalink: string | null; live: boolean }> {
+): Promise<{
+  views: number | null;
+  permalink: string | null;
+  live: boolean | null;
+  publishedAt: string | null;
+}> {
   const id = videoId.trim();
   const fallbackPermalink = id ? `https://www.youtube.com/watch?v=${id}` : null;
-  if (!id) return { views: null, permalink: null, live: false };
+  const empty = {
+    views: null,
+    permalink: fallbackPermalink,
+    live: null as boolean | null,
+    publishedAt: null,
+  };
+  if (!id) return { views: null, permalink: null, live: null, publishedAt: null };
 
   try {
     const accessToken = await getValidAccessToken(userId);
     const url = new URL(YOUTUBE_VIDEOS_URL);
-    url.searchParams.set("part", "statistics,status");
+    url.searchParams.set("part", "snippet,statistics,status");
     url.searchParams.set("id", id);
     const body = await youtubeFetch<{ items?: YouTubeVideoResource[] }>(url.toString(), accessToken);
     const item = body.items?.[0];
-    if (!item?.id) return { views: null, permalink: fallbackPermalink, live: false };
+    if (!item?.id) {
+      return { views: null, permalink: fallbackPermalink, live: false, publishedAt: null };
+    }
 
     const rawViews = item.statistics?.viewCount;
     const views =
@@ -312,10 +325,11 @@ export async function getYouTubeVideoSnapshot(
     return {
       views: views != null && Number.isFinite(views) ? views : null,
       permalink: fallbackPermalink,
-      live: Boolean(item.id),
+      live: true,
+      publishedAt: item.snippet?.publishedAt ?? null,
     };
   } catch {
-    return { views: null, permalink: fallbackPermalink, live: false };
+    return empty;
   }
 }
 

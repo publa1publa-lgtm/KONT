@@ -7,6 +7,7 @@ import { getServerLocale } from "@/i18n/server";
 import { auditContextFromRequest, writeAudit } from "@/lib/audit";
 import { json } from "@/lib/api/http";
 import { safeStudioRedirect } from "@/lib/safeRedirectPath";
+import { getSessionUserId } from "@/lib/session";
 import {
   DRIVE_OAUTH_STATE_COOKIE,
   exchangeCodeForTokens,
@@ -61,10 +62,18 @@ function accountHandle(profile: DriveUserProfile | null): string {
 async function readOAuthState(queryState: string | null): Promise<DriveOAuthState> {
   const jar = await cookies();
   const cookieState = jar.get(DRIVE_OAUTH_STATE_COOKIE)?.value ?? null;
-  if (cookieState && queryState && cookieState !== queryState) {
+  if (!cookieState) {
+    throw new GoogleDriveError("OAuth state cookie missing.", { code: "OAUTH_STATE", status: 400 });
+  }
+  if (queryState && cookieState !== queryState) {
     throw new GoogleDriveError("OAuth state mismatch.", { code: "OAUTH_STATE", status: 400 });
   }
-  return parseOAuthState(cookieState ?? queryState);
+  const state = parseOAuthState(cookieState);
+  const sessionUserId = await getSessionUserId();
+  if (!sessionUserId || sessionUserId !== state.userId) {
+    throw new GoogleDriveError("OAuth session mismatch.", { code: "OAUTH_SESSION", status: 401 });
+  }
+  return state;
 }
 
 async function completeDriveOAuth(req: Request, code: string): Promise<CompletedDriveOAuth> {

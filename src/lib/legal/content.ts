@@ -231,7 +231,7 @@ const kontPrivacy: LegalDocument = {
         },
         {
           type: "note",
-          text: "Studio may show tiles such as TikTok, Pinterest, LinkedIn, Discord, Inbox, comments, and Insights. Those are placeholders on our roadmap. Studio → Analytics is live for Instagram: if you connect a professional account and grant insights access, we load account-level totals such as views, reach, follows, and accounts engaged for recent days. Expanding a published post in the content library may also load that media’s lifetime play count. We do not currently read messages, comments, DMs, or personal feeds from connected platforms, and we do not receive TikTok API data until TikTok Connect is live. If we enable a new category of data, we will ask for the matching permissions and update this policy first.",
+          text: "Studio may show tiles such as TikTok and other roadmap surfaces that are not live yet. Studio → Analytics is live for Instagram when you grant insights. Studio → Inbox can load Instagram and Facebook Messenger conversations when you connect those accounts and grant messaging permissions: messages are fetched on demand for display in your session and are not stored in the KONT database. We do not receive TikTok API data until TikTok Connect is live.",
         },
       ],
     },
@@ -334,7 +334,7 @@ const kontPrivacy: LegalDocument = {
         {
           type: "ul",
           items: [
-            "Facebook Pages and Instagram professional: who logged in, Pages you manage, the Instagram professional account linked to a Page, encrypted tokens, and post or media ids after you publish. Used to list destinations, publish content you submit, and — when you grant insights access — show account analytics in Studio → Analytics and lifetime play counts on published posts in the content library. We do not load comments or DMs into Studio.",
+            "Facebook Pages and Instagram professional: who logged in, Pages you manage, the Instagram professional account linked to a Page, encrypted tokens, and post or media ids after you publish. Used to list destinations, publish content you submit, and — when you grant insights access — show account analytics in Studio → Analytics and lifetime play counts on published posts in the content library. When you grant messaging / Inbox access, we may load conversation and message content from Meta solely to display it in Studio → Inbox for that session; we do not store DM bodies in our database.",
             "YouTube and Google Drive: Google identity needed for the connection, YouTube channel identity, videos and metadata you upload, and names and contents of Drive files you pick to import. We list image and video files you can access so you can choose one; we download only the file you select. We do not read Gmail. We do not currently pull YouTube Analytics into Studio, and we do not sync Google Calendar or Sheets even if those items appear in Studio.",
             "TikTok: not live today — we do not receive TikTok API data until you complete TikTok Login. When that connection is offered, we will receive identity needed to label the account, encrypted tokens, and the caption and video you submit, plus ids and status after that publish. We will not read TikTok DMs, followers, or For You feed.",
             "Telegram: you paste a bot token you control and optionally a chat id. We verify the bot, store the token encrypted, and use it only to send messages you initiate. We do not read your personal Telegram chats.",
@@ -377,7 +377,7 @@ const kontPrivacy: LegalDocument = {
           type: "ul",
           items: [
             "KONT account data: until you request deletion, plus a short period needed to complete deletion and keep security logs",
-            "Connected-platform tokens (and Telegram bot tokens): only while that connection stays active; disconnect or deletion removes them",
+            "Connected-platform tokens and Meta/Google connection metadata: only while that connection stays active; disconnect or Meta/Google deletion removes them",
             "Drafts, media, schedules, calendar events, and link-page content: until you delete them or we delete the account",
             "Publish ids and status: kept with the post record so you can see what already went out",
           ],
@@ -395,8 +395,8 @@ const kontPrivacy: LegalDocument = {
         {
           type: "ul",
           items: [
-            "Disconnect a platform in Studio → Platforms. KONT then revokes the grant where the provider allows it and deletes stored tokens for that connection.",
-            "Remove KONT from Facebook → Settings & privacy → Settings → Apps and websites. Choosing Remove and Send Request triggers our Meta data-deletion callback, which deletes Facebook and Instagram tokens we received from Meta.",
+            "Disconnect a platform in Studio → Platforms. KONT then revokes the grant where the provider allows it and deletes stored tokens and provider connection metadata for that connection.",
+            "Remove KONT from Facebook → Settings & privacy → Settings → Apps and websites. Choosing Remove and Send Request triggers our Meta data-deletion callback, which deletes Facebook and Instagram tokens and Meta-derived connection data (Page and Instagram identifiers stored for that link) that we received from Meta.",
             "Remove KONT from Google Third-party access and, when available, TikTok connected apps. That stops new API access even if you have not opened KONT.",
             `Request deletion of your KONT account and remaining personal data by emailing ${DELETION_EMAIL} from the address on the account. Write “Delete my KONT account” and include the email on the account. We will delete or irreversibly anonymize that data within 30 days, except records we must keep for security, dispute, or legal reasons (for example a short audit trail that a publish occurred).`,
           ],

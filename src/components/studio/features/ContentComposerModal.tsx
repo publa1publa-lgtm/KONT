@@ -461,7 +461,7 @@ export function ContentComposerModal({
     };
   }, [open]);
 
-  const postingNow = kind !== "event" && postNow;
+  const postingNow = kind !== "event";
 
   const dateError = useMemo(() => {
     if (postingNow || !effectiveDate || isEditing) return null;
@@ -553,13 +553,14 @@ export function ContentComposerModal({
                 dateError={dateError ?? undefined}
                 timeError={timeError ?? undefined}
                 showPostNow={kind !== "event"}
-                postNow={postNow}
+                postNow={kind === "event" ? postNow : true}
                 onPostNowChange={(next) => {
                   setPostNow(next);
                   setFieldErrors((prev) => ({ ...prev, form: undefined }));
                 }}
                 postNowLabel={C.postNow}
                 postNowSummary={C.postNowSummary}
+                allowScheduling={kind === "event"}
               />
               {kind === "reel" ? (
                 <ComposerReelPreview

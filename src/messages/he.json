@@ -65,206 +65,209 @@
   "landing": {
     "scrollHint": "גלול כדי לגלות",
     "hero": {
-      "label": "סביבת העבודה לתוכן",
-      "badge": "פרסמו היום",
-      "title": "ערימת הכאוס שלכם.",
-      "titleAccent": "סביבת העבודה השקטה שלנו.",
-      "text": "תכנון, פרסום ומדידה בכל ערוץ מסביבת עבודה אחת.",
-      "ctaPrimary": "התחילו עכשיו",
-      "ctaSecondary": "ראו איך זה עובד",
-      "trust": ["APIs רשמיים", "OAuth בלבד", "בלי סיסמאות"],
+      "label": "The content workspace",
+      "badge": "Publish today",
+      "title": "Your chaos stack.",
+      "titleAccent": "Our calm workspace.",
+      "text": "Plan and publish to Instagram, Facebook, and YouTube from one workspace — more channels as we unlock API access.",
+      "ctaPrimary": "Start now",
+      "ctaSecondary": "See how it works",
+      "trust": [
+        "Official APIs",
+        "OAuth only",
+        "No shared passwords"
+      ],
       "platforms": [
         "Instagram",
-        "TikTok",
+        "Facebook",
         "YouTube",
-        "X",
         "Telegram",
-        "LinkedIn"
+        "Google Drive"
       ],
       "multiChannel": {
-        "kicker": "רב-ערוצי",
-        "title": "פוסט אחד. כל פלטפורמה."
+        "kicker": "Multi-channel",
+        "title": "One workspace. Live platforms today."
       },
       "social": {
-        "count": "1,200+ יוצרים",
-        "text": "מפרסמים בערוצים",
-        "worksWith": "מפרסם ל"
+        "count": "Early access",
+        "text": "creators publishing with KONT",
+        "worksWith": "Publishes to"
       },
       "tags": [
-        "OAuth בלבד",
-        "עיצוב אוטומטי",
-        "תזמון חכם"
+        "OAuth-only",
+        "Meta + Google",
+        "Encrypted tokens"
       ],
       "secure": {
-        "kicker": "חיבור מאובטח",
-        "title": "OAuth בלבד. אתם שולטים.",
-        "line": "בלי סיסמאות משותפות · ביטול גישה בכל עת"
+        "kicker": "Secure connect",
+        "title": "OAuth only. You stay in control.",
+        "line": "No shared passwords · Revoke access anytime"
       },
       "pulse": {
-        "kicker": "דופק חי",
+        "kicker": "Live pulse",
         "activities": [
           {
-            "action": "פורסם",
-            "detail": "Instagram Reel · באוויר עכשיו",
+            "action": "Published",
+            "detail": "Instagram Reel · now live",
             "icon": "/home/icons/color/instagram.svg"
           },
           {
-            "action": "מתוזמן",
-            "detail": "YouTube Short · 18:00",
-            "icon": "/home/icons/color/youtube.svg"
+            "action": "Published",
+            "detail": "Facebook Page · photo live",
+            "icon": "/home/icons/color/facebook.svg"
           },
           {
-            "action": "עוצב אוטומטית",
-            "detail": "TikTok · 3 חיתוכים מוכנים",
-            "icon": "/home/icons/color/tiktok.svg"
+            "action": "Published",
+            "detail": "YouTube · Short uploaded",
+            "icon": "/home/icons/color/youtube.svg"
           }
         ],
         "insights": [
           {
-            "value": "94%",
-            "label": "שיעור פרסום בזמן"
+            "value": "IG",
+            "label": "Analytics in Studio"
           },
           {
-            "value": "2m",
-            "label": "כל הערוצים מסונכרנים"
+            "value": "3",
+            "label": "Live publish platforms"
           },
           {
-            "value": "847",
-            "label": "פוסטים מתוזמנים השבוע"
+            "value": "OAuth",
+            "label": "Official API connect"
           }
         ],
         "metrics": [
           {
-            "value": "3.2×",
-            "label": "מחזורי פרסום מהירים יותר"
+            "value": "1",
+            "label": "Workspace for create & publish"
           },
           {
-            "value": "12+",
-            "label": "פלטפורמות במקום אחד"
+            "value": "3+",
+            "label": "Live platforms today"
           }
         ]
       },
       "quickWins": {
-        "kicker": "ניצחונות מהירים",
-        "title": "שחררו יותר, עם פחות חיכוך",
+        "kicker": "Quick wins",
+        "title": "Ship more, with less friction",
         "items": [
-          "תזמנו שבוע שלם בפעולה אחת",
-          "עיצוב אוטומטי לכל ערוץ",
-          "תגובות נשארות על הפוסט"
+          "Connect Instagram, Facebook, or YouTube with OAuth",
+          "Compose a post or Reel and publish now",
+          "See Instagram account analytics when insights are granted"
         ]
       },
       "timing": {
-        "kicker": "תזמון חכם",
-        "title": "פרסמו כשהקהל שלכם פעיל",
+        "kicker": "Publish now",
+        "title": "Ship when you are ready",
         "chips": [
-          "שעות שיא",
-          "מודע לזמן מקומי",
-          "משבצות מומלצות"
+          "Post now",
+          "Encrypted tokens",
+          "Disconnect anytime"
         ]
       }
     },
     "pillars": {
-      "label": "איך זה עובד",
+      "label": "How it works",
       "title": "CREATE . MANAGE . GROW",
-      "text": "שלושה מרחבים. זרימה אחת. אותה סביבת עבודה שקטה — מהטיוטה הראשונה ועד ההוכחה שזה עבד.",
+      "text": "Three spaces. One flow — from draft to publish on the platforms we support today.",
       "items": [
         {
           "id": "create",
           "title": "CREATE .",
-          "body": "כתיבה. כיתוב. אוטומציה. פוסטים, רילס ותהליכי עבודה מתחילים על קנבס אחד — התאימו פעם אחת, פרסמו לכל ערוץ."
+          "body": "Compose posts and reels on one canvas — then publish to connected Instagram, Facebook, or YouTube accounts."
         },
         {
           "id": "manage",
           "title": "MANAGE .",
-          "body": "תכנון. סקירה. פרסום. לוח שנה, תיבת דואר נכנס וחשבונות מחוברים שומרים כל פוסט במסלול — בלי כאוס של לשוניות."
+          "body": "Calendar, library, and connected accounts keep your content organized — without tab chaos."
         },
         {
           "id": "grow",
           "title": "GROW .",
-          "body": "מדידה. למידה. פעולה. אנליטיקה ותובנות מראות מה עובד — כדי שהצעד הבא יהיה מושכל, לא ניחוש."
+          "body": "Instagram analytics in Studio when you grant insights. More reporting surfaces are on the roadmap."
         }
       ]
     },
     "benefits": {
-      "label": "למה צוותים עוברים",
-      "title": "הריפוד",
-      "titleAccent": "נגמר כאן.",
-      "text": "צוותים מובילים לא צריכים עוד כלים — הם צריכים משטח אחד שקט, בנוי לאיך פרסום באמת עובד.",
+      "label": "Why teams switch",
+      "title": "The patchwork",
+      "titleAccent": "ends here.",
+      "text": "You do not need more tabs — you need one calm surface for the channels that are live today.",
       "compare": {
         "before": {
-          "tag": "מפוצל",
-          "title": "שש לשוניות לריל אחד",
+          "tag": "Fragmented",
+          "title": "Six tabs to ship one reel",
           "items": [
-            "טיוטות מפוזרות ב-Notion, Drive והודעות פרטיות",
-            "אישורים קבורים בשרשורי Slack",
-            "תזמון בכלי אחד, אנליטיקה בשלושה אחרים",
-            "כל יום פרסום מתחיל בארכיאולוגיה של לשוניות"
+            "Drafts scattered across Notion, Drive, and DMs",
+            "Approvals buried in Slack threads",
+            "Publishing in one tool, analytics somewhere else",
+            "Every publish day starts with tab archaeology"
           ],
-          "metric": "6 כלים · ~47 דק' אבודות לפוסט"
+          "metric": "Too many tools · time lost per post"
         },
         "after": {
-          "tag": "מאוחד",
-          "title": "סביבת עבודה אחת, כל ערוץ",
+          "tag": "Focused",
+          "title": "One workspace, live platforms",
           "items": [
-            "כתבו פעם אחת — עיצוב אוטומטי ל-Reels, Shorts ופוסטים",
-            "אישורים ותגובות על הנכס, לא בצ'אט",
-            "לוח שנה, תיבת דואר נכנס ואנליטיקה באותה תצוגה",
-            "פרסמו ל-12+ פלטפורמות בלי לעזוב את סביבת העבודה"
+            "Compose once for Reels, Shorts, and posts",
+            "Connect with OAuth — revoke anytime",
+            "Calendar and library in the same Studio",
+            "Publish to Instagram, Facebook, and YouTube without leaving KONT"
           ],
-          "metric": "סביבת עבודה אחת · ממוצע מתחת ל-6 דק'"
+          "metric": "1 workspace · live Meta + Google publish"
         }
       },
       "stats": [
         {
-          "value": 3.2,
-          "decimals": 1,
-          "suffix": "×",
-          "label": "מחזורי פרסום מהירים יותר"
-        },
-        {
-          "value": 12,
-          "suffix": "+",
-          "label": "פלטפורמות במקום אחד"
-        },
-        {
-          "value": 40,
-          "suffix": "%",
-          "label": "פחות זמן אבוד במעבר בין לשוניות"
+          "value": 3,
+          "decimals": 0,
+          "suffix": "",
+          "label": "Live publish platforms"
         },
         {
           "value": 1,
           "suffix": "",
-          "label": "מקור אמת אחד לצוות"
+          "label": "Workspace for your content"
+        },
+        {
+          "value": 100,
+          "suffix": "%",
+          "label": "OAuth — no shared passwords"
+        },
+        {
+          "value": 1,
+          "suffix": "",
+          "label": "Source of truth for drafts you ship"
         }
       ],
       "items": [
         {
-          "title": "סיימו את מרתון הלשוניות",
-          "body": "הפסיקו להעתיק כיתובים בין כלים. תכננו, ערכו ותזמנו מקנבס אחד — כולל משבצות מותאמות לערוץ.",
-          "outcome": "מחזורים מהירים פי 3.2"
+          "title": "Kill the tab marathon",
+          "body": "Stop copying captions between apps. Plan and publish Instagram, Facebook, and YouTube from a single Studio.",
+          "outcome": "Fewer tools to juggle"
         },
         {
-          "title": "תבניות שמשחררות, לא תוקעות",
-          "body": "פורמטים לשימוש חוזר לכל פלטפורמה, קול מותג קבוע, ואפס כתיבה מחדש ברגע האחרון לפני פרסום.",
-          "outcome": "70% פחות כתיבה מחדש"
+          "title": "Official API connects",
+          "body": "Meta and Google OAuth only. Encrypted tokens at rest. Disconnect whenever you want.",
+          "outcome": "You stay in control"
         },
         {
-          "title": "אותות שאפשר לפעול לפיהם",
-          "body": "ביצועים חוצי-פלטפורמות בקריאה אחת — הכפילו את המנצחים במקום לנחש מארבעה דשבורדים.",
-          "outcome": "אמת אנליטית אחת"
+          "title": "Signals you can act on",
+          "body": "Instagram account analytics in Studio when insights are granted — more surfaces coming as APIs unlock.",
+          "outcome": "Honest roadmap"
         }
       ],
       "testimonial": {
-        "quote": "פעם איבדנו חצי יום בכל פעם ששחררנו קמפיין. עכשיו כל הצוות רואה לוח שנה אחד, תיבת דואר נכנס אחת, אמת אחת.",
-        "author": "Maya Chen",
-        "role": "ראש תוכן · סטודיו של 8 אנשים",
-        "metric": "תפעול שבועי: 12 ש' → 3 ש'"
+        "quote": "We needed one place to publish Reels and Page posts without five browser tabs. KONT is that place while we grow into more channels.",
+        "author": "Early creator",
+        "role": "Content · early access",
+        "metric": "Meta + YouTube publish live"
       }
     },
     "bento": {
       "label": "תצוגה מקדימה של המוצר",
       "title": "ראו את המוצר, לא מצגת",
-      "text": "ליבת הסטודיו — לוח שנה, תיבת דואר נכנס מאוחדת, מפת קהל, חשבונות מחוברים, אוטומציות ואנליטיקה. ווידג'טים חיים, לא צילומי מסך.",
+      "text": "Studio today: content library, calendar, connected accounts (Instagram, Facebook, YouTube, Drive, Telegram), and Instagram analytics. Inbox and extra networks are on the roadmap — not live yet.",
       "tabs": {
         "calendar": "לוח שנה",
         "automation": "אוטומציות",
@@ -308,6 +311,10 @@
     }
   },
   "studio": {
+    "toasts": {
+      "acknowledge": "קראתי",
+      "dismiss": "סגור"
+    },
     "nav": {
       "calendar": "לוח שנה",
       "content": "תוכן",
@@ -687,12 +694,14 @@
       "details": {
         "title": "פלטפורמות",
         "viewsCol": "צפיות",
+        "dateCol": "פורסם",
         "openPost": "פתיחת פוסט",
         "loading": "טוען…",
         "loadFailed": "לא ניתן לטעון פרטי פלטפורמות.",
         "empty": "עדיין אין יעדי פרסום.",
         "views": "{count} צפיות",
         "viewsUnknown": "—",
+        "missingOnPlatform": "לא בפלטפורמה",
         "status": {
           "pending": "ממתין",
           "scheduled": "מתוזמן",
@@ -876,54 +885,54 @@
       "metaLongLivedFailed": "Meta: לא ניתן ליצור טוקן ארוך-טווח. בדקו META_APP_ID / META_APP_SECRET ושה-Facebook Login החזיר user token ולא Page token."
     },
     "inbox": {
-      "label": "תיבת דואר נכנס",
-      "subtitle": "מקום אחד לתגובות, הודעות פרטיות ואזכורים בערוצים מחוברים — תצוגה מקדימה לסקירה.",
-      "demoBanner": "נתוני תצוגה מקדימה בלבד. מסך זה לא מחובר לרשתות חיות.",
-      "demoEyebrow": "דמו",
-      "unreadBadge": "לא נקרא",
-      "unreadSummary": "{count} לא נקראו",
-      "threads": "שרשורים",
-      "listEmpty": "אין התאמה לסינון.",
-      "pickThread": "בחרו שרשור מהרשימה לקריאת הודעות וניסיון תיבת התשובה.",
-      "back": "שרשורים",
-      "connectedAs": "מחובר כ",
-      "notConnected": "לא מחובר בדמו זה",
-      "sampleDisconnected": "דוגמה",
-      "markRead": "סימון כנקרא",
-      "readState": "נקרא",
-      "conversation": "שיחה",
-      "replyLabel": "תשובה",
-      "replyPlaceholder": "כתבו תשובה קצרה…",
-      "replyHint": "דמו: תשובות נשמרות במושב הדפדפן ולא נשלחות לשום פלטפורמה.",
-      "send": "שליחה",
-      "sentDemo": "נשמר למושב זה (דמו).",
-      "justNow": "עכשיו",
-      "kindComment": "תגובה",
-      "kindDm": "הודעה פרטית",
-      "kindMention": "אזכור",
+      "label": "Inbox",
+      "subtitle": "Instagram and Messenger DMs from connected Meta accounts.",
+      "demoBanner": "Preview data only. This screen is not connected to live networks.",
+      "demoEyebrow": "Demo",
+      "unreadBadge": "Unread",
+      "unreadSummary": "{count} unread",
+      "threads": "Threads",
+      "listEmpty": "Nothing matches your filters.",
+      "pickThread": "Pick a thread from the list to read messages and try the demo reply box.",
+      "back": "Threads",
+      "connectedAs": "Connected as",
+      "notConnected": "Not connected in this demo",
+      "sampleDisconnected": "Sample",
+      "markRead": "Mark read",
+      "readState": "Read",
+      "conversation": "Conversation",
+      "replyLabel": "Reply",
+      "replyPlaceholder": "Write a quick reply…",
+      "replyHint": "Demo: replies stay in this browser session and are not sent to any platform.",
+      "send": "Send",
+      "sentDemo": "Saved for this session (demo).",
+      "justNow": "Just now",
+      "kindComment": "Comment",
+      "kindDm": "Direct",
+      "kindMention": "Mention",
       "sort": {
-        "label": "מיון",
-        "newest": "החדש ביותר",
-        "oldest": "הישן ביותר",
-        "unread": "לא נקראו קודם"
+        "label": "Sort",
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "unread": "Unread first"
       },
       "filter": {
-        "all": "הכל",
-        "channels": "ערוצים",
-        "connectedOnly": "ערוצים מחוברים בלבד"
+        "all": "All",
+        "channels": "Channels",
+        "connectedOnly": "Connected channels only"
       },
       "dialog": {
-        "title": "מיון וערוצים",
-        "subtitle": "בחרו איך לסדר שרשורים ואילו מקורות להציג. פלטפורמות שלא חיברתם נשארות מושבתות — הוסיפו אותן תחת פלטפורמות עם «תיבת דואר נכנס מאוחדת».",
-        "done": "סיום",
-        "cancel": "ביטול",
-        "openButtonAria": "פתיחת אפשרויות מיון וערוצים",
-        "sortSection": "סדר",
-        "channelsSection": "פלטפורמות",
-        "channelUnavailable": "חברו בפלטפורמות עם תיבת דואר נכנס מאוחדת כדי להשתמש בסינון."
+        "title": "Sort & channels",
+        "subtitle": "Choose how threads are ordered and which sources to show. Platforms you have not connected yet stay disabled — add them under Platforms with Unified Inbox enabled.",
+        "done": "Done",
+        "cancel": "Cancel",
+        "openButtonAria": "Open sort and channel options",
+        "sortSection": "Order",
+        "channelsSection": "Platforms",
+        "channelUnavailable": "Connect in Platforms with Unified Inbox to use this filter."
       },
-      "noSourcesTitle": "אין מקורות לתיבת דואר נכנס",
-      "noSourcesBody": "פתחו פלטפורמות, חברו ערוץ והפעילו «תיבת דואר נכנס מאוחדת» בהרשאות. רק ערוצים אלה יופיעו כאן כסינון, והשרשורים שלהם ברשימה.",
+      "noSourcesTitle": "No Inbox sources yet",
+      "noSourcesBody": "Open Platforms, connect a channel, and enable “Unified Inbox” in permissions. Only those channels appear here as filters, and their threads show in the list.",
       "platform": {
         "instagram": "Instagram",
         "youtube": "YouTube",
@@ -932,7 +941,21 @@
         "pinterest": "Pinterest",
         "linkedin": "LinkedIn",
         "telegram": "Telegram"
-      }
+      },
+      "liveSubtitle": "Live DMs from Instagram and Facebook Messenger — loaded on demand, not stored in KONT.",
+      "ephemeralBanner": "Privacy: conversations are fetched when you open Inbox and kept only in this browser session. KONT does not save DM content to the database.",
+      "refresh": "Refresh",
+      "loading": "Loading conversations…",
+      "loadFailed": "Could not load inbox.",
+      "reconnectHint": "Open Platforms → Connect Instagram or Facebook and enable Inbox / messaging, then refresh.",
+      "emptyHint": "Make sure the Page can receive messages and that someone has written to you first.",
+      "listEmptyLive": "No conversations yet for this channel.",
+      "pickThreadLive": "Select a conversation to read messages.",
+      "noMessages": "No messages in this thread.",
+      "noPreview": "(no text)",
+      "replyHintLive": "Replies use Meta’s HUMAN_AGENT tag (up to 7 days after the user’s last message). Not stored in KONT.",
+      "sentLive": "Reply sent via Meta.",
+      "sendFailed": "Could not send reply."
     },
     "connection": {
       "online": "מחובר",

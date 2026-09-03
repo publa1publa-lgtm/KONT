@@ -65,43 +65,46 @@
   "landing": {
     "scrollHint": "Прокрутите, чтобы узнать больше",
     "hero": {
-      "label": "Рабочее пространство для контента",
-      "badge": "Публикуйте сегодня",
-      "title": "Ваш хаос из вкладок.",
-      "titleAccent": "Наше спокойное пространство.",
-      "text": "Планируйте, публикуйте и измеряйте все каналы из одного рабочего пространства.",
-      "ctaPrimary": "Начать сейчас",
-      "ctaSecondary": "Как это работает",
-      "trust": ["Официальные API", "Только OAuth", "Без паролей"],
+      "label": "The content workspace",
+      "badge": "Publish today",
+      "title": "Your chaos stack.",
+      "titleAccent": "Our calm workspace.",
+      "text": "Планируйте и публикуйте в Instagram, Facebook и YouTube из одного пространства — остальные каналы появятся, когда откроем API-доступ.",
+      "ctaPrimary": "Start now",
+      "ctaSecondary": "See how it works",
+      "trust": [
+        "Official APIs",
+        "OAuth only",
+        "No shared passwords"
+      ],
       "platforms": [
         "Instagram",
-        "TikTok",
+        "Facebook",
         "YouTube",
-        "X",
         "Telegram",
-        "LinkedIn"
+        "Google Drive"
       ],
       "multiChannel": {
         "kicker": "Мультиканальность",
-        "title": "Один пост. Все площадки."
+        "title": "Одно пространство. Живые платформы сегодня."
       },
       "social": {
-        "count": "1 200+ авторов",
-        "text": "публикуют в каналах",
+        "count": "Ранний доступ",
+        "text": "авторы публикуют через KONT",
         "worksWith": "Публикует в"
       },
       "tags": [
         "Только OAuth",
-        "Автоформат",
-        "Умное время"
+        "Meta + Google",
+        "Шифрование токенов"
       ],
       "secure": {
-        "kicker": "Безопасное подключение",
-        "title": "Только OAuth. Контроль у вас.",
-        "line": "Без общих паролей · Отзыв доступа в любой момент"
+        "kicker": "Secure connect",
+        "title": "OAuth only. You stay in control.",
+        "line": "No shared passwords · Revoke access anytime"
       },
       "pulse": {
-        "kicker": "Пульс в реальном времени",
+        "kicker": "Live pulse",
         "activities": [
           {
             "action": "Опубликовано",
@@ -109,162 +112,162 @@
             "icon": "/home/icons/color/instagram.svg"
           },
           {
-            "action": "Запланировано",
-            "detail": "YouTube Short · 18:00",
-            "icon": "/home/icons/color/youtube.svg"
+            "action": "Опубликовано",
+            "detail": "Facebook Page · фото в эфире",
+            "icon": "/home/icons/color/facebook.svg"
           },
           {
-            "action": "Автоформат",
-            "detail": "TikTok · 3 кадра готовы",
-            "icon": "/home/icons/color/tiktok.svg"
+            "action": "Опубликовано",
+            "detail": "YouTube · Short загружен",
+            "icon": "/home/icons/color/youtube.svg"
           }
         ],
         "insights": [
           {
-            "value": "94%",
-            "label": "Публикации вовремя"
+            "value": "IG",
+            "label": "Аналитика в Studio"
           },
           {
-            "value": "2m",
-            "label": "Все каналы синхронизированы"
+            "value": "3",
+            "label": "Живые платформы для публикации"
           },
           {
-            "value": "847",
-            "label": "Постов запланировано на эту неделю"
+            "value": "OAuth",
+            "label": "Официальное API-подключение"
           }
         ],
         "metrics": [
           {
-            "value": "3.2×",
-            "label": "Быстрее циклы публикации"
+            "value": "1",
+            "label": "Пространство для создания и публикации"
           },
           {
-            "value": "12+",
-            "label": "Платформ в одном месте"
+            "value": "3+",
+            "label": "Живые платформы сегодня"
           }
         ]
       },
       "quickWins": {
-        "kicker": "Быстрые победы",
+        "kicker": "Быстрый старт",
         "title": "Больше публикаций — меньше трения",
         "items": [
-          "Запланируйте всю неделю за один проход",
-          "Автоформат для каждого канала",
-          "Комментарии остаются у поста"
+          "Подключите Instagram, Facebook или YouTube через OAuth",
+          "Создайте пост или Reel и опубликуйте сразу",
+          "Смотрите аналитику Instagram, если выдали insights"
         ]
       },
       "timing": {
-        "kicker": "Умное время",
-        "title": "Публикуйте, когда аудитория онлайн",
+        "kicker": "Опубликовать сейчас",
+        "title": "Публикуйте, когда готовы",
         "chips": [
-          "Пиковые часы",
-          "С учётом часового пояса",
-          "Рекомендуемые слоты"
+          "Post now",
+          "Шифрование токенов",
+          "Отключение в любой момент"
         ]
       }
     },
     "pillars": {
-      "label": "Как это работает",
-      "title": "СОЗДАВАТЬ . УПРАВЛЯТЬ . РАСТИ",
-      "text": "Три пространства. Один поток. То же спокойное рабочее место — от первого черновика до доказательства, что всё сработало.",
+      "label": "How it works",
+      "title": "CREATE . MANAGE . GROW",
+      "text": "Три зоны. Один поток — от черновика до публикации на платформах, которые уже поддерживаем.",
       "items": [
         {
           "id": "create",
-          "title": "СОЗДАВАТЬ .",
-          "body": "Создавайте. Пишите подписи. Автоматизируйте. Посты, рилсы и сценарии начинаются на одном холсте — адаптируйте один раз, публикуйте на все каналы."
+          "title": "CREATE .",
+          "body": "Создавайте посты и Reels на одном холсте — и публикуйте в подключённые Instagram, Facebook или YouTube."
         },
         {
           "id": "manage",
-          "title": "УПРАВЛЯТЬ .",
-          "body": "Планируйте. Согласовывайте. Публикуйте. Календарь, входящие и подключённые аккаунты держат каждый пост под контролем — без хаоса вкладок."
+          "title": "MANAGE .",
+          "body": "Календарь, библиотека и аккаунты держат контент в порядке — без хаоса вкладок."
         },
         {
           "id": "grow",
-          "title": "РАСТИ .",
-          "body": "Измеряйте. Учитесь. Действуйте. Аналитика и инсайты показывают, что заходит — следующий шаг осознанный, а не наугад."
+          "title": "GROW .",
+          "body": "Аналитика Instagram в Studio при выдаче insights. Больше отчётов — в roadmap."
         }
       ]
     },
     "benefits": {
-      "label": "Почему команды переходят",
-      "title": "Лоскутная экосистема",
-      "titleAccent": "заканчивается здесь.",
-      "text": "Сильным командам не нужно больше инструментов — им нужна одна спокойная поверхность, заточенная под реальный процесс публикации.",
+      "label": "Why teams switch",
+      "title": "The patchwork",
+      "titleAccent": "ends here.",
+      "text": "You do not need more tabs — you need one calm surface for the channels that are live today.",
       "compare": {
         "before": {
-          "tag": "Разрозненно",
-          "title": "Шесть вкладок на один рилс",
+          "tag": "Fragmented",
+          "title": "Six tabs to ship one reel",
           "items": [
-            "Черновики разбросаны по Notion, Drive и личкам",
-            "Согласования теряются в тредах Slack",
-            "Планирование в одном инструменте, аналитика в трёх других",
-            "Каждый день публикации начинается с археологии вкладок"
+            "Drafts scattered across Notion, Drive, and DMs",
+            "Approvals buried in Slack threads",
+            "Publishing in one tool, analytics somewhere else",
+            "Every publish day starts with tab archaeology"
           ],
-          "metric": "6 инструментов · ~47 мин потерь на пост"
+          "metric": "Too many tools · time lost per post"
         },
         "after": {
-          "tag": "Единое пространство",
-          "title": "Одно рабочее пространство, все каналы",
+          "tag": "Focused",
+          "title": "One workspace, live platforms",
           "items": [
-            "Создайте один раз — автоформат для Reels, Shorts и постов",
-            "Согласования и комментарии у материала, а не в чате",
-            "Календарь, входящие и аналитика в одном виде",
-            "Публикация на 12+ платформ без выхода из рабочего пространства"
+            "Compose once for Reels, Shorts, and posts",
+            "Connect with OAuth — revoke anytime",
+            "Calendar and library in the same Studio",
+            "Publish to Instagram, Facebook, and YouTube without leaving KONT"
           ],
-          "metric": "1 пространство · в среднем меньше 6 мин"
+          "metric": "1 workspace · live Meta + Google publish"
         }
       },
       "stats": [
         {
-          "value": 3.2,
-          "decimals": 1,
-          "suffix": "×",
-          "label": "Быстрее циклы публикации"
-        },
-        {
-          "value": 12,
-          "suffix": "+",
-          "label": "Платформ в одном месте"
-        },
-        {
-          "value": 40,
-          "suffix": "%",
-          "label": "Меньше времени на переключение вкладок"
+          "value": 3,
+          "decimals": 0,
+          "suffix": "",
+          "label": "Live publish platforms"
         },
         {
           "value": 1,
           "suffix": "",
-          "label": "Единый источник правды для команды"
+          "label": "Workspace for your content"
+        },
+        {
+          "value": 100,
+          "suffix": "%",
+          "label": "OAuth — no shared passwords"
+        },
+        {
+          "value": 1,
+          "suffix": "",
+          "label": "Source of truth for drafts you ship"
         }
       ],
       "items": [
         {
-          "title": "Конец марафону вкладок",
-          "body": "Хватит копировать подписи между инструментами. Планируйте, редактируйте и планируйте публикации на одном холсте — со слотами под каждый канал.",
-          "outcome": "Циклы в 3,2 раза быстрее"
+          "title": "Kill the tab marathon",
+          "body": "Stop copying captions between apps. Plan and publish Instagram, Facebook, and YouTube from a single Studio.",
+          "outcome": "Fewer tools to juggle"
         },
         {
-          "title": "Шаблоны, которые публикуются",
-          "body": "Переиспользуемые форматы для каждой площадки, зафиксированный голос бренда и ноль срочных переписываний перед выходом.",
-          "outcome": "На 70% меньше правок"
+          "title": "Official API connects",
+          "body": "Meta and Google OAuth only. Encrypted tokens at rest. Disconnect whenever you want.",
+          "outcome": "You stay in control"
         },
         {
-          "title": "Сигналы, на которые можно опереться",
-          "body": "Кросс-платформенная эффективность в одном обзоре — усиливайте удачное вместо догадок по четырём дашбордам.",
-          "outcome": "Одна аналитическая правда"
+          "title": "Signals you can act on",
+          "body": "Instagram account analytics in Studio when insights are granted — more surfaces coming as APIs unlock.",
+          "outcome": "Honest roadmap"
         }
       ],
       "testimonial": {
-        "quote": "Раньше на каждую кампанию уходила половина дня. Теперь вся команда видит один календарь, один входящий ящик, одну правду.",
-        "author": "Maya Chen",
-        "role": "Руководитель контента · студия из 8 человек",
-        "metric": "Еженедельные операции: 12 ч → 3 ч"
+        "quote": "We needed one place to publish Reels and Page posts without five browser tabs. KONT is that place while we grow into more channels.",
+        "author": "Early creator",
+        "role": "Content · early access",
+        "metric": "Meta + YouTube publish live"
       }
     },
     "bento": {
       "label": "Превью продукта",
       "title": "Смотрите продукт, а не презентацию",
-      "text": "Ядро Студии — календарь, единые входящие, карта аудитории, подключённые аккаунты, автоматизации и аналитика. Живые виджеты, не скриншоты.",
+      "text": "Studio сегодня: библиотека, календарь, аккаунты (Instagram, Facebook, YouTube, Drive, Telegram) и аналитика Instagram. Inbox и другие сети — в планах, пока не live.",
       "tabs": {
         "calendar": "Календарь",
         "automation": "Автоматизации",
@@ -308,6 +311,10 @@
     }
   },
   "studio": {
+    "toasts": {
+      "acknowledge": "Прочитано",
+      "dismiss": "Закрыть"
+    },
     "nav": {
       "calendar": "Календарь",
       "content": "Контент",
@@ -687,12 +694,14 @@
       "details": {
         "title": "Платформы",
         "viewsCol": "Просмотры",
+        "dateCol": "Дата",
         "openPost": "Открыть пост",
         "loading": "Загрузка…",
         "loadFailed": "Не удалось загрузить данные платформ.",
         "empty": "Платформы для публикации ещё не выбраны.",
         "views": "{count} просмотров",
         "viewsUnknown": "—",
+        "missingOnPlatform": "Нет на платформе",
         "status": {
           "pending": "Ожидает",
           "scheduled": "Запланировано",
@@ -876,54 +885,54 @@
       "metaLongLivedFailed": "Meta: не удалось получить долгоживущий токен. Проверьте META_APP_ID / META_APP_SECRET и что Facebook Login вернул user token, а не Page token."
     },
     "inbox": {
-      "label": "Входящие",
-      "subtitle": "Одно место для комментариев, личных сообщений и упоминаний по подключённым каналам — превью для ознакомления.",
-      "demoBanner": "Только демо-данные. Экран не подключён к живым сетям.",
-      "demoEyebrow": "Демо",
-      "unreadBadge": "Непрочитано",
-      "unreadSummary": "{count} непрочитанных",
-      "threads": "Диалоги",
-      "listEmpty": "Ничего не подходит под фильтры.",
-      "pickThread": "Выберите диалог из списка, чтобы читать сообщения и попробовать демо-ответ.",
-      "back": "Диалоги",
-      "connectedAs": "Подключено как",
-      "notConnected": "В этом демо не подключено",
-      "sampleDisconnected": "Пример",
-      "markRead": "Пометить прочитанным",
-      "readState": "Прочитано",
-      "conversation": "Переписка",
-      "replyLabel": "Ответ",
-      "replyPlaceholder": "Быстрый ответ…",
-      "replyHint": "Демо: ответы остаются в этой сессии браузера и не отправляются на платформы.",
-      "send": "Отправить",
-      "sentDemo": "Сохранено в этой сессии (демо).",
-      "justNow": "Только что",
-      "kindComment": "Комментарий",
-      "kindDm": "Личное",
-      "kindMention": "Упоминание",
+      "label": "Inbox",
+      "subtitle": "Instagram and Messenger DMs from connected Meta accounts.",
+      "demoBanner": "Preview data only. This screen is not connected to live networks.",
+      "demoEyebrow": "Demo",
+      "unreadBadge": "Unread",
+      "unreadSummary": "{count} unread",
+      "threads": "Threads",
+      "listEmpty": "Nothing matches your filters.",
+      "pickThread": "Pick a thread from the list to read messages and try the demo reply box.",
+      "back": "Threads",
+      "connectedAs": "Connected as",
+      "notConnected": "Not connected in this demo",
+      "sampleDisconnected": "Sample",
+      "markRead": "Mark read",
+      "readState": "Read",
+      "conversation": "Conversation",
+      "replyLabel": "Reply",
+      "replyPlaceholder": "Write a quick reply…",
+      "replyHint": "Demo: replies stay in this browser session and are not sent to any platform.",
+      "send": "Send",
+      "sentDemo": "Saved for this session (demo).",
+      "justNow": "Just now",
+      "kindComment": "Comment",
+      "kindDm": "Direct",
+      "kindMention": "Mention",
       "sort": {
-        "label": "Сортировка",
-        "newest": "Сначала новые",
-        "oldest": "Сначала старые",
-        "unread": "Сначала непрочитанные"
+        "label": "Sort",
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "unread": "Unread first"
       },
       "filter": {
-        "all": "Все",
-        "channels": "Каналы",
-        "connectedOnly": "Только подключённые каналы"
+        "all": "All",
+        "channels": "Channels",
+        "connectedOnly": "Connected channels only"
       },
       "dialog": {
-        "title": "Сортировка и каналы",
-        "subtitle": "Выберите порядок диалогов и источники. Неподключённые платформы недоступны — добавьте их в «Платформы» с включённым Unified Inbox.",
-        "done": "Готово",
-        "cancel": "Отмена",
-        "openButtonAria": "Открыть настройки сортировки и каналов",
-        "sortSection": "Порядок",
-        "channelsSection": "Платформы",
-        "channelUnavailable": "Подключите в «Платформы» с Unified Inbox, чтобы использовать этот фильтр."
+        "title": "Sort & channels",
+        "subtitle": "Choose how threads are ordered and which sources to show. Platforms you have not connected yet stay disabled — add them under Platforms with Unified Inbox enabled.",
+        "done": "Done",
+        "cancel": "Cancel",
+        "openButtonAria": "Open sort and channel options",
+        "sortSection": "Order",
+        "channelsSection": "Platforms",
+        "channelUnavailable": "Connect in Platforms with Unified Inbox to use this filter."
       },
-      "noSourcesTitle": "Источников входящих пока нет",
-      "noSourcesBody": "Откройте «Платформы», подключите канал и включите «Unified Inbox» в разрешениях. Только эти каналы появятся здесь как фильтры, их диалоги — в списке.",
+      "noSourcesTitle": "No Inbox sources yet",
+      "noSourcesBody": "Open Platforms, connect a channel, and enable “Unified Inbox” in permissions. Only those channels appear here as filters, and their threads show in the list.",
       "platform": {
         "instagram": "Instagram",
         "youtube": "YouTube",
@@ -932,7 +941,21 @@
         "pinterest": "Pinterest",
         "linkedin": "LinkedIn",
         "telegram": "Telegram"
-      }
+      },
+      "liveSubtitle": "Live DMs from Instagram and Facebook Messenger — loaded on demand, not stored in KONT.",
+      "ephemeralBanner": "Privacy: conversations are fetched when you open Inbox and kept only in this browser session. KONT does not save DM content to the database.",
+      "refresh": "Refresh",
+      "loading": "Loading conversations…",
+      "loadFailed": "Could not load inbox.",
+      "reconnectHint": "Open Platforms → Connect Instagram or Facebook and enable Inbox / messaging, then refresh.",
+      "emptyHint": "Make sure the Page can receive messages and that someone has written to you first.",
+      "listEmptyLive": "No conversations yet for this channel.",
+      "pickThreadLive": "Select a conversation to read messages.",
+      "noMessages": "No messages in this thread.",
+      "noPreview": "(no text)",
+      "replyHintLive": "Replies use Meta’s HUMAN_AGENT tag (up to 7 days after the user’s last message). Not stored in KONT.",
+      "sentLive": "Reply sent via Meta.",
+      "sendFailed": "Could not send reply."
     },
     "connection": {
       "online": "В сети",
